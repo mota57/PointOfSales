@@ -18,20 +18,37 @@ namespace PointOfSales.Core.Migrations
 
             modelBuilder.Entity("PointOfSales.Core.Entities.Category", b =>
                 {
-                    b.Property<int>("CategoryId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.Property<int>("ProductId");
+                    b.Property<int?>("ProductId");
 
-                    b.HasKey("CategoryId");
+                    b.HasKey("Id");
 
                     b.HasIndex("ProductId");
 
                     b.ToTable("Categories");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Category 1"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Category 2"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Category 3"
+                        });
                 });
 
             modelBuilder.Entity("PointOfSales.Core.Entities.Order", b =>
@@ -66,7 +83,7 @@ namespace PointOfSales.Core.Migrations
 
             modelBuilder.Entity("PointOfSales.Core.Entities.Product", b =>
                 {
-                    b.Property<int>("ProductId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<byte[]>("MainImage");
@@ -80,7 +97,7 @@ namespace PointOfSales.Core.Migrations
                     b.Property<string>("ProductCode")
                         .HasMaxLength(50);
 
-                    b.HasKey("ProductId");
+                    b.HasKey("Id");
 
                     b.ToTable("Products");
                 });
@@ -89,8 +106,7 @@ namespace PointOfSales.Core.Migrations
                 {
                     b.HasOne("PointOfSales.Core.Entities.Product", "Product")
                         .WithMany("Categories")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("ProductId");
                 });
 
             modelBuilder.Entity("PointOfSales.Core.Entities.OrderDetail", b =>

@@ -23,12 +23,16 @@
   "dependencies": {
     "axios": "^0.18.0",
     "core-js": "^2.5.3",
+    "lodash": "^4.17.15",
+    "select2": "^4.0.10",
     "vue": "^2.6.10",
+    "vue-ener-select": "^1.1.0",
     "vue-router": "^3.0.3",
     "vue-server-renderer": "^2.6.10",
     "vue-template-compiler": "^2.6.10",
     "vuex": "^3.1.0",
-    "vuex-router-sync": "^5.0.0"
+    "vuex-router-sync": "^5.0.0",
+    "webpack-dev-middleware": "^3.7.1"
   },
   "devDependencies": {
     "@babel/core": "^7.2.2",
@@ -54,7 +58,7 @@
     "babel-eslint": "^10.0.1",
     "babel-loader": "^8.0.5",
     "bootstrap": "^4.0.0",
-    "cross-env": "^5.2.0",
+    "cross-env": "^5.2.1",
     "css-loader": "^2.1.0",
     "eslint": "^5.12.1",
     "eslint-config-standard": "^12.0.0",

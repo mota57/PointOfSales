@@ -9,50 +9,30 @@ using Microsoft.EntityFrameworkCore;
 using PointOfSales.Core.Entities;
 using PointOfSales.Core.DTO;
 using AutoMapper;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using PointOfSales.WebUI.Extensions;
 
 namespace PointOfSales.WebUI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductsController : ControllerBase
+    public class ProductsController : ApplicationBaseController<Product>
     {
-        private readonly POSContext _context;
         private readonly IMapper _mapper;
 
         public ProductsController(POSContext context, IMapper mapper)
+            : base(context)
         {
-            _context = context;
             _mapper = mapper;
-        }
-
-        // GET: api/Products
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
-        {
-            return await _context.Products.ToListAsync();
-        }
-
-        // GET: api/Products/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Product>> GetProduct(int id)
-        {
-            var product = await _context.Products.FindAsync(id);
-
-            if (product == null)
-            {
-                return NotFound();
-            }
-
-            return product;
         }
 
         // PUT: api/Products/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProduct(int id, Product product)
+        public async Task<IActionResult> PutProduct([FromForm] int id, [FromBody] Product product)
         {
-            if (id != product.ProductId)
+            if (id != product.Id || !ModelState.IsValid)
             {
-                return BadRequest();
+                return BadRequest(ModelState);
             }
 
             _context.Entry(product).State = EntityState.Modified;
@@ -63,7 +43,7 @@ namespace PointOfSales.WebUI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ProductExists(id))
+                if (!EntityExists(id))
                 {
                     return NotFound();
                 }
@@ -80,28 +60,22 @@ namespace PointOfSales.WebUI.Controllers
         [HttpPost]
         //[ValidateAntiForgeryToken]
         [IgnoreAntiforgeryToken]
-        public async Task<ActionResult<Product>> PostProduct(ProductDTO dto)
+        public async Task<ActionResult<Product>> PostProduct([FromForm] ProductDTO dto)
         {
             Product product = _mapper.Map<Product>(dto);
-            if (dto.MainImage != null)
-            {
+            product.MainImage = await dto.Image.ToBytes();
 
-                using (var memoryStream = new MemoryStream())
-                {
-                    await dto.MainImage.CopyToAsync(memoryStream);
-                    product.MainImage = memoryStream.ToArray();
-                }
-            }
+
             if (ModelState.IsValid)
             {
-
 
                 _context.Products.Add(product);
 
                 await _context.SaveChangesAsync();
 
-                return CreatedAtAction("GetProduct", new { id = product.ProductId }, product);
-            } else
+                return CreatedAtAction("GetProduct", new { id = product.Id }, product);
+            }
+            else
             {
                 return BadRequest(ModelState);
             }
@@ -123,9 +97,5 @@ namespace PointOfSales.WebUI.Controllers
             return product;
         }
 
-        private bool ProductExists(int id)
-        {
-            return _context.Products.Any(e => e.ProductId == id);
-        }
     }
 }

@@ -9,15 +9,24 @@ namespace PointOfSales.Core.Entities
 {
     public static class GlobalVariables
     {
-        public static  string Connection => "Data Source=pos.db";
+        public static  string Connection => @"Data Source=C:\Users\hmota\Documents\RESOURCES\Projects\PointOfSales\PointOfSales.Core\pos.db";
 
     }
 
-    public class BaseEntity 
+
+
+    public abstract class BaseEntity 
     {
-        public bool SoftDetelete { get; set; }
-        public DateTime CreateDate { get; set; }
-        public DateTime ModifiedDate { get; set; }
+
+        [Required]
+        [MaxLength(50)]
+        public virtual string Name { get; set; }
+
+        [Key]
+        public int Id { get; set; }
+        //public bool SoftDetelete { get; set; }
+        //public DateTime CreateDate { get; set; }
+        //public DateTime ModifiedDate { get; set; }
     }
 
     public class POSContextFactory : IDesignTimeDbContextFactory<POSContext>
@@ -44,6 +53,15 @@ namespace PointOfSales.Core.Entities
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Category>().HasData(
+                new Category() { Id=1, Name = "Category 1"}
+                ,new Category() { Id =2, Name = "Category 2"}
+                ,new Category() { Id=3, Name = "Category 3"}
+                );
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -65,14 +83,8 @@ category
 unit price
 */
 
-    public class Product 
+    public class Product  : BaseEntity
     {
-        public int ProductId { get; set; }
-
-        [Required]
-        [MaxLength(50)]
-        public string Name { get; set; }
-
         
         [MaxLength(50)]
         public string ProductCode { get; set; }
@@ -83,15 +95,13 @@ unit price
         public byte[] MainImage { get; set; }
 
         public ICollection<Category> Categories { get; set; }
+
     }
 
-    public class  Category 
+    public class  Category : BaseEntity
     {
-        [Required]
-        [MaxLength(50)]
-        public string Name { get; set; }
-        public int CategoryId { get; set; }
-        public int ProductId { get; set; }
+
+        public int? ProductId { get; set; }
         public Product Product { get; set; }
     }
 

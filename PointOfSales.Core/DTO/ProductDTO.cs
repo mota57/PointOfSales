@@ -20,8 +20,10 @@ namespace PointOfSales.Core.DTO
         [Required]
         public decimal Price { get; set; }
 
-        public IFormFile MainImage { get; set; }
+        public IFormFile Image { get; set; }
 
         public ICollection<Category> Categories { get; set; }
+
+        public int? CategoryId { get; set; } = null;
     }
 }

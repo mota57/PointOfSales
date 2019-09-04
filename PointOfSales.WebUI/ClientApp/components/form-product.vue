@@ -6,29 +6,41 @@
       <p><em>Loading...</em></p>
       <h1><icon icon="spinner" pulse /></h1>
     </div>
-    <form @submit="upsert" method="post" enctype="multipart/form-data">
+    <form @submit="upsert" method="post" enctype="multipart/form-data" action="">
 
       <div class="form-group">
         <label for="Name">Name</label>
-        <input type="text" id="Name" class="form-control" aria-describedby="Name" placeholder="Enter name">
+        <input type="text" v-model="Name" id="Name" class="form-control" aria-describedby="Name" placeholder="Enter name">
+        <template v-if="errList && errList.Name">
+          <p class="text-danger" v-for="err in errList.Name"> {{err}} </p>
+        </template>
       </div>
 
       <div class="form-group">
         <label for="Price">Price</label>
-        <input type="number" id="Price" class="form-control" aria-describedby="price" placeholder="Enter Price">
+        <input type="number" id="Price" v-model="Price" class="form-control" aria-describedby="price" placeholder="Enter Price">
+        <template v-if="errList && errList.Price">
+          <p class="text-danger" v-for="err in errList.Price"> {{err}} </p>
+        </template>
       </div>
 
       <div class="form-group">
         <label for="ProductCode">Product Code</label>
-        <input type="text" id="ProductCode" class="form-control" aria-describedby="ProductCode" placeholder="Enter product code">
+        <input type="text" id="ProductCode" v-model="ProductCode" class="form-control" aria-describedby="ProductCode" placeholder="Enter product code">
+        <template v-if="errList && errList.ProductCode">
+          <p class="text-danger" v-for="err in errList.ProductCode"> {{err}} </p>
+        </template>
       </div>
 
       <div class="form-group">
-        <label for="Image">Image </label> <br />
-        <input type="file" id="Image" aria-describedby="Image" placeholder="Enter image">
+        <img :src="ImagePicture" width="200" height="200" /><br />
+        <input type="file" @change="onFileChange" placeholder="Enter image">
       </div>
+
+      {{Category}}
       <div class="form-group">
         <label for="Category">Category </label>
+        <v-select label="name" :options="options" v-model="Category" @search="onSearch" />
       </div>
       <button type="submit" class="btn btn-primary">Save</button>
     </form>
@@ -37,43 +49,90 @@
 </template>
 
 <script>
-export default {
-  computed: {
-    
-  },
-  data () {
-    return {
-      display:true,
-      Name:'',
-      Price:0,
-      ProductCode:'',
-      Category:''
-    }
-  },
-  methods: {
-      upsert(e) {
-      e.preventDefault();
-      //alert('hello');
-      var result = this.$http.post(this.urls.product.upsert(), {
-        Name: this.Name,
-        Price:this.Price,
-        ProductCode: this.ProductCode,
-        Category: this.Category
-      }).then(function (result) {
-        console.log(result);
-      }).catch(function (error) {
-        console.log(error);
-      });
 
+  import _ from 'lodash'
+
+  export default {
+    data() {
+      return {
+        display: true,
+        Name: '',
+        Price: 0,
+        ProductCode: '',
+        Category: '',
+        Image: '',
+        ImagePicture: '',
+        errList: null,
+        options: [],
+      }
     },
-    loadPage () {
-     
-    }
-  },
+    methods: {
+      onSearch(search, loading) {
+        loading(true)
+        this.search(loading, search, this);
+      },
+      search: _.debounce((loading, search, vm) => {
+        vm.$http.get(vm.urls.categories.picklist(search))
+          .then(res => {
+            vm.options = res.data;
+            loading(false)
+          })
 
-  async created () {
+      }, 350),
+      upsert(e) {
+        var vm = this;
+        e.preventDefault();
+        let categoryId = this.Category.id;
+
+        var formData = new FormData();
+        formData.set("Name", this.Name);
+        formData.set("Price", this.Price);
+        formData.set("ProductCode", this.ProductCode);
+        formData.set("CategoryId", categoryId ?  categoryId : null);
+        console.log(formData);
+        formData.append("Image", this.Image);
+        debugger;
+
+        this.$http({
+          method:'post',
+          url: this.urls.products.upsert(),
+          data: formData,
+          config: {
+            headers: {
+              "mimeType": "multipart/form-data"
+            }
+          }
+        }).then(function (result) {
+          vm.errList = null;
+
+        }).catch(function (error) {
+          vm.errList = error.response.data.errors;
+        });
+
+      },
+      onFileChange(e) {
+        var files = e.target.files || e.dataTransfer.files;
+        if (!files.length)
+          return;
+
+        this.Image = files[0];
+        this.createImageBase64(files[0]);
+      },
+      createImageBase64(file) {
+        var reader = new FileReader();
+        var vm = this;
+
+        reader.onload = (e) => {
+          vm.ImagePicture = e.target.result;
+        };
+
+        reader.readAsDataURL(file);
+      },
+      removeImage: function (e) {
+        this.ImagePicture = '';
+      },
+    }
   }
-}
 </script>
 
 <style>
