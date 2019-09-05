@@ -8,7 +8,7 @@ namespace PointOfSales.Core.Infraestructure
     {
         public POSMapperConfiguration()
         {
-            CreateMap<Product, ProductDTO>();
+            CreateMap<Product, ProductDTO>().ReverseMap();
         }
     }
 }

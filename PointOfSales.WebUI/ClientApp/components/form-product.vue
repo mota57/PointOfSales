@@ -1,8 +1,7 @@
 <template>
   <div>
-    <h1>Create Product</h1>
-    <p>This component demonstrates fetching data from the server.</p>
-    <div v-if="display" class="text-center">
+    <h1>Product Information</h1>
+    <div v-if="isAjax" class="text-center">
       <p><em>Loading...</em></p>
       <h1><icon icon="spinner" pulse /></h1>
     </div>
@@ -34,13 +33,19 @@
 
       <div class="form-group">
         <img :src="ImagePicture" width="200" height="200" /><br />
+        <input type="button" @click="removeImage" value="Remove" :disabled="!Image">
         <input type="file" @change="onFileChange" placeholder="Enter image">
+        <template v-if="errList && errList.Image">
+          <p class="text-danger" v-for="err in errList.Image"> {{err}} </p>
+        </template>
       </div>
 
-      {{Category}}
       <div class="form-group">
         <label for="Category">Category </label>
         <v-select label="name" :options="options" v-model="Category" @search="onSearch" />
+        <template v-if="errList && errList.Category">
+          <p class="text-danger" v-for="err in errList.Category"> {{err}} </p>
+        </template>
       </div>
       <button type="submit" class="btn btn-primary">Save</button>
     </form>
@@ -55,7 +60,7 @@
   export default {
     data() {
       return {
-        display: true,
+        isAjax: false,
         Name: '',
         Price: 0,
         ProductCode: '',
@@ -82,16 +87,18 @@
       upsert(e) {
         var vm = this;
         e.preventDefault();
-        let categoryId = this.Category.id;
+
 
         var formData = new FormData();
         formData.set("Name", this.Name);
         formData.set("Price", this.Price);
         formData.set("ProductCode", this.ProductCode);
-        formData.set("CategoryId", categoryId ?  categoryId : null);
+        if (this.Category) {
+          //can't send null if not it will send it as a string
+          formData.set("CategoryId", this.Category.id);
+        }
         console.log(formData);
         formData.append("Image", this.Image);
-        debugger;
 
         this.$http({
           method:'post',
@@ -123,6 +130,7 @@
         var vm = this;
 
         reader.onload = (e) => {
+          console.log('loaded');
           vm.ImagePicture = e.target.result;
         };
 
@@ -130,6 +138,7 @@
       },
       removeImage: function (e) {
         this.ImagePicture = '';
+        this.Image = null;
       },
     }
   }

@@ -47,7 +47,7 @@ namespace PointOfSales.WebUI.Controllers
         public async Task<IEnumerable<object>> GetPickList(string word = "")
         {
             return await _context.Set<TEntity>()
-                .Where(_ => !string.IsNullOrEmpty(word) && _.Name.Contains(word))
+                .Where(_ => !string.IsNullOrEmpty(word) && EF.Functions.Like(_.Name, $"%{word}%"))
                 .OrderBy(_ => _.Name)
                 .Take(20)
                 .Select(_ => new {  _.Name,  _.Id })

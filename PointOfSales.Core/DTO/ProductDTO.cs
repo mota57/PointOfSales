@@ -22,8 +22,7 @@ namespace PointOfSales.Core.DTO
 
         public IFormFile Image { get; set; }
 
-        public ICollection<Category> Categories { get; set; }
 
-        public int? CategoryId { get; set; } = null;
+        public int? CategoryId { get; set; }
     }
 }

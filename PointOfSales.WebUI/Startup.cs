@@ -29,7 +29,7 @@ namespace PointOfSales.WebUI
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            services.AddAutoMapper(System.Reflection.Assembly.GetAssembly(typeof(POSMapperConfiguration)));
+            services.AddAutoMapper(typeof(POSMapperConfiguration));
             // Simple example with dependency injection for a data provider.
             services.AddSingleton<IWeatherProvider, WeatherProviderFake>();
             services.AddDbContext<POSContext>(cfg => cfg.UseSqlite(GlobalVariables.Connection));

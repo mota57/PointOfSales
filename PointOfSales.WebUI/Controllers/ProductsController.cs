@@ -73,7 +73,7 @@ namespace PointOfSales.WebUI.Controllers
 
                 await _context.SaveChangesAsync();
 
-                return CreatedAtAction("GetProduct", new { id = product.Id }, product);
+                return CreatedAtAction(nameof(Get), new { id = product.Id }, product);
             }
             else
             {
