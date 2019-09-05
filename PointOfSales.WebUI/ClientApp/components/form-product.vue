@@ -1,11 +1,12 @@
 <template>
   <div>
     <h1>Product Information</h1>
+    <form-tbl-product></form-tbl-product>
     <div v-if="isAjax" class="text-center">
       <p><em>Loading...</em></p>
       <h1><icon icon="spinner" pulse /></h1>
     </div>
-    <form @submit="upsert" method="post" enctype="multipart/form-data" action="">
+    <form @submit.prevent="upsert" method="post" enctype="multipart/form-data" action="">
 
       <div class="form-group">
         <label for="Name">Name</label>
@@ -31,14 +32,11 @@
         </template>
       </div>
 
-      <div class="form-group">
-        <img :src="ImagePicture" width="200" height="200" /><br />
-        <input type="button" @click="removeImage" value="Remove" :disabled="!Image">
-        <input type="file" @change="onFileChange" placeholder="Enter image">
+      <cmp-image v-model="Image">
         <template v-if="errList && errList.Image">
           <p class="text-danger" v-for="err in errList.Image"> {{err}} </p>
         </template>
-      </div>
+      </cmp-image>
 
       <div class="form-group">
         <label for="Category">Category </label>
@@ -47,7 +45,7 @@
           <p class="text-danger" v-for="err in errList.Category"> {{err}} </p>
         </template>
       </div>
-      <button type="submit" class="btn btn-primary">Save</button>
+      <button type="submit" class="btn btn-primary" :disabled="isAjax">Save</button>
     </form>
 
   </div>
@@ -56,8 +54,12 @@
 <script>
 
   import _ from 'lodash'
+  import cmpImage from './cmp-image'
+  import formTblProduct from './form-tbl-product'
+
 
   export default {
+    components: { cmpImage, formTblProduct },
     data() {
       return {
         isAjax: false,
@@ -67,7 +69,7 @@
         Category: '',
         Image: '',
         ImagePicture: '',
-        errList: null,
+        errList: { Image : ['test error']},
         options: [],
       }
     },
@@ -86,9 +88,6 @@
       }, 350),
       upsert(e) {
         var vm = this;
-        e.preventDefault();
-
-
         var formData = new FormData();
         formData.set("Name", this.Name);
         formData.set("Price", this.Price);
@@ -97,11 +96,12 @@
           //can't send null if not it will send it as a string
           formData.set("CategoryId", this.Category.id);
         }
-        console.log(formData);
         formData.append("Image", this.Image);
 
+        this.isAjax = true;
+
         this.$http({
-          method:'post',
+          method: 'post',
           url: this.urls.products.upsert(),
           data: formData,
           config: {
@@ -114,33 +114,13 @@
 
         }).catch(function (error) {
           vm.errList = error.response.data.errors;
+        }).then(function () {
+          vm.isAjax = false;
+
         });
 
       },
-      onFileChange(e) {
-        var files = e.target.files || e.dataTransfer.files;
-        if (!files.length)
-          return;
-
-        this.Image = files[0];
-        this.createImageBase64(files[0]);
-      },
-      createImageBase64(file) {
-        var reader = new FileReader();
-        var vm = this;
-
-        reader.onload = (e) => {
-          console.log('loaded');
-          vm.ImagePicture = e.target.result;
-        };
-
-        reader.readAsDataURL(file);
-      },
-      removeImage: function (e) {
-        this.ImagePicture = '';
-        this.Image = null;
-      },
-    }
+     }
   }
 </script>
 

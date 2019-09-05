@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PointOfSales.Core.Entities;
+using PointOfSales.Core.Infraestructure.VueTable;
 
 namespace PointOfSales.WebUI.Controllers
 {
@@ -46,12 +47,22 @@ namespace PointOfSales.WebUI.Controllers
         [HttpGet("GetPickList/{word?}")]
         public async Task<IEnumerable<object>> GetPickList(string word = "")
         {
-            return await _context.Set<TEntity>()
-                .Where(_ => !string.IsNullOrEmpty(word) && EF.Functions.Like(_.Name, $"%{word}%"))
-                .OrderBy(_ => _.Name)
-                .Take(20)
-                .Select(_ => new {  _.Name,  _.Id })
-                .ToListAsync();
+            var query = _context.Set<TEntity>()
+               .OrderBy(_ => _.Name)
+               .Take(20);
+
+            if (!string.IsNullOrEmpty(word))
+                query = query.Where(_ => EF.Functions.Like(_.Name, $"%{word}%"));
+
+            return await  query.Select(_ => new {  _.Name,  _.Id }).ToListAsync();
+        }
+
+        [HttpGet("GetDatatable")]
+        public async Task<Dictionary<string, object>> GetDataTable([FromQuery] VueTableParameters parameters)
+        {
+            VueTableReader reader = new VueTableReader();
+            var result = await reader.GetAsync(parameters, new string[] { "id", "name" });
+            return result;
         }
 
         public bool EntityExists(int id)

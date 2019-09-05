@@ -7,14 +7,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace PointOfSales.Core.Entities
 {
-    public static class GlobalVariables
-    {
-        //public static  string Connection => @"Data Source=C:\Users\hmota\Documents\RESOURCES\Projects\PointOfSales\PointOfSales.Core\pos.db";
-        public static  string Connection => @"Data Source=C:\Users\hpnotebook\Documents\Visual Studio 2017\Projects\PointOfSales\PointOfSales.Core\pos.db";
-
-    }
-
-
 
     public abstract class BaseEntity 
     {
@@ -40,49 +32,6 @@ namespace PointOfSales.Core.Entities
             return new POSContext(optionsBuilder.Options);
         }
     }
-
-
-    public class POSContext : DbContext 
-    {
-
-        public POSContext(DbContextOptions<POSContext> options)
-        : base(options)
-        { }
-
-        public DbSet<Product> Products { get; set; }
-        public DbSet<Category> Categories { get; set; }
-        public DbSet<Order> Orders { get; set; }
-        public DbSet<OrderDetail> OrderDetails { get; set; }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Category>().HasData(
-                new Category() { Id=1, Name = "Category 1"}
-                ,new Category() { Id =2, Name = "Category 2"}
-                ,new Category() { Id=3, Name = "Category 3"}
-                );
-        }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlite(GlobalVariables.Connection);
-            }
-        }
-    }
-
-    /*
-     
-#the product fields
-productId
-productName
-productCode
-productPrice
-mainImage
-category
-unit price
-*/
 
     public class Product  : BaseEntity
     {
