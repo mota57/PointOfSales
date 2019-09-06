@@ -32,11 +32,11 @@
         </template>
       </div>
 
-      <cmp-image v-model="Image">
+      <form-image v-model="Image">
         <template v-if="errList && errList.Image">
           <p class="text-danger" v-for="err in errList.Image"> {{err}} </p>
         </template>
-      </cmp-image>
+      </form-image>
 
       <div class="form-group">
         <label for="Category">Category </label>
@@ -54,13 +54,10 @@
 <script>
 
   import _ from 'lodash'
-  import cmpImage from './cmp-image'
-  import formTblProduct from './form-tbl-product'
-  import formTbl2 from './form-tbl-2'
 
 
   export default {
-    components: { cmpImage, formTblProduct, formTbl2 },
+    name:'form-product',
     data() {
       return {
         isAjax: false,
@@ -88,6 +85,8 @@
 
       }, 350),
       upsert(e) {
+        alert('hey');
+        return;
         var vm = this;
         var formData = new FormData();
         formData.set("Name", this.Name);

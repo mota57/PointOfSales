@@ -12,22 +12,12 @@
             </div>
             <div class="modal-body">
 
-              <!--<form>
-                <div class="form-group">
-                  <label for="recipient-name" class="col-form-label">Recipient:</label>
-                  <input type="text" class="form-control" id="recipient-name">
-                </div>
-                <div class="form-group">
-                  <label for="message-text" class="col-form-label">Message:</label>
-                  <textarea class="form-control" id="message-text"></textarea>
-                </div>
-              </form>-->
-              <slot name="modal-edit"></slot>
+               <slot name="edit" v-ref="childForm"></slot>
 
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary">Send message</button>
+              <button type="button" class="btn btn-primary" @click="callSave">Save</button>
             </div>
           </div>
         </div>
@@ -94,11 +84,15 @@
 </template>
 
 <script>
-  import _ from 'lodash'
+  //import _ from 'lodash'
 
   export default {
     props: ['name'],
     methods: {
+      callSave() {
+        console.log(this.$refs);
+        this.$refs.childComponent.upsert();
+      },
       edit(data) {
         //open pop up
         console.log(data);

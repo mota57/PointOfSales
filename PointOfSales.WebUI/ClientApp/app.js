@@ -5,6 +5,8 @@ import store from './store'
 import { sync } from 'vuex-router-sync'
 import App from 'components/app-root'
 import formProduct from 'components/form-product'
+import formDatatable from 'components/form-datatable'
+import formImage from 'components/form-image'
 import { FontAwesomeIcon } from './icons'
 import jQuery from 'jquery'
 import vSelect from 'vue-ener-select'
@@ -23,10 +25,11 @@ window.axios = axios;
 
 Vue.use(ServerTable, {}, true, 'bootstrap4', 'default');
 
+Vue.component('form-image', formImage)
 Vue.component('form-product', formProduct)
+Vue.component('form-datatable', formDatatable)
 Vue.component('icon', FontAwesomeIcon)
 Vue.component('v-select', vSelect)
-
 
 Vue.prototype.$http = axios
 
