@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PointOfSales.Core.Entities;
 using PointOfSales.Core.Infraestructure.VueTable;
@@ -14,11 +12,13 @@ namespace PointOfSales.WebUI.Controllers
     public class ApplicationBaseController<TEntity> : ControllerBase
         where TEntity : BaseEntity
     {
+        protected VueTableConfig TableConfig { get; set; }
 
         protected readonly POSContext _context;
 
-        public ApplicationBaseController(POSContext context)   {
+        public ApplicationBaseController(POSContext context, VueTableConfig tableConfig)   {
             _context = context;
+            TableConfig = tableConfig;
         }
 
         // GET: api/Entities
@@ -61,8 +61,14 @@ namespace PointOfSales.WebUI.Controllers
         public async Task<Dictionary<string, object>> GetDataTable([FromQuery] VueTableParameters parameters)
         {
             VueTableReader reader = new VueTableReader();
-            var result = await reader.GetAsync(parameters, new string[] { "id", "name" });
+            var result = await reader.GetAsync(TableConfig, parameters);
             return result;
+        }
+
+        [HttpGet("GetTableMetadata")]
+        public object GetTableMetadata()
+        {
+            return TableConfig;
         }
 
         public bool EntityExists(int id)

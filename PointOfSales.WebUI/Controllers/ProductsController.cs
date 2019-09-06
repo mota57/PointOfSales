@@ -11,9 +11,25 @@ using PointOfSales.Core.DTO;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using PointOfSales.WebUI.Extensions;
+using PointOfSales.Core.Infraestructure.VueTable;
 
 namespace PointOfSales.WebUI.Controllers
 {
+    public class ProductDataTableConfig : VueTableConfig
+    {
+        public ProductDataTableConfig()
+        {
+            TableName = "Products";
+            Fields.AddRange(new List<VueField>()
+                {
+                     new VueField("Id", false),
+                     new VueField("Name")
+                });
+
+        }
+    }
+
+
     [Route("api/[controller]")]
     [ApiController]
     public class ProductsController : ApplicationBaseController<Product>
@@ -21,10 +37,14 @@ namespace PointOfSales.WebUI.Controllers
         private readonly IMapper _mapper;
 
         public ProductsController(POSContext context, IMapper mapper)
-            : base(context)
+            : base(context, new ProductDataTableConfig())
         {
             _mapper = mapper;
+
         }
+
+
+
 
         // PUT: api/Products/5
         [HttpPut("{id}")]

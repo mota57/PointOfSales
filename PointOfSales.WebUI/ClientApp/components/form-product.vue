@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>Product Information</h1>
-    <form-tbl-product></form-tbl-product>
+
     <div v-if="isAjax" class="text-center">
       <p><em>Loading...</em></p>
       <h1><icon icon="spinner" pulse /></h1>
@@ -56,10 +56,11 @@
   import _ from 'lodash'
   import cmpImage from './cmp-image'
   import formTblProduct from './form-tbl-product'
+  import formTbl2 from './form-tbl-2'
 
 
   export default {
-    components: { cmpImage, formTblProduct },
+    components: { cmpImage, formTblProduct, formTbl2 },
     data() {
       return {
         isAjax: false,

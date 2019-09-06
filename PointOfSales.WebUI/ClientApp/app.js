@@ -4,6 +4,7 @@ import router from './router/index'
 import store from './store'
 import { sync } from 'vuex-router-sync'
 import App from 'components/app-root'
+import formProduct from 'components/form-product'
 import { FontAwesomeIcon } from './icons'
 import jQuery from 'jquery'
 import vSelect from 'vue-ener-select'
@@ -20,18 +21,9 @@ window.axios = axios;
 
 // Registration of global components
 
-Vue.use(ServerTable, {
-  responseAdapter: function (resp) {
+Vue.use(ServerTable, {}, true, 'bootstrap4', 'default');
 
-    var d = resp.data;
-
-    return {
-      data: d.data,
-      count: d.count
-    }
-  }
-}, false, 'bootstrap4', 'default');
-
+Vue.component('form-product', formProduct)
 Vue.component('icon', FontAwesomeIcon)
 Vue.component('v-select', vSelect)
 
@@ -58,6 +50,11 @@ Vue.mixin({
         return result;
       }
 
+      list() {
+        let result = this.getURL();
+        return result;
+      }
+
       upsert (id = '') {
         let result = this.getURL(`/${id}`);
         return result;
@@ -67,6 +64,12 @@ Vue.mixin({
         let result = this.getURL(`/GetDataTable`)
         return result;
       }
+
+      get tableMetadata() {
+        let result = this.getURL(`/GetTableMetadata`)
+        return result;
+      }
+
 
     }
 

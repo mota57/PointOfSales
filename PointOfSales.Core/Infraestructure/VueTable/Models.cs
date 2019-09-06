@@ -3,9 +3,13 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PointOfSales.Core.Entities;
 using SqlKata;
+using SqlKata.Compilers;
 using SqlKata.Execution;
 using System;
+using System.Linq;
 using System.Collections.Generic;
+using System.Data.Common;
+using System.Data.SqlClient;
 using System.Threading.Tasks;
 
 namespace PointOfSales.Core.Infraestructure.VueTable
@@ -25,32 +29,61 @@ namespace PointOfSales.Core.Infraestructure.VueTable
 
     public interface IVueTablesInterface
     {
-        Task<Dictionary<string, object>> GetAsync(string className, VueTableParameters tableModel, string[] fields);
+        Task<Dictionary<string, object>> GetAsync(VueTableConfig config, VueTableParameters parameters);
     }
 
-  
+    public class VueField
+    {
+        public VueField(string name, bool filter = true)
+        {
+            if (string.IsNullOrEmpty(name)) {
+                throw new Exception("field must have a name");
+            }
+            this.Name = name;
+            this.Filter = filter;
+        }
+
+        public string Name { get; set; }
+        public bool Filter { get; set; } = true;
+        public bool Display { get; set; } = true;
+    }
+
+    public class VueTableConfig
+    {
+        public VueTableConfig()
+        {
+            Fields = new List<VueField>();
+
+        }
+
+        public string TableName { get; set; }
+        public List<VueField> Fields { get; set; } 
+        
+    }
+
+
+
     public class VueTableReader : IVueTablesInterface
     {
-        public async Task<Dictionary<string, object>> GetAsync(string className, VueTableParameters tableModel, string[] fields)
+        public async Task<Dictionary<string, object>> GetAsync(VueTableConfig config, VueTableParameters parameters)
         {
-            var connection = new SqliteConnection(GlobalVariables.Connection);
-            var compiler = new SqlKata.Compilers.SqliteCompiler();
-            var db = new QueryFactory(connection, compiler);
-            db.Logger = compiled => {
-                Console.WriteLine(compiled.ToString());
-            };
+            var tableName = config.TableName;
+            var fields = config.Fields;
+            var fieldNames = fields.Select(_ => _.Name).ToArray();
 
-            var queryBuilder = db.Query(className).Select(fields);
+            QueryFactory db = BuildQueryFactory();
+
+            var queryBuilder = db.Query(tableName).Select(fieldNames);
 
 
-            var count = await db.Query(className).CountAsync<int>();
+            var count = await db.Query(tableName).CountAsync<int>();
 
-            if (!string.IsNullOrEmpty(tableModel.Query))
+            if (!string.IsNullOrEmpty(parameters.Query))
             {
-                queryBuilder = tableModel.ByColumn == 1 ?  
-                        FilterByColumn(queryBuilder, tableModel.Query)
+                queryBuilder = parameters.ByColumn == 1 ?  
+                        FilterByColumn(queryBuilder, parameters.Query)
                         : 
-                        Filter(queryBuilder, tableModel.Query, fields);
+                        Filter(queryBuilder, parameters.Query, fieldNames);
             }
 
             var data = await queryBuilder.GetAsync<object>();
@@ -62,6 +95,30 @@ namespace PointOfSales.Core.Infraestructure.VueTable
                 { "data", data },
                 { "count", count }
             };
+        }
+
+        private QueryFactory BuildQueryFactory()
+        {
+            System.Data.IDbConnection connection;
+            Compiler compiler;
+
+            if (GlobalVariables.DatabaseProvider == DatabaseProvider.SQLite)
+            {
+                compiler = new SqliteCompiler();
+                connection = new SqliteConnection(GlobalVariables.Connection);
+            }
+            else 
+            {
+                compiler = new SqlServerCompiler();
+                connection = new SqlConnection(GlobalVariables.Connection);
+            }
+
+            var db = new QueryFactory(connection, compiler);
+            db.Logger = compiled => {
+                System.Diagnostics.Debug.WriteLine(compiled.ToString());
+            };
+            return db;
+
         }
 
         private Query FilterByColumn(Query queryBuilder, string query)

@@ -5,20 +5,38 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PointOfSales.Core.Entities;
+using PointOfSales.Core.Infraestructure.VueTable;
 
 namespace PointOfSales.WebUI.Controllers
 {
+    public class CategoryVueDataTableConfig : VueTableConfig
+        {
+            public CategoryVueDataTableConfig()
+            {
+                TableName = "Categories";
+                Fields.AddRange(new List<VueField>()
+                {
+                     new VueField("Id", false),
+                     new VueField("Name")
+                });
+
+            }
+        }
+
+
     [Route("api/[controller]")]
     [ApiController]
     public class CategoriesController : ApplicationBaseController<Category>
     {
 
-        public CategoriesController(POSContext context):base(context)
+        public CategoriesController(POSContext context): base(context, new CategoryVueDataTableConfig())
         {
         }
 
-      
+
        
+
+
         // PUT: api/Categories/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCategory(int id, Category category)

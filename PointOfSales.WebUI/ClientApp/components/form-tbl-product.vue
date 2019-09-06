@@ -8,43 +8,56 @@
     </div>
 
     <div>
-      {{urls.categories.datatable}}
-      <v-server-table :url="urls.categories.datatable" :columns="columns" :options="options"></v-server-table>
+      <input type="text" class="form-control" v-model="Name">
+      <button @click="emitName"> trigger name</button>
+
+      <v-server-table  name="categories" :url="urls.categories.datatable" :columns="columns" :options="options">
+      </v-server-table>
     </div>
 
   </div>
 </template>
 
 <script>
+  import _ from 'lodash'
+
   export default {
-  
-  data () {
-    return {
-      isAjax:false,
-      columns: ['Id', 'Name'],
-      options: {
-        // see the options API
-        initFilters: {Name: 'Cat'},
-        customFilters: [ 'Name'],
-        filterByColumn: true,
-        responseAdapter: function (resp) {
+    methods: {
+      emitName: function() {
+        this.$store.commit('categories/SET_FILTER', { 'Name': this.Name });
 
-          var d = resp.data;
+      }
+    },
+    watch: {
 
-          return {
-            data: d.data,
-            count: d.count
-          }
+    },
+    created() {
+
+    },
+    data() {
+      return {
+        Name:'',
+        isAjax: false,
+        columns: ['Id', 'Name'],
+        options: {
+          // see the options API
+          initFilters: { Name: 'Cat' },
+          customFilters: ['Name'],
+          filterByColumn: true,
+          filterable: []
+          //responseAdapter: function (resp) {
+
+          //  var d = resp.data;
+
+          //  return {
+          //    data: d.data,
+          //    count: d.count
+          //  }
+          //}
         }
       }
-    }
-  },
-  methods: {
-  },
-  async created () {
-    //fetch data
+    },
   }
-}
 </script>
 
 <style>

@@ -1,0 +1,33 @@
+entity framework core validation
+
+https://www.thereformedprogrammer.net/entity-framework-core-validating-data-and-catching-sql-errors/
+
+
+https://docs.microsoft.com/en-us/aspnet/core/mvc/models/validation?view=aspnetcore-2.2
+
+validate in angular an attribute in efcore
+
+[complete] https://www.carlrippon.com/integrating-validation-in-angular-2-and-asp-net-core/
+
+
+
+attach an attribute to the model
+display the attribute in vue
+
+# SOLUTION 1 
+use a component that display the label from a property 
+the label will be store in a table called EntityPropertyLabel
+the fields are  id, label, tableName.propertyName
+
+# SOLUTION 2 
+use the attribute display in each property
+generate a json document with the properties's label
+the format of the json will be
+
+<labels> : {
+	<table> : {
+		<propertyLabel>: <value>
+	}
+}
+# SOLUTION 3 
+using globalization and localization
