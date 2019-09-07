@@ -45,7 +45,8 @@
           <p class="text-danger" v-for="err in errList.Category"> {{err}} </p>
         </template>
       </div>
-      <button type="submit" class="btn btn-primary" :disabled="isAjax">Save</button>
+
+      <button  v-if="display" type="submit" class="btn btn-primary" :disabled="isAjax">Save</button>
     </form>
 
   </div>
@@ -55,8 +56,10 @@
 
   import _ from 'lodash'
 
+  import { eventBus } from './event-bus'
 
   export default {
+    props: { display: Boolean },
     name:'form-product',
     data() {
       return {
@@ -70,6 +73,13 @@
         errList: { Image : ['test error']},
         options: [],
       }
+    },
+    created() {
+      var vm = this;
+      eventBus.$on('saveForm', function () {
+        vm.upsert({});
+      });
+
     },
     methods: {
       onSearch(search, loading) {
@@ -85,8 +95,6 @@
 
       }, 350),
       upsert(e) {
-        alert('hey');
-        return;
         var vm = this;
         var formData = new FormData();
         formData.set("Name", this.Name);

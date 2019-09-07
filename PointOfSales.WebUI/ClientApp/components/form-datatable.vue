@@ -2,7 +2,7 @@
   <div>
 
       <div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="exampleModalLabel">New </h5>
@@ -12,7 +12,7 @@
             </div>
             <div class="modal-body">
 
-               <slot name="edit" v-ref="childForm"></slot>
+               <slot name="edit"></slot>
 
             </div>
             <div class="modal-footer">
@@ -27,15 +27,10 @@
     <div class="row">
       <div class="col-12" v-if="isComplete"> 
         <v-server-table :name="name" :url="urls[name].datatable" :columns="columns" :options="options">
-
-
           <div slot="Edit" slot-scope="props">
-              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#edit" data-whatever="@mdo">Open modal for @mdo</button>
               <a data-target="#edit" data-toggle="modal"> <icon icon="edit" class="mr-2 menu-icon"    /> </a>
           </div>
-          
         </v-server-table>
-
       </div>
 
       <!--<div class="card col-6">
@@ -82,16 +77,16 @@
 
   </div>
 </template>
-
 <script>
   //import _ from 'lodash'
+  import { eventBus } from './event-bus'
+  console.log(eventBus);
 
   export default {
     props: ['name'],
     methods: {
       callSave() {
-        console.log(this.$refs);
-        this.$refs.childComponent.upsert();
+        eventBus.$emit('saveForm');
       },
       edit(data) {
         //open pop up
@@ -107,20 +102,23 @@
     watch: {
 
     },
+    mounted() {
+      console.log(this.$slots);
+
+    },
     async created() {
 
       try {
-        let response = await this.$http.get(this.urls.categories.tableMetadata)
+        let response = await this.$http.get(this.urls[this.name].tableMetadata)
         this.isComplete = true;
-        console.log(response);
         let data = response.data;
 
-        //todo move this to API CONTROLLER 
+        //todo move .map and. filter  to API CONTROLLER 
         let fieldsToFilter = data.fields.filter(_ => _.filter).map(_ => _.name);
         this.columns = data.fields.map(_ => _.name);
         this.columns.push('Edit');
-        this.options.filterable = fieldsToFilter;
-        this.options.customFilters = fieldsToFilter; 
+        this.options.filterable = fieldsToFilter; // set the default input text filter of the api
+        this.options.customFilters = fieldsToFilter;  // allow fields to be filter
 
       /*
        # create dropdown for pick list

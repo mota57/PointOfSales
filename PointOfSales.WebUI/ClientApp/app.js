@@ -13,6 +13,7 @@ import vSelect from 'vue-ener-select'
 import { ServerTable, ClientTable, Event } from 'vue-tables-2';
 
 
+
 // Registration of global window variables 
 window.$ = jQuery
 window.axios = axios;
