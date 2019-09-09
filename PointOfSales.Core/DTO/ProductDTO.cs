@@ -5,24 +5,30 @@ using System.ComponentModel.DataAnnotations;
 
 namespace PointOfSales.Core.DTO
 {
+    public class CategoryDTO
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public int? ProductId { get; set; }
+
+    }
+
     public class ProductDTO
     {
         public int Id { get; set; }
 
-        [Required]
-        [MaxLength(50)]
         public string Name { get; set; }
 
 
-        [MaxLength(50)]
         public string ProductCode { get; set; }
 
-        [Required]
         public decimal Price { get; set; }
 
         public IFormFile Image { get; set; }
 
+        public byte[] ImageByte { get; set; }
 
-        public int? CategoryId { get; set; }
+        public CategoryDTO?[] CategoryDTO { get; set; }
+
     }
 }

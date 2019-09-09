@@ -14,3 +14,11 @@ https://www.ag-grid.com/?ref=madewithvuejs.com
 https://jsfiddle.net/jamesbrndwgn/uat70czp/9/
 
 https://vuejs.org/v2/guide/migration.html#dispatch-and-broadcast-replaced
+
+
+# ignoring self referencing
+
+https://stackoverflow.com/questions/7397207/json-net-error-self-referencing-loop-detected-for-type
+
+# fix issue with form data sending array
+https://stackoverflow.com/questions/16104078/appending-array-to-formdata-and-send-via-ajax

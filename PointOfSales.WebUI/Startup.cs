@@ -27,6 +27,7 @@ namespace PointOfSales.WebUI
         {
             // Add framework services.
             services.AddMvc()
+                 .AddJsonOptions(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddAutoMapper(typeof(POSMapperConfiguration));

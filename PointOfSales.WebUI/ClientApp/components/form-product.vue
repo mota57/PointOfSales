@@ -12,7 +12,7 @@
         <div class="col-6">
           <div class="form-group">
             <label for="Name">Name</label>
-            <input type="text" v-model="form.Name"  class="form-control" aria-describedby="Name" placeholder="Enter name">
+            <input type="text" v-model="form.Name"  class="form-control"  placeholder="Enter name">
             <template v-if="errList && errList.Name">
               <p class="text-danger" v-for="err in errList.Name"> {{err}} </p>
             </template>
@@ -20,7 +20,7 @@
 
           <div class="form-group">
             <label for="Price">Price</label>
-            <input type="number"  v-model="form.Price" class="form-control" aria-describedby="price" placeholder="Enter Price">
+            <input type="number"  v-model="form.Price" class="form-control"  placeholder="Enter Price">
             <template v-if="errList && errList.Price">
               <p class="text-danger" v-for="err in errList.Price"> {{err}} </p>
             </template>
@@ -31,15 +31,16 @@
         <div class="col-6">
           <div class="form-group">
             <label for="ProductCode">Product Code</label>
-            <input type="text"  v-model="form.ProductCode" class="form-control" aria-describedby="ProductCode" placeholder="Enter product code">
+            <input type="text" v-model="form.ProductCode" class="form-control"  placeholder="Enter product code">
             <template v-if="errList && errList.ProductCode">
               <p class="text-danger" v-for="err in errList.ProductCode"> {{err}} </p>
             </template>
           </div>
 
           <div class="form-group">
+            {{form.CategoryDTO}}
             <label for="Category">Category </label>
-            <v-select label="name" :options="options" :reduce="model => model.id" v-model="form.CategoryId" @search="onSearch" />
+            <v-select multiple label="name" :options="options" v-model="form.CategoryDTO" @search="onSearch" />
             <template v-if="errList && errList.Category">
               <p class="text-danger" v-for="err in errList.Category"> {{err}} </p>
             </template>
@@ -78,7 +79,7 @@
           Name: '',
           Price: 0,
           ProductCode: '',
-          CategoryId: '',
+          CategoryDTO: [],
           Image: '',
         },
         errList: { Image: ['test error'] },
@@ -88,9 +89,11 @@
     },
     created() {
       var vm = this;
+      console.log(this.$refs);
       eventBus.$on('saveForm::form-product', () => vm.upsert({}))
       eventBus.$on('loadForm::form-product', (row) => vm.loadRecord(row))
       eventBus.$on('deleteForm::form-product', (row) => vm.deleteRecord(row))
+      vm.onSearch('', () => {})
 
     },
     mounted() {
@@ -114,23 +117,19 @@
         var vm = this;
         this.$http.get(vm.urls.products.getById(row.Id))
           .then((res) => {
-            console.info(res);
 
             let data = res.data
-
-
-
             vm.form.Id = data.id
-            //TODO show image picture
             vm.form.Name = data.name
             vm.form.Price = data.price
             vm.form.ProductCode = data.productCode
-            vm.form.CategoryId = data.categories[0].id
+            vm.form.CategoryDTO = data.categoryDTO
+            vm.form.Image = data.mainImage
 
-            this.$http.get(vm.urls.products.get() +'/GetImage/'+data.id)
-              .then((res) => {
-                vm.form.Image = res.data.mainImage
-              })
+            //this.$http.get(vm.urls.products.get() +'/GetImage/'+data.id)
+            //  .then((res) => {
+            //    vm.form.Image = res.data.mainImage
+            //  })
 
 
           }, {timeout: 10*1000})
@@ -162,13 +161,20 @@
         //formData.set("ProductCode", this.form.ProductCode);
         //if (this.Category) {
           //can't send null if not it will send it as a string
-          //formData.set("CategoryId", this.Category);
+          //formData.set("CategoryIds", this.Category);
         //}
         //formData.append("Image", this.Image);
         for (let key in this.form) {
-          let value = this.form[key]
+          let value = this.form[key];
           if (value) {
-            formData.append(key, value);
+            //value = JSON.parse(JSON.stringify(value))
+            if (Array.isArray(value)) {
+              for (let i in value) {
+                formData.append(key +"[" + i + "]",  JSON.stringify(value[i]));
+              }
+            } else {
+              formData.append(key, value);
+            }
           }
         }
 
@@ -178,15 +184,10 @@
           method: vm.form.Id ? 'put' : 'post',
           url: this.urls.products.upsert(vm.form.Id),
           data: formData,
-          config: {
-            headers: {
-              "mimeType": "multipart/form-data"
-            }
-          }
-        }).then(function (result) {
+         }).then(function (result) {
           vm.errList = null;
           vm.$parent.reloadTable();
-          vm.form = { Id: '', Name: '', Price: 0, ProductCode: '', CategoryId: '', Image: '' }
+          vm.form = { Id: '', Name: '', Price: 0, ProductCode: '', CategoryIds: '', Image: '' }
 
         }).catch(function (error) {
           if (error) {
