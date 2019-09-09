@@ -28,19 +28,18 @@ namespace PointOfSales.WebUI.Controllers
             return await _context.Set<TEntity>().ToListAsync();
         }
 
-        // GET: api/Categories/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<TEntity>> Get(int id)
-        {
-            var entity = await _context.Set<TEntity>().FindAsync(id);
+        //GET: api/Categories/5
+        //public abstract async Task<ActionResult<TEntity>> Get(int id);
+        //{
+        //    var entity = await _context.Set<TEntity>().FindAsync(id);
 
-            if (entity == null)
-            {
-                return NotFound();
-            }
+        //    if (entity == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return entity;
-        }
+        //    return entity;
+        //}
 
 
 
@@ -71,9 +70,27 @@ namespace PointOfSales.WebUI.Controllers
             return TableConfig;
         }
 
+        [NonAction]
         public bool EntityExists(int id)
         {
             return _context.Set<TEntity>().Any(e => e.Id == id);
+        }
+
+        // DELETE: api/Products/5
+        [HttpDelete("{id}")]
+        public virtual async Task<ActionResult<TEntity>> DeleteProduct(int id)
+        {
+            var set = _context.Set<TEntity>();
+            var entity = await set.FindAsync(id);
+            if (entity == null)
+            {
+                return NotFound();
+            }
+
+            set.Remove(entity);
+            await _context.SaveChangesAsync();
+
+            return entity;
         }
 
 

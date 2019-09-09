@@ -7,7 +7,7 @@ namespace PointOfSales.Core.DTO
 {
     public class ProductDTO
     {
-        public int ProductId { get; set; }
+        public int Id { get; set; }
 
         [Required]
         [MaxLength(50)]
