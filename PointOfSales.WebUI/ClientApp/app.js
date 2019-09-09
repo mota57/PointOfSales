@@ -9,8 +9,10 @@ import formDatatable from 'components/form-datatable'
 import formImage from 'components/form-image'
 import { FontAwesomeIcon } from './icons'
 import jQuery from 'jquery'
-import vSelect from 'vue-ener-select'
+//import vSelect from 'vue-ener-select'
+import vSelect from 'vue-select'
 import { ServerTable, ClientTable, Event } from 'vue-tables-2';
+
 
 
 // Registration of global window variables 
@@ -29,7 +31,8 @@ Vue.component('form-image', formImage)
 Vue.component('form-product', formProduct)
 Vue.component('form-datatable', formDatatable)
 Vue.component('icon', FontAwesomeIcon)
-Vue.component('v-select', vSelect)
+//Vue.component('v-select', vSelect)
+Vue.component('v-select', vSelect);
 
 Vue.prototype.$http = axios
 
@@ -48,6 +51,11 @@ Vue.mixin({
         return result;
       }
 
+      delete(id = '') {
+        var result = this.getURL(`/${id}`)
+        return result;
+      }
+
       picklist (partUrl = '') {
         var result = this.getURL(`/GetPickList/${partUrl}`)
         return result;
@@ -55,6 +63,11 @@ Vue.mixin({
 
       list() {
         let result = this.getURL();
+        return result;
+      }
+
+      getById(id) {
+        let result = this.getURL(`/${id}`);
         return result;
       }
 

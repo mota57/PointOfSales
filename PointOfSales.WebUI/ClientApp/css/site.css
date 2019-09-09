@@ -123,3 +123,9 @@ li.nav-item {
         text-overflow: ellipsis;
     }
 }
+body {
+    color:red;
+
+}
+
+@import '~vue-select/dist/vue-select.css';

@@ -35,6 +35,10 @@ namespace PointOfSales.Core.Entities
 
     public class Product  : BaseEntity
     {
+        public Product()
+        {
+            Categories = new HashSet<Category>();
+        }
         
         [MaxLength(50)]
         public string ProductCode { get; set; }

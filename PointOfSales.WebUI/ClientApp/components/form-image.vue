@@ -1,8 +1,9 @@
+
 <template>
   <div>
     <img :src="ImagePicture" :width="width || 200" :height="height || 200"  data-foo="1" /><br />
     <input type="button" @click="removeImage" value="Remove" :disabled="!Image">
-    <input type="file" @change="onFileChange" placeholder="Enter image" v-on:input="$emit('input', $event.target.files)">
+    <input type="file" @change="onFileChange" placeholder="Enter image" @input="$emit('input', $event.target.files[0])">
     <slot></slot>
   </div>
    
@@ -12,8 +13,8 @@
   export default {
     name:'cmp-image',
     props:['value', 'single', 'width', 'height'],
-    mounted() {
-      console.log('hmdebug cmp-img mounted');
+    created() {
+      this.ImagePicture = 'data:text/plain;base64, '+ this.value;
 
     },
     data() {
@@ -36,7 +37,6 @@
         var vm = this;
 
         reader.onload = (e) => {
-          console.log('loaded');
           vm.ImagePicture = e.target.result;
         };
 
