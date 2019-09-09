@@ -1,14 +1,13 @@
-entity framework core validation
+## entity framework core validation
 
 https://www.thereformedprogrammer.net/entity-framework-core-validating-data-and-catching-sql-errors/
 
 
 https://docs.microsoft.com/en-us/aspnet/core/mvc/models/validation?view=aspnetcore-2.2
 
-validate in angular an attribute in efcore
+## validate in angular an attribute in efcore
 
 [complete] https://www.carlrippon.com/integrating-validation-in-angular-2-and-asp-net-core/
-
 
 
 attach an attribute to the model
@@ -31,3 +30,63 @@ the format of the json will be
 }
 # SOLUTION 3 
 using globalization and localization
+-------------------------------------------------------------------
+HANDLE DATA TABLE
+
+```client
+<datatable object="Product"></datatable>
+
+````
+
+``` server
+
+public class VueField
+{
+	public VueField(string name, bool filter = true){
+		if(string.isNullOrEmpty(name) {
+			throw new Exception('field must have a name');
+		}
+		this.Name = name;
+	}
+
+	public string Name {get; set;}
+	public bool filter {get; set;}  = true;
+}
+
+
+class ProductsController {
+	private class ProductDataTableConfig : IVueTableConfig
+	{
+		
+		//default true
+		public List<VueField> Fields => 
+		{
+			new VueField("name"),
+			new VueField("id",false)				
+		}
+	}
+	
+	public string GetDataTable(VueParamteres)
+	{
+		
+
+	}
+
+}
+
+```
+
+#questions
+
+[PENDING] how to hide a value in vue-datatable?
+
+[COMPLETE] how to create a custom filter search box in vue table?
+
+[PENDING] how to query datetime?
+
+[COMPLETE] how to retrieve the metadata of the table, to render the columns ?
+	make a query to retrieve the metadata for the table then render the table with the metadata.
+
+--------------------------------------------------------------------------------------------------------
+
+
