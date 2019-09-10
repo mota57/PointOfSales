@@ -8,7 +8,6 @@ using SqlKata.Execution;
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 
@@ -34,27 +33,33 @@ namespace PointOfSales.Core.Infraestructure.VueTable
 
     public class VueField
     {
-        public VueField(string name, bool filter = true)
+        public VueField(string name,  bool filter = true, string sqlField = "")
         {
             if (string.IsNullOrEmpty(name)) {
                 throw new Exception("field must have a name");
             }
             this.Name = name;
             this.Filter = filter;
+            this.SqlField = sqlField;
         }
 
         public string Name { get; set; }
         public bool Filter { get; set; } = true;
         public bool Display { get; set; } = true;
+        public string SqlField { get; set; }
     }
 
     public class VueTableConfig
     {
+
         public VueTableConfig()
         {
             Fields = new List<VueField>();
 
         }
+
+        public Query QueryBuilder { get; set; } = null;
+
 
         public string TableName { get; set; }
         public List<VueField> Fields { get; set; } 
@@ -65,6 +70,10 @@ namespace PointOfSales.Core.Infraestructure.VueTable
 
     public class VueTableReader : IVueTablesInterface
     {
+        private Dictionary<string, string> MapFieldSql;
+        private bool IsCustomInlineQuery = false;
+
+
         public async Task<Dictionary<string, object>> GetAsync(VueTableConfig config, VueTableParameters parameters)
         {
             var tableName = config.TableName;
@@ -73,7 +82,17 @@ namespace PointOfSales.Core.Infraestructure.VueTable
 
             QueryFactory db = BuildQueryFactory();
 
-            var queryBuilder = db.Query(tableName).Select(fieldNames);
+            Query queryBuilder = null;
+            if(config.QueryBuilder == null)
+            {
+                queryBuilder = db.Query(tableName).Select(fieldNames);
+            }
+            else
+            {
+                queryBuilder = db.FromQuery(config.QueryBuilder);
+                IsCustomInlineQuery = true;
+                MapFieldSql = new Dictionary<string, string>(fields.Select(_ => new KeyValuePair<string, string>(_.Name, _.SqlField)));
+            }
 
 
             var count = await db.Query(tableName).CountAsync<int>();
@@ -131,7 +150,7 @@ namespace PointOfSales.Core.Infraestructure.VueTable
                     continue;
                 }
                 var value = prop.Value.ToString();
-                queryBuilder = queryBuilder.OrWhereLike(prop.Name, $"%{value}%");
+                queryBuilder = queryBuilder.OrWhereLike( IsCustomInlineQuery ? MapFieldSql[prop.Name] : prop.Name, $"%{value}%");
             }
             return queryBuilder;
 
@@ -141,7 +160,7 @@ namespace PointOfSales.Core.Infraestructure.VueTable
         {
             foreach(string field in fields)
             {
-                queryBuilder = queryBuilder.OrWhereLike(field, $"%{query}%");
+                queryBuilder = queryBuilder.OrWhereLike(IsCustomInlineQuery ? MapFieldSql[field] : field, $"%{query}%");
             }
             return queryBuilder;
         }

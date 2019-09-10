@@ -8,8 +8,7 @@ using AutoMapper;
 using PointOfSales.WebUI.Extensions;
 using PointOfSales.Core.Infraestructure.VueTable;
 using System.Linq;
-using System;
-using Newtonsoft.Json;
+using SqlKata;
 
 namespace PointOfSales.WebUI.Controllers
 {
@@ -17,15 +16,19 @@ namespace PointOfSales.WebUI.Controllers
     {
         public ProductDataTableConfig()
         {
-            var prd = new Product();
-            TableName = "Products";
+            TableName = nameof(Product);
             Fields.AddRange(new List<VueField>()
                 {
-                     new VueField(nameof(prd.Id), false),
-                     new VueField(nameof(prd.Name)),
-                     new VueField(nameof(prd.Price)),
-                     new VueField(nameof(prd.ProductCode)),
+                     new VueField(name:"Id", sqlField:"Product.Id"),
+                     new VueField(name:"Name", sqlField:"Product.Name"),
+                     new VueField(name:"Price", sqlField:"Product.Price"),
+                     new VueField(name:"ProductCode", sqlField:"Product.ProductCode"),
+                     new VueField(name:"CategoryName", sqlField:"Category.Name")
                 });
+
+            QueryBuilder = new Query(TableName)
+                          .LeftJoin("Category", "Category.Id", "Product.CategoryId")
+                          .Select("Product.{Id,Name,Price,ProductCode}", "Category.Name as CategoryName");
 
         }
     }
@@ -52,18 +55,18 @@ namespace PointOfSales.WebUI.Controllers
         public ActionResult<ProductDTO> Get(int id)
         {
 
-            var entity = _context.Products.Include(_ => _.Categories)
+            var entity = _context.Product
                 .Where(_ => _.Id == id)
-                .Select(_ => 
+                .Select(_ =>
                      new ProductDTO
-                    {
-                        Id = _.Id,
-                        ImageByte = _.MainImage,
-                        ProductCode = _.ProductCode,
-                        CategoryDTO = _.Categories.Select(c => new CategoryDTO() { Id = c.Id, Name = c.Name, ProductId= _.Id}).ToArray(),
-                        Name = _.Name,
-                        Price = _.Price
-                    })
+                     {
+                         Id = _.Id,
+                         ImageByte = _.MainImage,
+                         ProductCode = _.ProductCode,
+                         Name = _.Name,
+                         Price = _.Price,
+                         CategoryId =  _.CategoryId
+                     })
                 .FirstOrDefault();
 
 
@@ -74,30 +77,6 @@ namespace PointOfSales.WebUI.Controllers
 
             return entity;
         }
-
-        [HttpGet("GetImage")]
-        public FileResult GetImage(int id)
-        {
-            var entity = _context.Products.Include(_ => _.Categories).FirstOrDefault(_ => _.Id == id);
-            return File(entity.MainImage, "image/png");
-        }
-
-        [NonAction]
-        private void UpsertCategory(Product product, CategoryDTO[]? categoryDTO)
-        {
-
-            product.Categories = new HashSet<Category>();
-            if(categoryDTO?.Count > 0)
-            {
-                //var categoryDTOList = categoryDTO.ToList();
-                //var categories = _context.Categories.Where(_ => categoryDTO.Any(c => c.Id == _.Id)).ToList();
-                //foreach (var cat in categories)
-                //{
-                //    product.Categories.Add(cat);
-                //}
-            }
-        }
-
 
 
         // PUT: api/Products/5
@@ -110,22 +89,17 @@ namespace PointOfSales.WebUI.Controllers
                 return BadRequest(ModelState);
             }
 
-            Product product = await _context.Products.Include(_ => _.Categories).FirstOrDefaultAsync(_ => _.Id == id);
+            Product product = await _context.Product.FirstOrDefaultAsync(_ => _.Id == id);
             if (product == null) return BadRequest();
 
+            _mapper.Map<ProductDTO, Product>(dto, product);
 
-            product.Name = dto.Name;
-            product.Price = dto.Price;
-            product.ProductCode = dto.ProductCode;
-            UpsertCategory(product, dto.CategoryDTO);
-
-            if (!this.Request.Form.ContainsKey(nameof(dto.Image)))
+            if (!this.Request.Form.ContainsKey(nameof(dto.MainImage)))
             {
-                product.MainImage = await dto.Image.ToBytes();
+                product.MainImage = await dto.MainImage.ToBytes();
             }
 
-
-                      _context.Entry(product).State = EntityState.Modified;
+            _context.Entry(product).State = EntityState.Modified;
 
             try
             {
@@ -153,13 +127,13 @@ namespace PointOfSales.WebUI.Controllers
         public async Task<ActionResult<Product>> PostProduct([FromForm] ProductDTO dto)
         {
             Product product = _mapper.Map<Product>(dto);
-            product.MainImage = await dto.Image.ToBytes();
-            UpsertCategory(product, dto.CategoryDTO);
+            product.MainImage = await dto.MainImage.ToBytes();
+            
 
             if (ModelState.IsValid)
             {
 
-                _context.Products.Add(product);
+                _context.Product.Add(product);
 
                 await _context.SaveChangesAsync();
 

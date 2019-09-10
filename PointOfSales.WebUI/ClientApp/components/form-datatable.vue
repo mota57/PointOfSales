@@ -50,7 +50,7 @@
       <div class="col-12" v-if="isComplete">
         <v-server-table ref="tableObj" :name="name" :url="urls[name].datatable" :columns="columns" :options="options">
           <div slot="beforeTable" style="border-bottom-width: 2px; border: 1px solid #dee2e6;">
-            <button :data-target="'#form' + name" data-toggle="modal" type="button" class="btn "  style="border: 1px solid #dee2e6" > <icon icon="plus" class="mr-2 menu-icon" />Add </button>
+            <button  @click="callClearForm()" :data-target="'#form' + name" data-toggle="modal" type="button" class="btn "  style="border: 1px solid #dee2e6" > <icon icon="plus" class="mr-2 menu-icon" />Add </button>
           </div>
 
           <div slot="Edit" slot-scope="props">
@@ -111,6 +111,7 @@
   export default {
     props: ['name', 'eventpostfix', 'title'],
     methods: {
+      callClearForm() { eventBus.$emit(`clearForm::${this.eventpostfix}`);},
       callSave() { eventBus.$emit(`saveForm::${this.eventpostfix}`);  },
       callLoad(row) { eventBus.$emit(`loadForm::${this.eventpostfix}`,row);  },
       callDelete() {

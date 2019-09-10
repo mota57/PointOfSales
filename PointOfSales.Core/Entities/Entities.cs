@@ -37,7 +37,6 @@ namespace PointOfSales.Core.Entities
     {
         public Product()
         {
-            Categories = new HashSet<Category>();
         }
         
         [MaxLength(50)]
@@ -48,15 +47,20 @@ namespace PointOfSales.Core.Entities
 
         public byte[] MainImage { get; set; }
 
-        public ICollection<Category> Categories { get; set; }
+        public int? CategoryId { get; set; }
+        public Category Category { get; set; } 
 
     }
 
     public class  Category : BaseEntity
     {
+        public Category()
+        {
+            Products = new HashSet<Product>();
 
-        public int? ProductId { get; set; }
-        public Product Product { get; set; }
+        }
+
+        public ICollection<Product> Products { get; set; }
     }
 
     public class Order

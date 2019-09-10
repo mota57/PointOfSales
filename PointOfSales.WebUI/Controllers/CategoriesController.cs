@@ -13,7 +13,7 @@ namespace PointOfSales.WebUI.Controllers
         {
             public CategoryVueDataTableConfig()
             {
-                TableName = "Categories";
+                TableName = nameof(Category);
                 Fields.AddRange(new List<VueField>()
                 {
                      new VueField("Id", false),
@@ -71,7 +71,7 @@ namespace PointOfSales.WebUI.Controllers
         [HttpPost]
         public async Task<ActionResult<Category>> PostCategory(Category category)
         {
-            _context.Categories.Add(category);
+            _context.Category.Add(category);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetCategory", new { id = category.Id }, category);
@@ -81,13 +81,13 @@ namespace PointOfSales.WebUI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Category>> DeleteCategory(int id)
         {
-            var category = await _context.Categories.FindAsync(id);
+            var category = await _context.Category.FindAsync(id);
             if (category == null)
             {
                 return NotFound();
             }
 
-            _context.Categories.Remove(category);
+            _context.Category.Remove(category);
             await _context.SaveChangesAsync();
 
             return category;

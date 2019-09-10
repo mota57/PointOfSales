@@ -38,9 +38,9 @@
           </div>
 
           <div class="form-group">
-            {{form.CategoryDTO}}
+            {{form.CategoryId}}
             <label for="Category">Category </label>
-            <v-select multiple label="name" :options="options" v-model="form.CategoryDTO" @search="onSearch" />
+            <v-select label="name" :options="options" :reduce="m => m.id" v-model="form.CategoryId" @search="onSearch" />
             <template v-if="errList && errList.Category">
               <p class="text-danger" v-for="err in errList.Category"> {{err}} </p>
             </template>
@@ -48,9 +48,9 @@
         </div>
         <div class="col-6">
 
-          <form-image v-model="form.Image">
-            <template v-if="errList && errList.Image">
-              <p class="text-danger" v-for="err in errList.Image"> {{err}} </p>
+          <form-image v-model="form.MainImage">
+            <template v-if="errList && errList.MainImage">
+              <p class="text-danger" v-for="err in errList.MainImage"> {{err}} </p>
             </template>
           </form-image>
 
@@ -79,10 +79,10 @@
           Name: '',
           Price: 0,
           ProductCode: '',
-          CategoryDTO: [],
-          Image: '',
+          CategoryId: [],
+          MainImage: '',
         },
-        errList: { Image: ['test error'] },
+        errList: { MainImage: ['test error'] },
         ImagePicture: '',
         options: [],
       }
@@ -93,6 +93,7 @@
       eventBus.$on('saveForm::form-product', () => vm.upsert({}))
       eventBus.$on('loadForm::form-product', (row) => vm.loadRecord(row))
       eventBus.$on('deleteForm::form-product', (row) => vm.deleteRecord(row))
+      eventBus.$on('clearForm::form-product', (row) => vm.clearForm())
       vm.onSearch('', () => {})
 
     },
@@ -114,6 +115,7 @@
       },
       loadRecord(row) {
         this.isAjax = true;
+        this.clearForm();
         var vm = this;
         this.$http.get(vm.urls.products.getById(row.Id))
           .then((res) => {
@@ -123,16 +125,9 @@
             vm.form.Name = data.name
             vm.form.Price = data.price
             vm.form.ProductCode = data.productCode
-            vm.form.CategoryDTO = data.categoryDTO
-            vm.form.Image = data.mainImage
-
-            //this.$http.get(vm.urls.products.get() +'/GetImage/'+data.id)
-            //  .then((res) => {
-            //    vm.form.Image = res.data.mainImage
-            //  })
-
-
-          }, {timeout: 10*1000})
+            vm.form.CategoryId = data.categoryId
+            vm.form.MainImage = data.imageByte
+          })
           .then((err) => { if (err) { console.log(err); } })
           .then(() => { vm.isAjax = false; })
 
@@ -149,25 +144,18 @@
           })
 
       }, 350),
+      clearForm() {
+        this.form = { Id: '', Name: '', Price: 0, ProductCode: '', CategoryIds:'', MainImage: '' }
+        console.log('clearForm');
+      },
       upsert(e) {
         var vm = this;
         console.log(vm);
         var formData = new FormData();
-        //if (this.Id) {
-        //  formData.set("Id", this.form.Id);
-        //}
-        //formData.set("Name", this.form.Name);
-        //formData.set("Price", this.form.Price);
-        //formData.set("ProductCode", this.form.ProductCode);
-        //if (this.Category) {
-          //can't send null if not it will send it as a string
-          //formData.set("CategoryIds", this.Category);
-        //}
-        //formData.append("Image", this.Image);
+
         for (let key in this.form) {
           let value = this.form[key];
           if (value) {
-            //value = JSON.parse(JSON.stringify(value))
             if (Array.isArray(value)) {
               for (let i in value) {
                 formData.append(key +"[" + i + "]",  JSON.stringify(value[i]));
@@ -186,8 +174,8 @@
           data: formData,
          }).then(function (result) {
           vm.errList = null;
+          vm.clearForm();
           vm.$parent.reloadTable();
-          vm.form = { Id: '', Name: '', Price: 0, ProductCode: '', CategoryIds: '', Image: '' }
 
         }).catch(function (error) {
           if (error) {

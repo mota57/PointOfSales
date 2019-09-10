@@ -9,7 +9,6 @@ namespace PointOfSales.Core.DTO
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public int? ProductId { get; set; }
 
     }
 
@@ -19,16 +18,15 @@ namespace PointOfSales.Core.DTO
 
         public string Name { get; set; }
 
-
         public string ProductCode { get; set; }
 
         public decimal Price { get; set; }
 
-        public IFormFile Image { get; set; }
+        public IFormFile MainImage { get; set; }
 
         public byte[] ImageByte { get; set; }
 
-        public CategoryDTO?[] CategoryDTO { get; set; }
+        public int? CategoryId {get; set; }
 
     }
 }

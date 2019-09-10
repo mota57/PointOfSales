@@ -22,3 +22,8 @@ https://stackoverflow.com/questions/7397207/json-net-error-self-referencing-loop
 
 # fix issue with form data sending array
 https://stackoverflow.com/questions/16104078/appending-array-to-formdata-and-send-via-ajax
+
+
+# AUTOMAPPER
+* [IGNORE](https://docs.automapper.org/en/stable/8.0-Upgrade-Guide.html?highlight=ignore#forsourcemember-ignore)
+* [Map inline or custom converter autommaper for Iformfile and bytes[]] (https://stackoverflow.com/questions/25242783/map-from-httppostedfilebase-to-byte-with-automapper)

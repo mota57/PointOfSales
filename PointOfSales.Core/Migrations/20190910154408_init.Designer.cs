@@ -9,7 +9,7 @@ using PointOfSales.Core.Entities;
 namespace PointOfSales.Core.Migrations
 {
     [DbContext(typeof(POSContext))]
-    [Migration("20190904195442_init")]
+    [Migration("20190910154408_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,13 +27,9 @@ namespace PointOfSales.Core.Migrations
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.Property<int?>("ProductId");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("Categories");
+                    b.ToTable("Category");
 
                     b.HasData(
                         new
@@ -60,7 +56,7 @@ namespace PointOfSales.Core.Migrations
 
                     b.HasKey("OrderId");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Order");
                 });
 
             modelBuilder.Entity("PointOfSales.Core.Entities.OrderDetail", b =>
@@ -80,13 +76,15 @@ namespace PointOfSales.Core.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderDetails");
+                    b.ToTable("OrderDetail");
                 });
 
             modelBuilder.Entity("PointOfSales.Core.Entities.Product", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<int?>("CategoryId");
 
                     b.Property<byte[]>("MainImage");
 
@@ -101,14 +99,9 @@ namespace PointOfSales.Core.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Products");
-                });
+                    b.HasIndex("CategoryId");
 
-            modelBuilder.Entity("PointOfSales.Core.Entities.Category", b =>
-                {
-                    b.HasOne("PointOfSales.Core.Entities.Product", "Product")
-                        .WithMany("Categories")
-                        .HasForeignKey("ProductId");
+                    b.ToTable("Product");
                 });
 
             modelBuilder.Entity("PointOfSales.Core.Entities.OrderDetail", b =>
@@ -122,6 +115,13 @@ namespace PointOfSales.Core.Migrations
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("PointOfSales.Core.Entities.Product", b =>
+                {
+                    b.HasOne("PointOfSales.Core.Entities.Category", "Category")
+                        .WithMany("Products")
+                        .HasForeignKey("CategoryId");
                 });
 #pragma warning restore 612, 618
         }
