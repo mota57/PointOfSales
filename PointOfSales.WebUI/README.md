@@ -23,6 +23,9 @@ https://stackoverflow.com/questions/7397207/json-net-error-self-referencing-loop
 # fix issue with form data sending array
 https://stackoverflow.com/questions/16104078/appending-array-to-formdata-and-send-via-ajax
 
+# fix form-image to hold an object
+https://simonkollross.de/posts/vuejs-using-v-model-with-objects-for-custom-components
+
 
 # AUTOMAPPER
 * [IGNORE](https://docs.automapper.org/en/stable/8.0-Upgrade-Guide.html?highlight=ignore#forsourcemember-ignore)

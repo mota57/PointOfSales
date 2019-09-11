@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 namespace PointOfSales.Core.Infraestructure.VueTable
 {
     ///https://www.laravel-enso.com/examples/table
-
+    
     public class VueTableParameters
     {
         public string Query { get; set; }
@@ -33,6 +33,12 @@ namespace PointOfSales.Core.Infraestructure.VueTable
 
     public class VueField
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="filter"></param>
+        /// <param name="sqlField">Must set SqlField property in class VueField when using inline query is not null</param>
         public VueField(string name,  bool filter = true, string sqlField = "")
         {
             if (string.IsNullOrEmpty(name)) {
@@ -46,6 +52,9 @@ namespace PointOfSales.Core.Infraestructure.VueTable
         public string Name { get; set; }
         public bool Filter { get; set; } = true;
         public bool Display { get; set; } = true;
+        /// <summary>
+        /// Must set SqlField property when VueTableConfig.QueryBuilder is not null.  
+        /// </summary>
         public string SqlField { get; set; }
     }
 
@@ -58,6 +67,9 @@ namespace PointOfSales.Core.Infraestructure.VueTable
 
         }
 
+        /// <summary>
+        ///  Must set SqlField property when VueTableConfig.QueryBuilder is not null. 
+        /// </summary>
         public Query QueryBuilder { get; set; } = null;
 
 
@@ -91,6 +103,9 @@ namespace PointOfSales.Core.Infraestructure.VueTable
             {
                 queryBuilder = db.FromQuery(config.QueryBuilder);
                 IsCustomInlineQuery = true;
+                if(fields.Any(_ => string.IsNullOrEmpty(_.SqlField))){
+                    throw new Exception("Must set SqlField property in class VueField whenVueTableConfig.QueryBuilder is not null");
+                }
                 MapFieldSql = new Dictionary<string, string>(fields.Select(_ => new KeyValuePair<string, string>(_.Name, _.SqlField)));
             }
 

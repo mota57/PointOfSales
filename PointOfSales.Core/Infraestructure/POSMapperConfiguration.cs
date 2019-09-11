@@ -8,12 +8,9 @@ namespace PointOfSales.Core.Infraestructure
     {
         public POSMapperConfiguration()
         {
-            CreateMap<Product, ProductDTO>()
-                .ForSourceMember(_ => _.MainImage, cfg => cfg.DoNotValidate())
-                .ForMember(_ => _.MainImage, cfg => cfg.Ignore());
+            CreateMap<Product, ProductDTO>();
 
             CreateMap<ProductDTO, Product>()
-                .ForSourceMember(_ => _.MainImage, cfg => cfg.DoNotValidate())
                 .ForMember(_ => _.MainImage, cfg => cfg.Ignore());
         }
     }

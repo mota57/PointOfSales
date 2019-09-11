@@ -56,12 +56,13 @@ namespace PointOfSales.WebUI.Controllers
         {
 
             var entity = _context.Product
+                .AsNoTracking()
                 .Where(_ => _.Id == id)
                 .Select(_ =>
                      new ProductDTO
                      {
                          Id = _.Id,
-                         ImageByte = _.MainImage,
+                         MainImage = _.MainImage,
                          ProductCode = _.ProductCode,
                          Name = _.Name,
                          Price = _.Price,
@@ -92,13 +93,12 @@ namespace PointOfSales.WebUI.Controllers
             Product product = await _context.Product.FirstOrDefaultAsync(_ => _.Id == id);
             if (product == null) return BadRequest();
 
-            _mapper.Map<ProductDTO, Product>(dto, product);
-
-            if (!this.Request.Form.ContainsKey(nameof(dto.MainImage)))
+            if (dto.MainImage == null)
             {
-                product.MainImage = await dto.MainImage.ToBytes();
+                product.MainImage = await dto.MainImageForm.ToBytes();
             }
 
+            _mapper.Map(dto, product);
             _context.Entry(product).State = EntityState.Modified;
 
             try
@@ -127,7 +127,7 @@ namespace PointOfSales.WebUI.Controllers
         public async Task<ActionResult<Product>> PostProduct([FromForm] ProductDTO dto)
         {
             Product product = _mapper.Map<Product>(dto);
-            product.MainImage = await dto.MainImage.ToBytes();
+            product.MainImage = await dto.MainImageForm.ToBytes();
             
 
             if (ModelState.IsValid)

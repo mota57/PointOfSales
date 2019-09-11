@@ -22,9 +22,9 @@ namespace PointOfSales.Core.DTO
 
         public decimal Price { get; set; }
 
-        public IFormFile MainImage { get; set; }
+        public byte[] MainImage { get; set; }
 
-        public byte[] ImageByte { get; set; }
+        public IFormFile MainImageForm { get; set; }
 
         public int? CategoryId {get; set; }
 

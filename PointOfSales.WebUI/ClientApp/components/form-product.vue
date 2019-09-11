@@ -38,7 +38,6 @@
           </div>
 
           <div class="form-group">
-            {{form.CategoryId}}
             <label for="Category">Category </label>
             <v-select label="name" :options="options" :reduce="m => m.id" v-model="form.CategoryId" @search="onSearch" />
             <template v-if="errList && errList.Category">
@@ -48,7 +47,7 @@
         </div>
         <div class="col-6">
 
-          <form-image v-model="form.MainImage">
+          <form-image :imagebytes="form.MainImage" v-model="form.MainImageForm">
             <template v-if="errList && errList.MainImage">
               <p class="text-danger" v-for="err in errList.MainImage"> {{err}} </p>
             </template>
@@ -74,16 +73,8 @@
     data() {
       return {
         isAjax: false,
-        form : {
-          Id: '',
-          Name: '',
-          Price: 0,
-          ProductCode: '',
-          CategoryId: [],
-          MainImage: '',
-        },
+        form: { Id: '', Name: '', Price: 0, ProductCode: '', CategoryId: 0, MainImage: '', MainImageForm : null },
         errList: { MainImage: ['test error'] },
-        ImagePicture: '',
         options: [],
       }
     },
@@ -102,6 +93,10 @@
 
     },
     methods: {
+      clearForm() {
+        this.form = { Id: '', Name: '', Price: 0, ProductCode: '', CategoryId:0, MainImage: '', MainImageForm : null }
+        console.log('clearForm');
+      },
       deleteRecord(row) {
         this.isAjax = true;
         var vm = this;
@@ -119,14 +114,13 @@
         var vm = this;
         this.$http.get(vm.urls.products.getById(row.Id))
           .then((res) => {
-
             let data = res.data
             vm.form.Id = data.id
             vm.form.Name = data.name
             vm.form.Price = data.price
             vm.form.ProductCode = data.productCode
             vm.form.CategoryId = data.categoryId
-            vm.form.MainImage = data.imageByte
+            vm.form.MainImage = data.mainImage
           })
           .then((err) => { if (err) { console.log(err); } })
           .then(() => { vm.isAjax = false; })
@@ -144,13 +138,9 @@
           })
 
       }, 350),
-      clearForm() {
-        this.form = { Id: '', Name: '', Price: 0, ProductCode: '', CategoryIds:'', MainImage: '' }
-        console.log('clearForm');
-      },
       upsert(e) {
+        this.isAjax = true;
         var vm = this;
-        console.log(vm);
         var formData = new FormData();
 
         for (let key in this.form) {
@@ -165,8 +155,6 @@
             }
           }
         }
-
-        this.isAjax = true;
 
         this.$http({
           method: vm.form.Id ? 'put' : 'post',
