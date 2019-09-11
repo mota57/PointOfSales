@@ -45,6 +45,7 @@ namespace PointOfSales.Core.Entities
         [Required]
         public decimal Price { get; set; }
 
+
         public byte[] MainImage { get; set; }
 
         public int? CategoryId { get; set; }

@@ -28,5 +28,7 @@ namespace PointOfSales.Core.DTO
 
         public int? CategoryId {get; set; }
 
+        public bool ImageDeleted { get; set; }
+
     }
 }

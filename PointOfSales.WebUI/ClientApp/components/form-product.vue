@@ -6,13 +6,13 @@
       <p><em>Loading...</em></p>
       <h1><icon icon="spinner" pulse /></h1>
     </div>
-    <form ref="form" v-if="!isAjax" @submit.prevent="upsert" >
+    <form ref="formElement" v-if="!isAjax" @submit.prevent="upsert" >
       <div class="row">
 
         <div class="col-6">
           <div class="form-group">
             <label for="Name">Name</label>
-            <input type="text" v-model="form.Name"  class="form-control"  placeholder="Enter name">
+            <input name="Name" type="text" v-model="form.Name"  class="form-control"  placeholder="Enter name">
             <template v-if="errList && errList.Name">
               <p class="text-danger" v-for="err in errList.Name"> {{err}} </p>
             </template>
@@ -20,7 +20,7 @@
 
           <div class="form-group">
             <label for="Price">Price</label>
-            <input type="number"  v-model="form.Price" class="form-control"  placeholder="Enter Price">
+            <input name="Price" type="number"  v-model="form.Price" class="form-control"  placeholder="Enter Price">
             <template v-if="errList && errList.Price">
               <p class="text-danger" v-for="err in errList.Price"> {{err}} </p>
             </template>
@@ -31,7 +31,7 @@
         <div class="col-6">
           <div class="form-group">
             <label for="ProductCode">Product Code</label>
-            <input type="text" v-model="form.ProductCode" class="form-control"  placeholder="Enter product code">
+            <input name="ProductCode" type="text" v-model="form.ProductCode" class="form-control"  placeholder="Enter product code">
             <template v-if="errList && errList.ProductCode">
               <p class="text-danger" v-for="err in errList.ProductCode"> {{err}} </p>
             </template>
@@ -39,7 +39,7 @@
 
           <div class="form-group">
             <label for="Category">Category </label>
-            <v-select label="name" :options="options" :reduce="m => m.id" v-model="form.CategoryId" @search="onSearch" />
+            <v-select  label="name" :options="options" :reduce="m => m.id" v-model="form.CategoryId" @search="onSearch" />
             <template v-if="errList && errList.Category">
               <p class="text-danger" v-for="err in errList.Category"> {{err}} </p>
             </template>
@@ -47,7 +47,7 @@
         </div>
         <div class="col-6">
 
-          <form-image :imagebytes="form.MainImage" v-model="form.MainImageForm">
+          <form-image :name="'MainImageForm'" ref="formImage1" :imagebytes="form.MainImage" v-model="form.MainImageForm">
             <template v-if="errList && errList.MainImage">
               <p class="text-danger" v-for="err in errList.MainImage"> {{err}} </p>
             </template>
@@ -84,17 +84,16 @@
       eventBus.$on('saveForm::form-product', () => vm.upsert({}))
       eventBus.$on('loadForm::form-product', (row) => vm.loadRecord(row))
       eventBus.$on('deleteForm::form-product', (row) => vm.deleteRecord(row))
-      eventBus.$on('clearForm::form-product', (row) => vm.clearForm())
+      eventBus.$on('clearForm::form-product', (row) => {
+        this.$refs.formImage1.removeImage(); 
+        vm.clearForm()
+      })
       vm.onSearch('', () => {})
-
-    },
-    mounted() {
-      this.formElement = this.$refs.form
 
     },
     methods: {
       clearForm() {
-        this.form = { Id: '', Name: '', Price: 0, ProductCode: '', CategoryId:0, MainImage: '', MainImageForm : null }
+        this.form = { Id: '', Name: '', Price: 0, ProductCode: '', CategoryId: 0, MainImage: '', MainImageForm: null }
         console.log('clearForm');
       },
       deleteRecord(row) {
@@ -139,23 +138,33 @@
 
       }, 350),
       upsert(e) {
-        this.isAjax = true;
-        var vm = this;
-        var formData = new FormData();
 
-        for (let key in this.form) {
-          let value = this.form[key];
-          if (value) {
-            if (Array.isArray(value)) {
-              for (let i in value) {
-                formData.append(key +"[" + i + "]",  JSON.stringify(value[i]));
-              }
-            } else {
-              formData.append(key, value);
-            }
-          }
+        this.isAjax = true;
+        let formData = new FormData(this.$refs.formElement);
+
+        if (!this.$refs.formImage1.ImagePicture)
+        {
+          //avoid sending bytes
+          this.form.MainImage = null;
+          formData.append('imageDeleted', true)
         }
 
+
+
+        //for (let key in this.form) {
+        //  let value = this.form[key];
+        //  if (value) {
+        //    if (Array.isArray(value)) {
+        //      for (let i in value) {
+        //        formData.append(key +"[" + i + "]",  JSON.stringify(value[i]));
+        //      }
+        //    } else {
+        //      formData.append(key, value);
+        //    }
+        //  }
+        //}
+
+        var vm = this;
         this.$http({
           method: vm.form.Id ? 'put' : 'post',
           url: this.urls.products.upsert(vm.form.Id),

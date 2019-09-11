@@ -2,8 +2,8 @@
 <template>
   <div>
     <img :src="ImagePicture" :width="width || 200" :height="height || 200"  /><br />
-    <input type="button" @click="removeImage" value="Remove" :disabled="!Image">
-    <input type="file" @change="onFileChange" placeholder="Enter image" @input="$emit('input', $event.target.files[0])">
+    <input type="button" @click="removeImage" value="Remove">
+    <input :name="name" type="file" @change="onFileChange" placeholder="Enter image" @input="$emit('input', $event.target.files[0])">
     <slot></slot>
   </div>
    
@@ -12,10 +12,11 @@
 <script>
   export default {
     name:'cmp-image',
-    props: ['value', 'imagebytes', 'single', 'width', 'height'],
+    props: ['value', 'name', 'imagebytes', 'single', 'width', 'height'],
     created() {
       // set the value from props.value to display the image
-      this.ImagePicture = 'data:text/plain;base64, ' + this.ImagePicture;
+      this.ImagePicture = 'data:text/plain;base64, ' + this.imagebytes;
+      console.log(this.name);
 
     },
     data() {
@@ -46,6 +47,7 @@
       removeImage: function (e) {
         this.ImagePicture = '';
         this.Image = null;
+        console.log('removeImage');
       },
     }
   }

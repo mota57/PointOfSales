@@ -93,7 +93,11 @@ namespace PointOfSales.WebUI.Controllers
             Product product = await _context.Product.FirstOrDefaultAsync(_ => _.Id == id);
             if (product == null) return BadRequest();
 
-            if (dto.MainImage == null)
+            //if the user click on the delete button
+            if (dto.ImageDeleted)
+            {
+                product.MainImage = null;
+            } else if (dto.MainImageForm != null)
             {
                 product.MainImage = await dto.MainImageForm.ToBytes();
             }
