@@ -52,14 +52,14 @@ namespace PointOfSales.WebUI.Controllers
 
         // GET: api/Categories/5
         [HttpGet("{id}")]
-        public ActionResult<ProductDTO> Get(int id)
+        public ActionResult<ProductFormDTO> Get(int id)
         {
 
-            var entity = _context.Product
+            var dto = _context.Product
                 .AsNoTracking()
                 .Where(_ => _.Id == id)
                 .Select(_ =>
-                     new ProductDTO
+                     new ProductFormDTO
                      {
                          Id = _.Id,
                          MainImage = _.MainImage,
@@ -71,18 +71,19 @@ namespace PointOfSales.WebUI.Controllers
                 .FirstOrDefault();
 
 
-            if (entity == null)
+            if (dto == null)
             {
                 return NotFound();
             }
+            dto.AttributeIds = new List<int>() { 2,3 };
 
-            return entity;
+            return dto;
         }
 
 
         // PUT: api/Products/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProduct([FromForm] int id, [FromForm] ProductDTO dto)
+        public async Task<IActionResult> PutProduct(int id, [FromForm] ProductFormDTO dto)
         {
 
             if (id != dto.Id || !ModelState.IsValid)
@@ -128,7 +129,7 @@ namespace PointOfSales.WebUI.Controllers
         [HttpPost]
         //[ValidateAntiForgeryToken]
         [IgnoreAntiforgeryToken]
-        public async Task<ActionResult<Product>> PostProduct([FromForm] ProductDTO dto)
+        public async Task<ActionResult<Product>> PostProduct([FromForm] ProductFormDTO dto)
         {
             Product product = _mapper.Map<Product>(dto);
             product.MainImage = await dto.MainImageForm.ToBytes();

@@ -6,10 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NJsonSchema" Version="10.0.23" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\PointOfSales.Core\PointOfSales.Core.csproj" />
   </ItemGroup>
 

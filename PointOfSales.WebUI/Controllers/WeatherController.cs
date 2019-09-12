@@ -1,5 +1,7 @@
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using PointOfSales.WebUI.Providers;
 
 namespace PointOfSales.WebUI.Controllers
@@ -40,5 +42,39 @@ namespace PointOfSales.WebUI.Controllers
 
             return Ok(result);
         }
+
+        [NonAction]
+        public string getJSObj()
+        {
+            var obj = new
+            {
+                username = "andrey",
+                callback = new JRaw("function(self) { return function() {self.doSomething()} (this) }")
+            };
+            // and then serialize using the JsonConvert class
+            var jsonObj = JsonConvert.SerializeObject(obj);
+            return jsonObj;
+        }
+
+        [HttpGet("[action]")]
+        public IActionResult Get1()
+        {
+            return Ok(new JRaw(getJSObj()));
+        }
+
+        [HttpGet("[action]")]
+        public object Get2()
+        {
+            return new JRaw(getJSObj());
+        }
+
+        [HttpGet("[action]")]
+        public IActionResult Get3()
+        {
+            return Content(getJSObj(), "text/plain");
+        }
+
+
+
     }
 }

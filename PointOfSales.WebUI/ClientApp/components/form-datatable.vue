@@ -1,5 +1,20 @@
 <template>
   <div>
+    <div>
+      <label>pending</label>
+
+    <ul>
+      <li> create view/edit form</li>
+        <li>datepicker</li>
+        <li>multiselect </li>
+        <li>checkbox group</li>
+        <li>richtexteditor</li>
+        <li>multiple files</li>
+        <li>create a related tab</li>
+
+    </ul>
+
+    </div>
 
     <div class="modal fade" :id="'form'+name" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">

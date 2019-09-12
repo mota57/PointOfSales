@@ -1,11 +1,8 @@
 ﻿using Newtonsoft.Json.Schema;
-using NJsonSchema.Generation;
-using PointOfSales.Core.Entities;
 using System;
-using JsonSchemaGenerator = NJsonSchema.Generation.JsonSchemaGenerator;
-using JsonSchemaResolver = NJsonSchema.Generation.JsonSchemaResolver;
-using JsonSchema = NJsonSchema.JsonSchema;
 using PointOfSales.Core.DTO;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace ConsoleApp1
 {
@@ -13,10 +10,14 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
-            JsonSchemaGeneratorSettings settings = new JsonSchemaGeneratorSettings();
-            var schema = JsonSchema.FromType<ProductDTO>();
-            var schemaData = schema.ToJson();
-            Console.WriteLine(schemaData);
+            var obj = new
+            {
+                username = "andrey",
+                log = new JRaw("function() { return function(arg1) { console.log(arg1) }")
+            };
+            // and then serialize using the JsonConvert class
+            var jsonObj = JsonConvert.SerializeObject(obj);
+            Console.WriteLine(jsonObj);
             Console.ReadLine();
         }
     }

@@ -1,4 +1,4 @@
-﻿<template>
+<template>
     <div>
         <h1>Weather forecast</h1>
 
@@ -72,9 +72,27 @@ export default {
         var from = (page - 1) * (this.pageSize)
         var to = from + this.pageSize
         let response = await this.$http.get(`/api/weather/forecasts?from=${from}&to=${to}`)
-        console.log(response.data.forecasts)
         this.forecasts = response.data.forecasts
         this.total = response.data.total
+        this.$http.get(`/api/weather/get2`).then(function (response) {
+          console.log(response);
+
+        })
+
+        this.$http.get(`/api/weather/get1`).then(function (response) {
+          console.log(response);
+
+        })
+
+        this.$http.get(`/api/weather/get3`).then(function (response) {
+          console.log(response);
+
+        })
+
+        this.$http.get(`/api/weather/get4`).then(function (response) {
+          console.log(response);
+
+        })
       } catch (err) {
         window.alert(err)
         console.log(err)

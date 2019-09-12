@@ -12,7 +12,7 @@ namespace PointOfSales.Core.DTO
 
     }
 
-    public class ProductDTO
+    public class ProductFormDTO
     {
         public int Id { get; set; }
 
@@ -29,6 +29,8 @@ namespace PointOfSales.Core.DTO
         public int? CategoryId {get; set; }
 
         public bool ImageDeleted { get; set; }
+
+        public List<int> AttributeIds { get; set; }
 
     }
 }
