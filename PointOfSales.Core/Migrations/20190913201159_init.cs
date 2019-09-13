@@ -21,6 +21,19 @@ namespace PointOfSales.Core.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Modifier",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(maxLength: 50, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Modifier", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Order",
                 columns: table => new
                 {
@@ -53,6 +66,27 @@ namespace PointOfSales.Core.Migrations
                         principalTable: "Category",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ItemModifier",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(maxLength: 50, nullable: false),
+                    ModifierId = table.Column<int>(nullable: false),
+                    Price = table.Column<decimal>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ItemModifier", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ItemModifier_Modifier_ModifierId",
+                        column: x => x.ModifierId,
+                        principalTable: "Modifier",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -98,6 +132,11 @@ namespace PointOfSales.Core.Migrations
                 values: new object[] { 3, "Category 3" });
 
             migrationBuilder.CreateIndex(
+                name: "IX_ItemModifier_ModifierId",
+                table: "ItemModifier",
+                column: "ModifierId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_OrderDetail_OrderId",
                 table: "OrderDetail",
                 column: "OrderId");
@@ -116,7 +155,13 @@ namespace PointOfSales.Core.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "ItemModifier");
+
+            migrationBuilder.DropTable(
                 name: "OrderDetail");
+
+            migrationBuilder.DropTable(
+                name: "Modifier");
 
             migrationBuilder.DropTable(
                 name: "Order");

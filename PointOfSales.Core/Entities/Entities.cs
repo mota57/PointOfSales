@@ -33,24 +33,39 @@ namespace PointOfSales.Core.Entities
         }
     }
 
-    public class Product  : BaseEntity
+    public class Product : BaseEntity
     {
-        public Product()
-        {
-        }
-        
+        public Product() { } 
+
         [MaxLength(50)]
         public string ProductCode { get; set; }
 
         [Required]
         public decimal Price { get; set; }
 
-
         public byte[] MainImage { get; set; }
 
         public int? CategoryId { get; set; }
         public Category Category { get; set; } 
 
+    }
+
+    public class Modifier : BaseEntity
+    {
+        public Modifier()
+        {
+            ItemModifier = new HashSet<ItemModifier>();
+        }
+
+        public ICollection<ItemModifier> ItemModifier { get; set; }
+
+    }
+
+    public class ItemModifier  : BaseEntity
+    {
+        public int ModifierId { get; set; }
+        public Modifier Modifier { get; set; } 
+        public decimal Price { get; set; }
     }
 
     public class  Category : BaseEntity

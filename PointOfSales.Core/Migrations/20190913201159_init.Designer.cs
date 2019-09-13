@@ -9,7 +9,7 @@ using PointOfSales.Core.Entities;
 namespace PointOfSales.Core.Migrations
 {
     [DbContext(typeof(POSContext))]
-    [Migration("20190910154408_init")]
+    [Migration("20190913201159_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -47,6 +47,40 @@ namespace PointOfSales.Core.Migrations
                             Id = 3,
                             Name = "Category 3"
                         });
+                });
+
+            modelBuilder.Entity("PointOfSales.Core.Entities.ItemModifier", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("ModifierId");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50);
+
+                    b.Property<decimal>("Price");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ModifierId");
+
+                    b.ToTable("ItemModifier");
+                });
+
+            modelBuilder.Entity("PointOfSales.Core.Entities.Modifier", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Modifier");
                 });
 
             modelBuilder.Entity("PointOfSales.Core.Entities.Order", b =>
@@ -102,6 +136,14 @@ namespace PointOfSales.Core.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Product");
+                });
+
+            modelBuilder.Entity("PointOfSales.Core.Entities.ItemModifier", b =>
+                {
+                    b.HasOne("PointOfSales.Core.Entities.Modifier", "Modifier")
+                        .WithMany("ItemModifier")
+                        .HasForeignKey("ModifierId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("PointOfSales.Core.Entities.OrderDetail", b =>

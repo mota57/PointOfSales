@@ -131,7 +131,7 @@ namespace PointOfSales.Core.Infraestructure.VueTable
             };
         }
 
-        private QueryFactory BuildQueryFactory()
+        public QueryFactory BuildQueryFactory()
         {
             System.Data.IDbConnection connection;
             Compiler compiler;
@@ -149,6 +149,7 @@ namespace PointOfSales.Core.Infraestructure.VueTable
 
             var db = new QueryFactory(connection, compiler);
             db.Logger = compiled => {
+                Console.WriteLine(compiled.RawSql);
                 System.Diagnostics.Debug.WriteLine(compiled.ToString());
             };
             return db;

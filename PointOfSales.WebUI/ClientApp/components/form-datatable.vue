@@ -11,6 +11,8 @@
         <li>richtexteditor</li>
         <li>multiple files</li>
         <li>create a related tab</li>
+        <li>create dropdown select create lookup</li>
+        <li>fix on blur reset form</li>
 
     </ul>
 
@@ -27,7 +29,7 @@
           </div>
           <div class="modal-body">
 
-            <slot name="edit" v-on:reload="reloadTable"></slot>
+            <slot name="edit" ></slot>
 
           </div>
           <div class="modal-footer">
@@ -65,7 +67,8 @@
       <div class="col-12" v-if="isComplete">
         <v-server-table ref="tableObj" :name="name" :url="urls[name].datatable" :columns="columns" :options="options">
           <div slot="beforeTable" style="border-bottom-width: 2px; border: 1px solid #dee2e6;">
-            <button  @click="callClearForm()" :data-target="'#form' + name" data-toggle="modal" type="button" class="btn "  style="border: 1px solid #dee2e6" > <icon icon="plus" class="mr-2 menu-icon" />Add </button>
+            <button  @click="callClearForm()" :data-target="'#form' + name" data-toggle="modal" type="button" class="btn "  style="border: 1px solid #dee2e6" >
+            <icon icon="plus" class="mr-2 menu-icon" />Add </button>
           </div>
 
           <div slot="Edit" slot-scope="props">

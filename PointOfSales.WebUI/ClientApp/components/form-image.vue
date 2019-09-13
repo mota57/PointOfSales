@@ -12,11 +12,10 @@
 <script>
   export default {
     name:'cmp-image',
-    props: ['value', 'name', 'imagebytes', 'single', 'width', 'height'],
+    props: ['value', 'name', 'imagebytes',  'single', 'width', 'height'],
     created() {
       // set the value from props.value to display the image
       this.ImagePicture = 'data:image/png;base64, ' + this.imagebytes;
-
     },
     data() {
       return {

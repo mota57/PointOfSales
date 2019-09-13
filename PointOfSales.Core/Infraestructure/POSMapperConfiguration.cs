@@ -8,9 +8,9 @@ namespace PointOfSales.Core.Infraestructure
     {
         public POSMapperConfiguration()
         {
-            CreateMap<Product, ProductDTO>();
+            CreateMap<Product, ProductFormDTO>();
 
-            CreateMap<ProductDTO, Product>()
+            CreateMap<ProductFormDTO, Product>()
                 .ForMember(_ => _.MainImage, cfg => cfg.Ignore());
         }
     }
