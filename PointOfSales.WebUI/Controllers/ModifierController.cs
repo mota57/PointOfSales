@@ -69,152 +69,69 @@ namespace PointOfSales.WebUI.Controllers
         }
 
 
-        // PUT: api/Modifier/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] ModifierDTO dto)
-        {
-
-            if (id != dto.Id || !ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            Modifier entity = await _context.Modifier.FirstOrDefaultAsync(_ => _.Id == id);
-            if (entity == null) return BadRequest();
-
-            _mapper.Map(dto, entity);
-            _context.Entry(entity).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!EntityExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
         // POST: api/Modifier
         [HttpPost]
         //[ValidateAntiForgeryToken]
         [IgnoreAntiforgeryToken]
-        public async Task<IActionResult> Post([FromBody] ModifierDTO dto)
+        public async Task<IActionResult> Post([FromBody] Modifier entity)
         {
-            Modifier entity = _mapper.Map<Modifier>(dto);
-
-
             if (ModelState.IsValid)
             {
-                _context.Modifier.Add(entity);
+                UpsertDeleteModiferAndItemModifier(_context, entity);
 
                 await _context.SaveChangesAsync();
 
-                return CreatedAtAction(nameof(Get), new { id = entity.Id }, entity);
+                return Ok();
             }
             else
             {
                 return BadRequest(ModelState);
             }
         }
-    }
 
 
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ItemModifierController : ApplicationBaseController<ItemModifier>
-    {
-        private readonly IMapper _mapper;
-
-        public ItemModifierController(POSContext context, IMapper mapper)
-            : base(context, new ModifierDataTableConfig())
+        [NonAction]
+        public static void UpsertDeleteModiferAndItemModifier(POSContext context, Modifier modClient)
         {
-            _mapper = mapper;
+            //load the modifier
+            var modDb = context.Modifier
+                .Include(_ => _.ItemModifier)
+                .FirstOrDefault(_ => _.Id == modClient.Id);
 
-        }
-
-
-        // PUT: api/Modifier/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody]  List<ItemModifier> dtos)
-        {
-
-            //if (id != dto.Id || !ModelState.IsValid)
-            //{
-            //    return BadRequest(ModelState);
-            //}
-
-            Modifier entity = await _context.Modifier.Include(_ => _.ItemModifier).FirstOrDefaultAsync(_ => _.Id == id);
-            if (entity == null) return BadRequest();
-
-            _context.Entry(entity).State = EntityState.Modified;
-
-            foreach(var item in entity.ItemModifier)
+            if(modDb == null)
             {
-                foreach(var im in dtos)
-                {
-                    if(item.Id == im.Id)
-                    {
-                        //map
+                context.Add(modClient);
+            } else
+            {
+                //set values
+                context.Entry(modDb).CurrentValues.SetValues(modClient);
 
+                //check what are in the db and update it
+                foreach (var item in modClient.ItemModifier)
+                {
+                    var itemDb = modDb.ItemModifier.FirstOrDefault(_ => _.Id == item.Id);
+
+                    if (itemDb == null)
+                    {
+                        context.ItemModifier.Add(item);
+                    }
+                    else
+                    {
+                        context.Entry<ItemModifier>(itemDb).CurrentValues.SetValues(item);
+                    }
+                }
+
+                foreach (var item in modDb.ItemModifier)
+                {
+                    if (!modClient.ItemModifier.Any(_ => _.Id == item.Id))
+                    {
+                        context.ItemModifier.Remove(item);
                     }
 
                 }
             }
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!EntityExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/Modifier
-        [HttpPost]
-        //[ValidateAntiForgeryToken]
-        [IgnoreAntiforgeryToken]
-        public async Task<IActionResult> Post([FromBody] List<ItemModifierDTO> dtos)
-        {
-            Modifier modifier = _context.Modifier.FirstOrDefault(_ => dtos.Any(d => d.Id == _.Id));
-
-            List<ItemModifier> entities = _mapper.Map<List<ItemModifier>>(dtos);
-
-            if (ModelState.IsValid)
-            {
-                foreach(var item in entities)
-                {
-                    modifier.ItemModifier.Add(item);
-                }
-
-                await _context.SaveChangesAsync();
-
-                return StatusCode(201);
-             }
-            else
-            {
-                return BadRequest(ModelState);
-            }
         }
     }
+
 }

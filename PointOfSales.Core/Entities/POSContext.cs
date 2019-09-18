@@ -14,6 +14,7 @@ namespace PointOfSales.Core.Entities
         public DbSet<Order> Order { get; set; }
         public DbSet<OrderDetail> OrderDetail { get; set; }
         public DbSet<Modifier> Modifier { get; set; }
+        public DbSet<ItemModifier> ItemModifier { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -24,13 +25,6 @@ namespace PointOfSales.Core.Entities
                 );
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlite(GlobalVariables.Connection);
-            }
-        }
     }
 
 
