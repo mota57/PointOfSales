@@ -33,9 +33,22 @@
           </div>
           <hr/>
           <div>
-            <template v-for="item in form.itemModifier">
-              <div></div>
-            </template>
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Item Modifier</th>
+                  <th scope="col">Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                  <tr v-for="item in form.itemModifier" key="item.id">
+                    <th>{{item.id}}</th>
+                    <td>>item.name</td>
+                    <td>item.price</td>
+                  </tr>
+              </tbody>
+            </table>
           </div>
 
         </div>
