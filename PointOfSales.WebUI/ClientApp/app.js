@@ -102,11 +102,19 @@ Vue.mixin({
       }
      }
 
+    class modifier extends BASE_URL {
+      constructor() {
+        super('/Modifier')
+      }
+     }
+
+
 
     return {
       urls: {
         categories: new categories(),
-        products: new products()
+        products: new products(),
+        modifier: new modifier()
       }
     }
   }
