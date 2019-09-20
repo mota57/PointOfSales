@@ -1,9 +1,9 @@
 <template>
   <div>
-    <div>
+    <div v-if="false">
       <label>pending</label>
 
-    <ul>
+    <ul >
       <li> create view/edit form</li>
         <li>datepicker</li>
         <li>multiselect </li>
@@ -17,6 +17,8 @@
     </ul>
 
     </div>
+
+    <!-- modal form -->
 
     <div class="modal fade" :id="'form'+name" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
@@ -41,6 +43,7 @@
     </div>
 
 
+    <!-- modal delete -->
     <div class="modal fade" :id="'confirm'+name" tabindex="-1" role="dialog"  aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -69,11 +72,13 @@
           <div slot="beforeTable" style="border-bottom-width: 2px; border: 1px solid #dee2e6;">
             <button  @click="callClearForm()" :data-target="'#form' + name" data-toggle="modal" type="button" class="btn "  style="border: 1px solid #dee2e6" >
             <icon icon="plus" class="mr-2 menu-icon" />Add </button>
+            <slot name="sectionBeforeTable"></slot>
           </div>
 
           <div slot="Edit" slot-scope="props">
             <a style="cursor:pointer" :data-target="'#form' + name" data-toggle="modal" @click="callLoad(props.row)"> <icon icon="edit" class="mr-2 menu-icon" /> </a>
             <a style="cursor:pointer" :data-target="'#confirm' + name" data-toggle="modal" @click="rowToDelete = props.row"> <icon icon="trash" class="mr-2 menu-icon" /> </a>
+            <slot name="sectionAction" :row="props.row"></slot>
           </div>
         </v-server-table>
       </div>

@@ -41,6 +41,7 @@ namespace TestApp
 
         }
 
+      
         private List<ItemModifier> BuildItemModifiers(int total = 1)
         {
             List<ItemModifier> itemMods = new List<ItemModifier>();
@@ -48,6 +49,51 @@ namespace TestApp
                 itemMods.Add(new ItemModifier { Name = $"item{i+1}" });
             }
             return itemMods;
+        }
+
+        [TestMethod]
+        public void TestUpsertProductModifiers()
+        {
+
+            var connection = new SqliteConnection("DataSource=:memory:");
+            connection.Open();
+
+            try
+            {
+                var options = new DbContextOptionsBuilder<POSContext>()
+                    .UseSqlite(connection)
+                    .Options;
+
+                // Create the schema in the database
+                using (var context = new POSContext(options))
+                {
+                    //create database
+                    context.Database.EnsureCreated();
+                    context.CreateProductData();
+                    context.Add(BuildModifierData(totalItemModifier: 2));
+                    context.Add(new ProductModifier { ModifierId = 1, ProductId = 1 });
+                    context.SaveChanges();
+                }
+
+                using (var context = new POSContext(options))
+                {
+                    var productId = 1;
+                    var productModifierClient = new List<ProductModifier>()
+                        {
+                            new ProductModifier { ProductId = productId, ModifierId = 1},
+                            new ProductModifier { ProductId = productId, ModifierId = 2},
+                        };
+                    var posService = new PointOfSales.Core.Service.POSService(context);
+                    posService.UpsertProductModifiers(productId, productModifierClient).Wait();
+                    Assert.AreEqual(1, context.Product.FirstOrDefault().ProductModifier.Count());
+                     
+                }
+
+            }
+            finally
+            {
+                connection.Close();
+            }
         }
 
       

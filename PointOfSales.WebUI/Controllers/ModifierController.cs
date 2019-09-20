@@ -9,6 +9,7 @@ using PointOfSales.Core.Entities;
 using PointOfSales.Core.Infraestructure.VueTable;
 using SqlKata;
 using SqlKata.Extensions;
+using PointOfSales.Core.Service;
 
 namespace PointOfSales.WebUI.Controllers
 {
@@ -19,46 +20,46 @@ namespace PointOfSales.WebUI.Controllers
             TableName = nameof(Modifier);
             Fields.AddRange(new List<VueField>()
                 {
-                     new VueField(name:"Id" ),
-                     new VueField(name:"Name"),
-                     new VueField(name:"ModifierCount"),
+                     new VueField(name:"Id", sqlField:"Modifier.Id" ),
+                     new VueField(name:"Name", sqlField:"Modifier.Name"),
+                     new VueField(name:"ModifierCount", sqlField:"ModifierCount"),
                 });
 
 
             QueryBuilder = new Query("Modifier")
                      .Select("Modifier.Id", "Modifier.Name")
-                     .ForSqlite(q => q.SelectRaw("(Select (COUNT(Name) || 'Modifiers') from ItemModifier WHERE  ItemModifier.ModifierId = Modifier.Id) as ModifierCount"))
-                     .ForSqlServer(q => q.SelectRaw("(Select (COUNT(Name) + 'Modifiers') from ItemModifier WHERE  ItemModifier.ModifierId = Modifier.Id) as ModifierCount"));
+                     .ForSqlite(q => q.SelectRaw("(Select (COUNT(Name) || ' Modifiers') from ItemModifier WHERE  ItemModifier.ModifierId = Modifier.Id) as ModifierCount"))
+                     .ForSqlServer(q => q.SelectRaw("(Select (COUNT(Name) + ' Modifiers') from ItemModifier WHERE  ItemModifier.ModifierId = Modifier.Id) as ModifierCount"));
 
         }
     }
+    
 
     [Route("api/[controller]")]
     [ApiController]
     public class ModifierController : ApplicationBaseController<Modifier>
     {
         private readonly IMapper _mapper;
+        private readonly POSService _POSService;
 
-        public ModifierController(POSContext context, IMapper mapper)
+        public ModifierController(POSContext context, IMapper mapper, POSService POSService)
             : base(context, new ModifierDataTableConfig())
         {
             _mapper = mapper;
-
+            _POSService = POSService;
         }
 
 
         // GET: api/Modifier/5
         [HttpGet("{id}")]
-        public ActionResult<ModifierDTO> Get(int id)
+        public ActionResult<Modifier> Get(int id)
         {
 
-            var entity = _context.Product
+            var entity = _context.Modifier
+                .Include(_ => _.ItemModifier)
                 .AsNoTracking()
                 .Where(_ => _.Id == id)
                 .FirstOrDefault();
-
-            var dto = _mapper.Map<ModifierDTO>(entity);
-
 
             if (entity == null)
             {
@@ -68,6 +69,16 @@ namespace PointOfSales.WebUI.Controllers
             return Ok(entity);
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> UpsertProductModifiers(int productId, List<ProductModifier> productModifierClient)
+        {
+            //if ( == null)
+            //{
+            //    return NotFound();
+            //}
+            await _POSService.UpsertProductModifiers(productId, productModifierClient);
+            return Ok();
+        }
 
         // POST: api/Modifier
         [HttpPost]
@@ -113,6 +124,7 @@ namespace PointOfSales.WebUI.Controllers
 
                     if (itemDb == null)
                     {
+                        item.ModifierId = modClient.Id;
                         context.ItemModifier.Add(item);
                     }
                     else

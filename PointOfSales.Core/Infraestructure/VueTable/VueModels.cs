@@ -103,10 +103,11 @@ namespace PointOfSales.Core.Infraestructure.VueTable
             {
                 queryBuilder = db.FromQuery(config.QueryBuilder);
                 IsCustomInlineQuery = true;
-                if(fields.Any(_ => string.IsNullOrEmpty(_.SqlField))){
+                if (fields.Any(_ => string.IsNullOrEmpty(_.SqlField)))
+                {
                     throw new Exception("Must set SqlField property in class VueField whenVueTableConfig.QueryBuilder is not null");
                 }
-                MapFieldSql = new Dictionary<string, string>(fields.Select(_ => new KeyValuePair<string, string>(_.Name, _.SqlField)));
+                MapFieldSql = new Dictionary<string, string>(fields.Select(_ => new KeyValuePair<string, string>(_.Name,  _.SqlField )));
             }
 
 

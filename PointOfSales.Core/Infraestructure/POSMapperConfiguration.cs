@@ -12,6 +12,7 @@ namespace PointOfSales.Core.Infraestructure
 
             CreateMap<ProductFormDTO, Product>()
                 .ForMember(_ => _.MainImage, cfg => cfg.Ignore());
+
         }
     }
 }

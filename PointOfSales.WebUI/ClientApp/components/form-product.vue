@@ -9,7 +9,7 @@
 
     <div v-if="!isAjax">
 
-    <form ref="formElement"  v-if="isEdit"  @submit.prevent="upsert">
+    <form ref="formElement"  :class="{ 'sr-only' : isEdit == false}"  @submit.prevent="upsert">
       <div class="row">
         <input type="hidden" v-model="form.Id" />
 
@@ -65,7 +65,7 @@
     </form>
 
 
-      <div class="row" v-if="!isEdit">
+      <div :class="{'row':true,  'sr-only': isEdit == true}">
 
         <div class="col-6">
           <div class="form-group">
@@ -99,7 +99,7 @@
           <div class="form-group">
             <label >Category </label>
             <div>
-              <v-select disabled="true" label="name" :options="options" :reduce="m => m.id" v-model="form.CategoryId" @search="onSearch" />
+              <v-select :disabled="isEdit == false" label="name" :options="options" :reduce="m => m.id" v-model="form.CategoryId" @search="onSearch" />
             </div>
           </div>
         </div>
@@ -159,7 +159,9 @@
       eventBus.$on('loadForm::form-product', (row) => vm.loadRecord(row))
       eventBus.$on('deleteForm::form-product', (row) => vm.deleteRecord(row))
       eventBus.$on('clearForm::form-product', (row) => {
-        this.$refs.formImage1.removeImage();
+        console.log('$refs');
+        console.log(vm.$refs);
+        vm.$refs.formImage1.removeImage();
         vm.clearForm()
       })
       vm.onSearch('', () => { })

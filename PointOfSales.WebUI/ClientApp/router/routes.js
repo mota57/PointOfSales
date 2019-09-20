@@ -4,6 +4,7 @@ import HomePage from 'components/home-page'
 import About from 'components/about'
 import FormProduct from 'components/form-product'
 import productComponent from 'components/product-component' 
+import modifierComponent from 'components/modifier-component' 
 
 
 export const routes = [
@@ -11,5 +12,6 @@ export const routes = [
   { name: 'about', path: '/about', component: About, display: 'About Template', icon: 'info' },
   { name: 'counter', path: '/counter', component: CounterExample, display: 'Counter', icon: 'graduation-cap' },
   { name: 'fetch-data', path: '/fetch-data', component: FetchData, display: 'Data', icon: 'list' },
-  { name: 'product-list', path: '/products/list', component: productComponent, display: 'Product', icon: 'list' }
+  { name: 'product-list', path: '/products/list', component: productComponent, display: 'Product', icon: 'list' },
+  { name: 'modifier-list', path: '/modifier/list', component: modifierComponent, display: 'Modifier', icon: 'list' }
 ]

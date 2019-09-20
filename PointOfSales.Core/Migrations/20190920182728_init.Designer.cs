@@ -9,7 +9,7 @@ using PointOfSales.Core.Entities;
 namespace PointOfSales.Core.Migrations
 {
     [DbContext(typeof(POSContext))]
-    [Migration("20190913201159_init")]
+    [Migration("20190920182728_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -138,6 +138,19 @@ namespace PointOfSales.Core.Migrations
                     b.ToTable("Product");
                 });
 
+            modelBuilder.Entity("PointOfSales.Core.Entities.ProductModifier", b =>
+                {
+                    b.Property<int>("ModifierId");
+
+                    b.Property<int>("ProductId");
+
+                    b.HasKey("ModifierId", "ProductId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductModifier");
+                });
+
             modelBuilder.Entity("PointOfSales.Core.Entities.ItemModifier", b =>
                 {
                     b.HasOne("PointOfSales.Core.Entities.Modifier", "Modifier")
@@ -164,6 +177,19 @@ namespace PointOfSales.Core.Migrations
                     b.HasOne("PointOfSales.Core.Entities.Category", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId");
+                });
+
+            modelBuilder.Entity("PointOfSales.Core.Entities.ProductModifier", b =>
+                {
+                    b.HasOne("PointOfSales.Core.Entities.Modifier", "Modifier")
+                        .WithMany("ProductModifier")
+                        .HasForeignKey("ModifierId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("PointOfSales.Core.Entities.Product", "Product")
+                        .WithMany("ProductModifier")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

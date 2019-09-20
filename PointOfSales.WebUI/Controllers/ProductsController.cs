@@ -9,6 +9,8 @@ using PointOfSales.WebUI.Extensions;
 using PointOfSales.Core.Infraestructure.VueTable;
 using System.Linq;
 using SqlKata;
+using System;
+using Newtonsoft.Json;
 
 namespace PointOfSales.WebUI.Controllers
 {
@@ -79,6 +81,7 @@ namespace PointOfSales.WebUI.Controllers
 
             return dto;
         }
+
 
 
         // PUT: api/Products/5

@@ -35,7 +35,10 @@ namespace PointOfSales.Core.Entities
 
     public class Product : BaseEntity
     {
-        public Product() { } 
+        public Product() {
+            ProductModifier = new HashSet<ProductModifier>();
+
+        } 
 
         [MaxLength(50)]
         public string ProductCode { get; set; }
@@ -48,6 +51,15 @@ namespace PointOfSales.Core.Entities
         public int? CategoryId { get; set; }
         public Category Category { get; set; } 
 
+        public ICollection<ProductModifier> ProductModifier { get; set; }
+
+    }
+    public class ProductModifier
+    {
+        public int ProductId { get; set; }
+        public Modifier Modifier { get; internal set; }
+        public int ModifierId { get; set; }
+        public Product Product { get; internal set; }
     }
 
     public class Modifier : BaseEntity
@@ -55,9 +67,11 @@ namespace PointOfSales.Core.Entities
         public Modifier()
         {
             ItemModifier = new HashSet<ItemModifier>();
+            ProductModifier = new HashSet<ProductModifier>();
         }
 
         public ICollection<ItemModifier> ItemModifier { get; set; }
+        public ICollection<ProductModifier> ProductModifier { get; set; }
 
     }
 
@@ -73,7 +87,6 @@ namespace PointOfSales.Core.Entities
         public Category()
         {
             Products = new HashSet<Product>();
-
         }
 
         public ICollection<Product> Products { get; set; }

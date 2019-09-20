@@ -116,6 +116,30 @@ namespace PointOfSales.Core.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "ProductModifier",
+                columns: table => new
+                {
+                    ProductId = table.Column<int>(nullable: false),
+                    ModifierId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProductModifier", x => new { x.ModifierId, x.ProductId });
+                    table.ForeignKey(
+                        name: "FK_ProductModifier_Modifier_ModifierId",
+                        column: x => x.ModifierId,
+                        principalTable: "Modifier",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ProductModifier_Product_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Product",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 table: "Category",
                 columns: new[] { "Id", "Name" },
@@ -150,6 +174,11 @@ namespace PointOfSales.Core.Migrations
                 name: "IX_Product_CategoryId",
                 table: "Product",
                 column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductModifier_ProductId",
+                table: "ProductModifier",
+                column: "ProductId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -161,10 +190,13 @@ namespace PointOfSales.Core.Migrations
                 name: "OrderDetail");
 
             migrationBuilder.DropTable(
-                name: "Modifier");
+                name: "ProductModifier");
 
             migrationBuilder.DropTable(
                 name: "Order");
+
+            migrationBuilder.DropTable(
+                name: "Modifier");
 
             migrationBuilder.DropTable(
                 name: "Product");

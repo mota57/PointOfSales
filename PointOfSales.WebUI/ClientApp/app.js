@@ -5,11 +5,12 @@ import store from './store'
 import { sync } from 'vuex-router-sync'
 import App from 'components/app-root'
 import formProduct from 'components/form-product'
+import formModifier from 'components/form-modifier'
 import formDatatable from 'components/form-datatable'
 import formImage from 'components/form-image'
+import modifierComponent from 'components/modifier-component'
 import { FontAwesomeIcon } from './icons'
 import jQuery from 'jquery'
-//import vSelect from 'vue-ener-select'
 import vSelect from 'vue-select'
 import { ServerTable, ClientTable, Event } from 'vue-tables-2';
 
@@ -29,9 +30,10 @@ Vue.use(ServerTable, {}, true, 'bootstrap4', 'default');
 
 Vue.component('form-image', formImage)
 Vue.component('form-product', formProduct)
+Vue.component('form-modifier', formModifier)
 Vue.component('form-datatable', formDatatable)
+Vue.component('modifier-component', modifierComponent)
 Vue.component('icon', FontAwesomeIcon)
-//Vue.component('v-select', vSelect)
 Vue.component('v-select', vSelect);
 
 Vue.prototype.$http = axios
@@ -106,6 +108,12 @@ Vue.mixin({
       constructor() {
         super('/Modifier')
       }
+
+      upsertProductModifier(productId) {
+        let result = this.getURL(`UpsertProductModifiers/${productId}`);
+        return result;
+      }
+
      }
 
 
