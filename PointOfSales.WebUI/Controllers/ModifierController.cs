@@ -33,7 +33,7 @@ namespace PointOfSales.WebUI.Controllers
 
         }
     }
-    
+
 
     [Route("api/[controller]")]
     [ApiController]
@@ -72,11 +72,12 @@ namespace PointOfSales.WebUI.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> UpsertProductModifiers(int productId, List<ProductModifier> productModifierClient)
         {
-            //if ( == null)
-            //{
-            //    return NotFound();
-            //}
-            await _POSService.UpsertProductModifiers(productId, productModifierClient);
+            if (_context.Product.FirstOrDefault(_ => _.Id == productId)  == null)
+            {
+                return NotFound();
+            }
+
+            await _POSService.UpsertDeleteProductModifiers(productId, productModifierClient);
             return Ok();
         }
 
@@ -88,7 +89,7 @@ namespace PointOfSales.WebUI.Controllers
         {
             if (ModelState.IsValid)
             {
-                UpsertDeleteModiferAndItemModifier(_context, entity);
+                _POSService.UpsertDeleteModiferAndItemModifier(entity);
 
                 await _context.SaveChangesAsync();
 
@@ -101,49 +102,6 @@ namespace PointOfSales.WebUI.Controllers
         }
 
 
-        [NonAction]
-        public static void UpsertDeleteModiferAndItemModifier(POSContext context, Modifier modClient)
-        {
-            //load the modifier
-            var modDb = context.Modifier
-                .Include(_ => _.ItemModifier)
-                .FirstOrDefault(_ => _.Id == modClient.Id);
-
-            if(modDb == null)
-            {
-                context.Add(modClient);
-            } else
-            {
-                //set values
-                context.Entry(modDb).CurrentValues.SetValues(modClient);
-
-                //check what are in the db and update it
-                foreach (var item in modClient.ItemModifier)
-                {
-                    var itemDb = modDb.ItemModifier.FirstOrDefault(_ => _.Id == item.Id);
-
-                    if (itemDb == null)
-                    {
-                        item.ModifierId = modClient.Id;
-                        context.ItemModifier.Add(item);
-                    }
-                    else
-                    {
-                        context.Entry<ItemModifier>(itemDb).CurrentValues.SetValues(item);
-                    }
-                }
-
-                foreach (var item in modDb.ItemModifier)
-                {
-                    if (!modClient.ItemModifier.Any(_ => _.Id == item.Id))
-                    {
-                        context.ItemModifier.Remove(item);
-                    }
-
-                }
-            }
-
-        }
     }
 
 }

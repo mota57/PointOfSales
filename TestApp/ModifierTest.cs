@@ -8,49 +8,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System;
+using PointOfSales.Core.Service;
 
 namespace TestApp
 {
     [TestClass]
     public class ModifierTest
     {
-        private Modifier GetModiferFromClient()
-        {
-
-            return new Modifier()
-            {
-                Id = 1,
-                Name = "mod1.1",
-                ItemModifier = new HashSet<ItemModifier>()
-                        {
-                            new ItemModifier { Id= 1, Name = "item1.1", ModifierId = 1},
-                            new ItemModifier { Id= 2, Name = "item2.1", ModifierId = 1},
-                            new ItemModifier { Name = "item3.1",  ModifierId = 1} //new
-                        }
-            };
-
-        }
-
-        private Modifier BuildModifierData(string name = "mod1", int totalItemModifier = 1)
-        {
-            return new Modifier()
-            {
-                Name = name,
-                ItemModifier = BuildItemModifiers(total:totalItemModifier)
-            };
-
-        }
-
-      
-        private List<ItemModifier> BuildItemModifiers(int total = 1)
-        {
-            List<ItemModifier> itemMods = new List<ItemModifier>();
-            for (int i = 0; i < total; i++) {
-                itemMods.Add(new ItemModifier { Name = $"item{i+1}" });
-            }
-            return itemMods;
-        }
-
         [TestMethod]
         public void TestUpsertProductModifiers()
         {
@@ -69,23 +33,35 @@ namespace TestApp
                 {
                     //create database
                     context.Database.EnsureCreated();
-                    context.CreateProductData();
-                    context.Add(BuildModifierData(totalItemModifier: 2));
-                    context.Add(new ProductModifier { ModifierId = 1, ProductId = 1 });
-                    context.SaveChanges();
                 }
 
                 using (var context = new POSContext(options))
                 {
+
+                    context.CreateProductData();
+                    context.CreateModifierData(total: 2, totalItemModifier: 2);
+                    context.SaveChanges();
+
+
+                    context.Add(new ProductModifier { ModifierId = 1, ProductId = 1 });
+                    context.SaveChanges();
+
                     var productId = 1;
-                    var productModifierClient = new List<ProductModifier>()
+                    var dto = new List<ProductModifier>()
                         {
                             new ProductModifier { ProductId = productId, ModifierId = 1},
                             new ProductModifier { ProductId = productId, ModifierId = 2},
                         };
-                    var posService = new PointOfSales.Core.Service.POSService(context);
-                    posService.UpsertProductModifiers(productId, productModifierClient).Wait();
-                    Assert.AreEqual(1, context.Product.FirstOrDefault().ProductModifier.Count());
+
+                    //assert add one more
+                    var posService = new POSService(context);
+                    posService.UpsertDeleteProductModifiers(productId, dto).Wait();
+                    Assert.AreEqual(2, context.Product.FirstOrDefault().ProductModifier.Count());
+
+                    //asssert remove all 
+                    dto = new List<ProductModifier>() {};
+                    posService.UpsertDeleteProductModifiers(productId, dto).Wait();
+                    Assert.AreEqual(0, context.Product.FirstOrDefault().ProductModifier.Count());
                      
                 }
 
@@ -122,10 +98,21 @@ namespace TestApp
                 // Run the test against one instance of the context
                 using (var context = new POSContext(options))
                 {
-                    context.Update(BuildModifierData(totalItemModifier:3));
+                    context.CreateModifierData(totalItemModifier:3);
                     context.SaveChanges();
 
-                    var modClient = GetModiferFromClient();
+                    var modClient = new Modifier()
+                    {
+                        Id = 1,
+                        Name = "mod1.1",
+                        ItemModifier = new HashSet<ItemModifier>()
+                        {
+                            new ItemModifier { Id= 1, Name = "item1.1", ModifierId = 1},
+                            new ItemModifier { Id= 2, Name = "item2.1", ModifierId = 1},
+                            new ItemModifier { Name = "item3.1",  ModifierId = 1} //new
+                        }
+                    };
+
 
                     ModifierController.UpsertDeleteModiferAndItemModifier(context, modClient);
                     context.SaveChanges();
@@ -156,15 +143,15 @@ namespace TestApp
                 using (var context = new POSContext(options))
                 {
                     var totalChilds = 1;
-                    var modClient = BuildModifierData("hello1",totalChilds);
+                    var modClient = DataFactory.BuildModifierData(name:"hello1", totalItemModifier: totalChilds);
                     ModifierController.UpsertDeleteModiferAndItemModifier(context, modClient);
                     context.SaveChanges();
+
                     Assert.AreEqual(
                         context.Modifier
                         .Include(_ => _.ItemModifier)
                         .FirstOrDefault(_ => _.Name == "hello1")
                         .ItemModifier.Count(), totalChilds);
-
                 }
 
 
