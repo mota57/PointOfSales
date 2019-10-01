@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PointOfSales.Core.Service
 {
-   public  class POSService
+   public  class POSService 
     {
         private readonly POSContext _context;
 

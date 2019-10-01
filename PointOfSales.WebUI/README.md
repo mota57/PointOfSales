@@ -20,11 +20,13 @@ https://vuejs.org/v2/guide/migration.html#dispatch-and-broadcast-replaced
 
 https://stackoverflow.com/questions/7397207/json-net-error-self-referencing-loop-detected-for-type
 
-# fix issue with form data sending array
+# fix issue with form data sending array && fix  send formData object through ajax request 
 https://stackoverflow.com/questions/16104078/appending-array-to-formdata-and-send-via-ajax
+https://stackoverflow.com/questions/42883550/ajax-with-formdata-dose-not-bind-childs-array-of-objects-in-asp-net-controller
 
 # fix form-image to hold an object
 https://simonkollross.de/posts/vuejs-using-v-model-with-objects-for-custom-components
+
 
 
 # AUTOMAPPER
@@ -37,3 +39,16 @@ https://simonkollross.de/posts/vuejs-using-v-model-with-objects-for-custom-compo
 
 https://support.revelsystems.com/hc/en-us/articles/203585239-Introduction-to-Modifiers
 https://squareup.com/dashboard/
+
+
+# found good practice
+
+Always initialize list in dto in order to avoid null parameterers on post object in a action controller
+
+```.cs
+    public class ProductFormDTO
+    {
+        public int Id { get; set; }
+        public List<int> ModifierIds { get; set; } = new List<int>();
+    }
+```

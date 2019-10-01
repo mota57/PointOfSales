@@ -113,9 +113,8 @@ namespace TestApp
                         }
                     };
 
-
-                    ModifierController.UpsertDeleteModiferAndItemModifier(context, modClient);
-                    context.SaveChanges();
+                    var posService = new POSService(context);
+                    posService.UpsertDeleteModiferAndItemModifier(modClient);
 
                     Assert.AreEqual(context.Modifier.First().Name, "mod1.1");
 
@@ -144,8 +143,10 @@ namespace TestApp
                 {
                     var totalChilds = 1;
                     var modClient = DataFactory.BuildModifierData(name:"hello1", totalItemModifier: totalChilds);
-                    ModifierController.UpsertDeleteModiferAndItemModifier(context, modClient);
-                    context.SaveChanges();
+
+                    var posService = new POSService(context);
+                    posService.UpsertDeleteModiferAndItemModifier(modClient);
+
 
                     Assert.AreEqual(
                         context.Modifier

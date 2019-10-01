@@ -21,7 +21,7 @@
                 </thead>
                 <tbody>
                     <tr :class="index % 2 == 0 ? 'bg-white' : 'bg-light'" v-for="(forecast, index) in forecasts" :key="index">
-                        <td>{{ forecast.dateFormatted }}</td>
+                        <td><input type="checkbox"/>{{ forecast.dateFormatted }}</td>
                         <td>{{ forecast.temperatureC }}</td>
                         <td>{{ forecast.temperatureF }}</td>
                         <td>{{ forecast.summary }}</td>

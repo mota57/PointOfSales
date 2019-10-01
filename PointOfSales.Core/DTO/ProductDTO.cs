@@ -28,6 +28,13 @@ namespace PointOfSales.Core.DTO
         public decimal Price { get; set; }
     }
 
+
+    public class ProductModifierDTO
+    {
+        public int ProductId { get; set; }
+        public int ModifierId { get; set; }
+    }
+
     public class ProductFormDTO
     {
         public int Id { get; set; }
@@ -47,6 +54,9 @@ namespace PointOfSales.Core.DTO
         public bool ImageDeleted { get; set; }
 
         public List<int> AttributeIds { get; set; }
+
+        public List<int> ModifierIds { get; set; } = new List<int>();
+
 
     }
 }

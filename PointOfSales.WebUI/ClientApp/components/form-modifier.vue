@@ -62,7 +62,7 @@
 
   class Modifier {
     constructor() {
-      this.id = '';
+      this.id = 0;
       this.name = '';
       this.itemModifier = []; 
     }
@@ -70,10 +70,10 @@
 
   class ItemModifier {
     constructor() {
-      this.id = '';
+      this.id = 0;
       this.name = '';
-      this.modifierId = '';
-      this.price = '';
+      this.modifierId = 0;
+      this.price = 0;
     }
   }
 
@@ -94,8 +94,6 @@
       console.log(this.$refs);
       eventBus.$on('saveForm::form-modifier', () => vm.upsert({}))
       eventBus.$on('loadForm::form-modifier', (row) => vm.loadRecord(row))
-      eventBus.$on('deleteForm::form-modifier', (row) => vm.deleteRecord(row))
-
       eventBus.$on('clearForm::form-modifier', (row) => {
         vm.clearForm()
       })
@@ -113,17 +111,6 @@
         this.form = new Modifier()
         this.formItemModifier = new ItemModifier()
       },
-      deleteRecord(row) {
-        this.isAjax = true;
-        var vm = this;
-        this.$http.delete(vm.urls.modifier.delete(row.Id))
-          .then((res) => {
-            vm.$parent.reloadTable();
-          })
-          .then((err) => { if (err) { window.alert(err) } })
-          .then(() => { vm.isAjax = false; })
-
-      },
       loadRecord(row) {
         this.isAjax = true;
         this.clearForm();
@@ -132,10 +119,6 @@
           .then((res) => {
             let data = res.data
             Object.assign(vm.form, res.data)
-            //vm.form.id = data.id
-            //vm.form.name = data.name
-            //vm.form.price = data.price.
-            //vm.form.itemModifier = data.itemModifier;
           })
           .then((err) => { if (err) { console.log(err); } })
           .then(() => { vm.isAjax = false; })
@@ -144,13 +127,11 @@
       upsert(e) {
 
         this.isAjax = true;
-        let formData = formHelper.buildFormPost(this.form);
-
         var vm = this;
         this.$http({
           method: 'post',
           url: this.urls.modifier.upsert(vm.form.Id),
-          data: formData,
+          data: this.form,
         }).then(function (result) {
           vm.errList = null;
           vm.clearForm();

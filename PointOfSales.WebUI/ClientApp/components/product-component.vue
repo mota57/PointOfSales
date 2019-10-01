@@ -13,14 +13,14 @@
 
 <script>
 
-  import { eventBus } from './event-bus'
-
   export default {
     data() {
       return {
 
       }
     },
+    methods: {
+    }
   }
 </script>
 

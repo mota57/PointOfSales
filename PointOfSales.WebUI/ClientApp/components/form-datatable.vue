@@ -59,7 +59,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" ref="btnCloseConfirm" class="btn btn-secondary" @click="rowToDelete = null" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" @click="callDelete()">Save changes</button>
+            <button type="button" class="btn btn-primary" @click="deleteRecord()">Save changes</button>
           </div>
         </div>
       </div>
@@ -128,7 +128,6 @@
   </div>
 </template>
 <script>
-  //import _ from 'lodash'
   import { eventBus } from './event-bus'
 
   export default {
@@ -137,17 +136,27 @@
       callClearForm() { eventBus.$emit(`clearForm::${this.eventpostfix}`);},
       callSave() { eventBus.$emit(`saveForm::${this.eventpostfix}`);  },
       callLoad(row) { eventBus.$emit(`loadForm::${this.eventpostfix}`,row);  },
-      callDelete() {
-        if (this.rowToDelete) { eventBus.$emit(`deleteForm::${this.eventpostfix}`, this.rowToDelete); }
-      },
       reloadTable() {
         this.$refs.tableObj.refresh();
         this.$refs.btnCloseEdit.click();
         this.$refs.btnCloseConfirm.click();
-      }
+      },
+      deleteRecord(row) {
+        this.isAjax = true;
+        var vm = this;
+        this.$http.delete(vm.urls[this.name].delete(this.rowToDelete.Id))
+          .then((res) => {
+            vm.reloadTable()
+          })
+          .then((err) => { if (err) { window.alert(err) } })
+          .then(() => { vm.isAjax = false; })
+      },
+      //callDelete() {
+      //  if (this.rowToDelete) { eventBus.$emit(`deleteForm::${this.eventpostfix}`, this.rowToDelete); }
+      //},
+      //to call custom fitler 
       //emitName: function() {
-      //  this.$store.commit('categories/SET_FILTER', { 'Name': this.Name });
-
+      //  this.$store.commit('${this.name}/SET_FILTER', { '<property_name>': <value> });
       //}
     },
     async created() {
@@ -190,7 +199,7 @@
     },
     data() {
       return {
-        rowToDelete:null,
+        rowToDelete:null, //set this field to the current row on click icon delete
         isEdit:false,
         isComplete:false,
         isAjax: false,

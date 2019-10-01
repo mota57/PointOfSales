@@ -10,6 +10,7 @@ using PointOfSales.WebUI.Providers;
 using Microsoft.OpenApi.Models;
 using AutoMapper;
 using PointOfSales.Core.Infraestructure;
+using PointOfSales.Core.Service;
 
 namespace PointOfSales.WebUI
 {
@@ -34,6 +35,7 @@ namespace PointOfSales.WebUI
             // Simple example with dependency injection for a data provider.
             services.AddSingleton<IWeatherProvider, WeatherProviderFake>();
             services.AddDbContext<POSContext>(cfg => cfg.UseSqlite(GlobalVariables.Connection));
+            services.AddScoped<POSService>();
 
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
