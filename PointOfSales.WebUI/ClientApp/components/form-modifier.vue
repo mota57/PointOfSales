@@ -84,7 +84,7 @@
         isEdit: true,
         isAjax: false,
         form: new Modifier(),
-        errList: { MainImage: ['test error'] },
+        errList: {  },
         options: [],
         formItemModifier: new ItemModifier()
       }
@@ -115,7 +115,7 @@
         this.isAjax = true;
         this.clearForm();
         var vm = this;
-        this.$http.get(vm.urls.modifier.getById(row.Id))
+        this.$http.get(vm.urls.modifier.getById(row.id))
           .then((res) => {
             let data = res.data
             Object.assign(vm.form, res.data)
@@ -130,7 +130,7 @@
         var vm = this;
         this.$http({
           method: 'post',
-          url: this.urls.modifier.upsert(vm.form.Id),
+          url: this.urls.modifier.upsert(vm.form.id),
           data: this.form,
         }).then(function (result) {
           vm.errList = null;

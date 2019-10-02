@@ -6,6 +6,7 @@ import { sync } from 'vuex-router-sync'
 import App from 'components/app-root'
 import formProduct from 'components/form-product'
 import formModifier from 'components/form-modifier'
+import formCategory from 'components/form-category'
 import formDatatable from 'components/form-datatable'
 import formImage from 'components/form-image'
 import modifierComponent from 'components/modifier-component'
@@ -31,6 +32,7 @@ Vue.use(ServerTable, {}, true, 'bootstrap4', 'default');
 Vue.component('form-image', formImage)
 Vue.component('form-product', formProduct)
 Vue.component('form-modifier', formModifier)
+Vue.component('form-category', formCategory)
 Vue.component('form-datatable', formDatatable)
 Vue.component('modifier-component', modifierComponent)
 Vue.component('icon', FontAwesomeIcon)

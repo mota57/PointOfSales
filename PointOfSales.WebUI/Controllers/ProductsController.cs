@@ -43,14 +43,12 @@ namespace PointOfSales.WebUI.Controllers
     [ApiController]
     public class ProductsController : ApplicationBaseController<Product>
     {
-        private readonly IMapper _mapper;
         private readonly POSService _POSService;
 
 
         public ProductsController(POSContext context, IMapper mapper, POSService pOSService)
-            : base(context, new ProductDataTableConfig())
+            : base(context, new ProductDataTableConfig(), mapper)
         {
-            _mapper = mapper;
             _POSService = pOSService;
 
         }
@@ -58,7 +56,7 @@ namespace PointOfSales.WebUI.Controllers
 
         // GET: api/Categories/5
         [HttpGet("{id}")]
-        public ActionResult<ProductFormDTO> Get(int id)
+        public  ActionResult<object> Get(int id)
         {
 
             var product =  _context.Product.Include(_ => _.ProductModifier).FirstOrDefault(p => p.Id == id);

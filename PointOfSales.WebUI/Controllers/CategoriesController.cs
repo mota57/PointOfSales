@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PointOfSales.Core.Entities;
@@ -29,12 +30,10 @@ namespace PointOfSales.WebUI.Controllers
     public class CategoriesController : ApplicationBaseController<Category>
     {
 
-        public CategoriesController(POSContext context): base(context, new CategoryVueDataTableConfig())
+        public CategoriesController(POSContext context, IMapper mapper):
+            base(context, new CategoryVueDataTableConfig(), mapper)
         {
         }
-
-
-       
 
 
         // PUT: api/Categories/5
@@ -69,7 +68,8 @@ namespace PointOfSales.WebUI.Controllers
 
         // POST: api/Categories
         [HttpPost]
-        public async Task<ActionResult<Category>> PostCategory(Category category)
+        [IgnoreAntiforgeryToken]
+        public async Task<ActionResult<Category>> PostCategory([FromBody] Category category)
         {
             _context.Category.Add(category);
             await _context.SaveChangesAsync();

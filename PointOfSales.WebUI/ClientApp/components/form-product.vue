@@ -72,6 +72,9 @@
       </div>
       <button v-if="display" type="submit" class="btn btn-primary" :disabled="isAjax">Save</button>
     </form>
+      <pre>
+{{form}}
+</pre>
 
 
       <!--<div :class="{'row':true,  'sr-only': isEdit == true}">
@@ -137,14 +140,13 @@
 <script>
 
   import _ from 'lodash'
-
   import { eventBus } from './event-bus'
   import { formHelper } from './form-helper'
 
 
   class ProductFormDTO {
     constructor() {
-      this.id = '';
+      this.id = ''; 
       this.name = '';
       this.price = 0;
       this.productCode = '';

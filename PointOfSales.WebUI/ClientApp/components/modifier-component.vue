@@ -22,7 +22,7 @@
           </div>
           <div class="modal-body">
             <div class="col-12">
-              <div class="form-group">
+              <div class="form-group">Modifier
                 <label>Product </label>
                 <div>
                   <v-select multiple label="name" :options="optionProduct" :reduce="m => m.id" v-model="form.productId" @search="onSearch" />
@@ -44,6 +44,7 @@
 
 <script>
 
+  import _ from 'lodash' 
 
   export default {
     data() {

@@ -39,20 +39,18 @@ namespace PointOfSales.WebUI.Controllers
     [ApiController]
     public class ModifierController : ApplicationBaseController<Modifier>
     {
-        private readonly IMapper _mapper;
         private readonly POSService _POSService;
 
         public ModifierController(POSContext context, IMapper mapper, POSService POSService)
-            : base(context, new ModifierDataTableConfig())
+            : base(context, new ModifierDataTableConfig(), mapper)
         {
-            _mapper = mapper;
             _POSService = POSService;
         }
 
 
         // GET: api/Modifier/5
         [HttpGet("{id}")]
-        public ActionResult<Modifier> Get(int id)
+        public  ActionResult<object> Get(int id)
         {
 
             var entity = _context.Modifier
