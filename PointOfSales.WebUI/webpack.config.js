@@ -24,6 +24,7 @@ module.exports = () => {
       extensions: ['.js', '.vue'],
       alias: isDevBuild ? {
         'vue$': 'vue/dist/vue',
+        'bootstrap-vue$': 'bootstrap-vue/src/index.js',
         'components': path.resolve(__dirname, './ClientApp/components'),
         'views': path.resolve(__dirname, './ClientApp/views'),
         'utils': path.resolve(__dirname, './ClientApp/utils'),
@@ -43,7 +44,14 @@ module.exports = () => {
     module: {
       rules: [
         { test: /\.vue$/, include: /ClientApp/, use: 'vue-loader' },
-        { test: /\.js$/, include: /ClientApp/, use: 'babel-loader' },
+        {
+          test: /\.js$/,
+          include: /ClientApp/,
+          exclude: /node_modules\/(?!bootstrap-vue\/src\/)/,
+          use: {
+            loader: 'babel-loader',
+          },
+        },
         { test: /\.css$/, use: isDevBuild ? ['style-loader', 'css-loader'] : [MiniCssExtractPlugin.loader, 'css-loader'] },
         { test: /\.(png|jpg|jpeg|gif|svg)$/, use: 'url-loader?limit=25000' }
       ]

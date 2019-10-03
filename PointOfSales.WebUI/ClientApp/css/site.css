@@ -125,3 +125,4 @@ li.nav-item {
 }
 
 @import '~vue-select/dist/vue-select.css';
+@import '~bootstrap-vue/dist/bootstrap-vue.css';

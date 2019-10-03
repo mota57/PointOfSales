@@ -2,9 +2,8 @@
   <div>
     <div v-if="false">
       <label>pending</label>
-
-    <ul >
-      <li> create view/edit form</li>
+      <ul>
+        <li> create view/edit form</li>
         <li>datepicker</li>
         <li>multiselect </li>
         <li>checkbox group</li>
@@ -13,38 +12,43 @@
         <li>create a related tab</li>
         <li>create dropdown select create lookup</li>
         <li>fix on blur reset form</li>
-
-    </ul>
-
+      </ul>
     </div>
+    <!-- modal form CREATE /UPDATE -->
 
-    <!-- modal form -->
+    <b-modal scrollable class="modal-dialog-scrollable" :id="'form-'+name" size="xl" :title="title" hide-footer>
 
-    <div class="modal fade" :id="'form'+name" tabindex="-1" role="dialog" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">{{title}} </h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
+      <slot name="edit"></slot>
 
-            <slot name="edit" ></slot>
+      <div class="modal-footer">
+        <button type="button" @click="$bvModal.hide(modalFormId)" class="btn btn-secondary">Close</button>
+        <button type="button" class="btn btn-primary" @click="callSave">Save</button>
+      </div>
+    </b-modal>
 
-          </div>
-          <div class="modal-footer">
-            <button type="button" ref="btnCloseEdit" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" @click="callSave">Save</button>
-          </div>
+    <!--<div class="modal fade" :id="modalFormId" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">{{title}} </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+
+          <slot name="edit"></slot>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" ref="btnCloseEdit" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" @click="callSave">Save</button>
         </div>
       </div>
     </div>
-
-
-    <!-- modal delete -->
-    <div class="modal fade" :id="'confirm'+name" tabindex="-1" role="dialog"  aria-hidden="true">
+  </div>-->
+    <!-- modal delete  -->
+    <div class="modal fade" :id="'confirm'+name" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -58,8 +62,8 @@
 
           </div>
           <div class="modal-footer">
-            <button type="button" ref="btnCloseConfirm" class="btn btn-secondary" @click="rowToDelete = null" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" @click="deleteRecord()">Save changes</button>
+            <button type="button" ref="btnCloseDelete" class="btn btn-secondary" @click="rowToDelete = null" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" @click="deleteRecord()" data-dismiss="modal">Save changes</button>
           </div>
         </div>
       </div>
@@ -70,9 +74,15 @@
       <div class="col-12" v-if="isComplete">
         <v-server-table ref="tableObj" :name="name" :url="urls[name].datatable" :columns="columns" :options="options">
           <div slot="beforeTable" style="border-bottom-width: 2px; border: 1px solid #dee2e6;">
-            <button  @click="callClearForm()" :data-target="'#form' + name" data-toggle="modal" type="button" class="btn "  style="border: 1px solid #dee2e6" >
-            <icon icon="plus" class="mr-2 menu-icon" />Add </button>
+            <!--<button @click="callClearForm()" :data-target="'#form' + name" data-toggle="modal" type="button" class="btn " style="border: 1px solid #dee2e6">
+            <icon icon="plus" class="mr-2 menu-icon" />Add
+          </button>-->
+            <b-button @click="$bvModal.show(modalFormId)">
+              <icon icon="plus" class="mr-2 menu-icon" /> Add
+            </b-button>
+
             <slot name="sectionBeforeTable"></slot>
+
           </div>
 
           <div slot="Edit" slot-scope="props">
@@ -134,21 +144,41 @@
     props: ['name', 'eventpostfix', 'title'],
     methods: {
       callClearForm() { eventBus.$emit(`clearForm::${this.eventpostfix}`);},
-      callSave() { eventBus.$emit(`saveForm::${this.eventpostfix}`);  },
+      callSave() {
+        eventBus.$emit(`saveForm::${this.eventpostfix}`);
+      },
       callLoad(row) { eventBus.$emit(`loadForm::${this.eventpostfix}`,row);  },
       reloadTable() {
+        if (this.$refs.btnCloseEdit) {
+          this.$refs.btnCloseEdit.click();
+        }
+        //if (this.$refs.btnCloseDelete) {
+        //  this.$refs.btnCloseDelete.click();
+        //}
         this.$refs.tableObj.refresh();
-        this.$refs.btnCloseEdit.click();
-        this.$refs.btnCloseConfirm.click();
       },
       deleteRecord(row) {
         this.isAjax = true;
         var vm = this;
         this.$http.delete(vm.urls[this.name].delete(this.rowToDelete.Id))
           .then((res) => {
+            //show success modal
+            this.$toasted.success('save success', {
+              position:'top-center',
+              duration:3000,
+              fullWidth:true
+            })
             vm.reloadTable()
           })
-          .then((err) => { if (err) { window.alert(err) } })
+          .catch((err) => {
+            //show error modal
+              console.info('err' + JSON.stringify(err.response.data));
+              this.$toasted.error(err.response.data.title, {
+                position: 'top-center',
+                duration: 3000,
+                fullWidth: true
+              })
+          })
           .then(() => { vm.isAjax = false; })
       },
       //callDelete() {
@@ -159,8 +189,16 @@
       //  this.$store.commit('${this.name}/SET_FILTER', { '<property_name>': <value> });
       //}
     },
+    beforeDestroy() {
+      eventBus.$off(`reloadTable::${this.eventpostfix}`)
+    },
     async created() {
       var vm = this;
+      vm.modalFormId = 'form-' + vm.name;
+      eventBus.$on(`reloadTable::${this.eventpostfix}`, function () {
+        vm.$bvModal.hide(vm.modalFormId)
+        vm.reloadTable()
+      })
 
       try {
         let response = await this.$http.get(this.urls[this.name].tableMetadata)
@@ -199,6 +237,7 @@
     },
     data() {
       return {
+        modalFormId:'',
         rowToDelete:null, //set this field to the current row on click icon delete
         isEdit:false,
         isComplete:false,

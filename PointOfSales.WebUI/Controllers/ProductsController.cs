@@ -56,7 +56,7 @@ namespace PointOfSales.WebUI.Controllers
 
         // GET: api/Categories/5
         [HttpGet("{id}")]
-        public  ActionResult<object> Get(int id)
+        public  override ActionResult Get(int id)
         {
 
             var product =  _context.Product.Include(_ => _.ProductModifier).FirstOrDefault(p => p.Id == id);
@@ -70,7 +70,7 @@ namespace PointOfSales.WebUI.Controllers
             dto.ModifierIds = product.ProductModifier.Select(_ =>  _.ModifierId ).ToList();
             dto.AttributeIds = new List<int>() { 2,3 };
 
-            return dto;
+            return Ok(dto);
         }
 
 

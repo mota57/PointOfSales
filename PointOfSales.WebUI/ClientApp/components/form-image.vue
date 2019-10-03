@@ -40,7 +40,7 @@
         var vm = this;
 
         reader.onload = (e) => {
-          console.log(e.target.result)
+          //console.log(e.target.result)
           vm.ImagePicture = e.target.result;
         };
 
@@ -49,6 +49,7 @@
       removeImage: function (e) {
         this.ImagePicture = ''
         console.log('removeImage');
+        this.$emit('image-deleted');
       },
     }
   }

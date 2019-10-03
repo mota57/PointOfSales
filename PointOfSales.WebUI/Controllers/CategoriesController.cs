@@ -11,18 +11,18 @@ using PointOfSales.Core.Infraestructure.VueTable;
 namespace PointOfSales.WebUI.Controllers
 {
     public class CategoryVueDataTableConfig : VueTableConfig
+    {
+        public CategoryVueDataTableConfig()
         {
-            public CategoryVueDataTableConfig()
+            TableName = nameof(Category);
+            Fields.AddRange(new List<VueField>()
             {
-                TableName = nameof(Category);
-                Fields.AddRange(new List<VueField>()
-                {
-                     new VueField("Id", false),
-                     new VueField("Name")
-                });
+                 new VueField("Id", false),
+                 new VueField("Name")
+            });
 
-            }
         }
+    }
 
 
     [Route("api/[controller]")]
@@ -38,7 +38,7 @@ namespace PointOfSales.WebUI.Controllers
 
         // PUT: api/Categories/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCategory(int id, Category category)
+        public async Task<IActionResult> Put(int id, Category category)
         {
             if (id != category.Id)
             {
@@ -69,28 +69,13 @@ namespace PointOfSales.WebUI.Controllers
         // POST: api/Categories
         [HttpPost]
         [IgnoreAntiforgeryToken]
-        public async Task<ActionResult<Category>> PostCategory([FromBody] Category category)
+        public async Task<ActionResult<Category>> Post([FromBody] Category category)
         {
             _context.Category.Add(category);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCategory", new { id = category.Id }, category);
+            return Ok(); 
         }
 
-        // DELETE: api/Categories/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<Category>> DeleteCategory(int id)
-        {
-            var category = await _context.Category.FindAsync(id);
-            if (category == null)
-            {
-                return NotFound();
-            }
-
-            _context.Category.Remove(category);
-            await _context.SaveChangesAsync();
-
-            return category;
-        }
     }
 }

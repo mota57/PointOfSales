@@ -27,19 +27,19 @@ namespace PointOfSales.WebUI.Controllers
         }
 
 
-        //// GET: api/Categories/5
-        //[HttpGet("{id}")]
-        //public virtual  ActionResult<object> Get(int id)
-        //{
-        //    var entity = _context.Set<TEntity>().FirstOrDefault(p => p.Id == id);
+        // GET: api/Entity/5
+        [HttpGet("{id}")]
+        public virtual ActionResult Get(int id)
+        {
+            var entity = _context.Set<TEntity>().FirstOrDefault(p => p.Id == id);
 
-        //    if (entity == null)
-        //    {
-        //        return NotFound();
-        //    }
+            if (entity == null)
+            {
+                return NotFound();
+            }
 
-        //    return entity;
-        //}
+            return Ok(entity);
+        }
 
 
 
@@ -65,6 +65,11 @@ namespace PointOfSales.WebUI.Controllers
             return await  query.Select(_ => new {  _.Name,  _.Id }).ToListAsync();
         }
 
+        /// <summary>
+        /// This function handle the data for the datatable.
+        /// </summary>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
         [HttpGet("GetDatatable")]
         public async Task<Dictionary<string, object>> GetDataTable([FromQuery] VueTableParameters parameters)
         {
@@ -73,6 +78,10 @@ namespace PointOfSales.WebUI.Controllers
             return result;
         }
 
+        /// <summary>
+        /// This function return the vueTableConfig to create the table columns
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("GetTableMetadata")]
         public object GetTableMetadata()
         {
@@ -86,8 +95,9 @@ namespace PointOfSales.WebUI.Controllers
         }
 
         [HttpDelete("{id}")]
-        public virtual async Task<ActionResult<TEntity>> Delete(int id)
+        public virtual async Task<ActionResult> Delete(int id)
         {
+
             var set = _context.Set<TEntity>();
             var entity = await set.FindAsync(id);
             if (entity == null)
@@ -98,7 +108,7 @@ namespace PointOfSales.WebUI.Controllers
             set.Remove(entity);
             await _context.SaveChangesAsync();
 
-            return entity;
+            return Ok(entity);
         }
 
 

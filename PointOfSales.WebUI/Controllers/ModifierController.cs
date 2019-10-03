@@ -50,7 +50,7 @@ namespace PointOfSales.WebUI.Controllers
 
         // GET: api/Modifier/5
         [HttpGet("{id}")]
-        public  ActionResult<object> Get(int id)
+        public override  ActionResult Get(int id)
         {
 
             var entity = _context.Modifier
@@ -79,7 +79,11 @@ namespace PointOfSales.WebUI.Controllers
             return Ok();
         }
 
-        // POST: api/Modifier
+        /// <summary>
+        /// I can create and update modifiers with this function
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
         [HttpPost]
         //[ValidateAntiForgeryToken]
         [IgnoreAntiforgeryToken]
@@ -98,7 +102,6 @@ namespace PointOfSales.WebUI.Controllers
                 return BadRequest(ModelState);
             }
         }
-
 
     }
 

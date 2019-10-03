@@ -8,10 +8,10 @@ import categoryComponent from 'components/category-component'
 
 
 export const routes = [
-  { name: 'home', path: '/', component: HomePage, display: 'Home', icon: 'home' },
-  { name: 'about', path: '/about', component: About, display: 'About Template', icon: 'info' },
-  { name: 'counter', path: '/counter', component: CounterExample, display: 'Counter', icon: 'graduation-cap' },
-  { name: 'fetch-data', path: '/fetch-data', component: FetchData, display: 'Data', icon: 'list' },
+  { name: 'home', path: '/', component: HomePage, display: 'Home', icon: 'home',  },
+  { name: 'about', path: '/about', component: About, display: 'About Template', icon: 'info', hidden:true },
+  { name: 'counter', path: '/counter', component: CounterExample, display: 'Counter', icon: 'graduation-cap', hidden:true },
+  { name: 'fetch-data', path: '/fetch-data', component: FetchData, display: 'Data', icon: 'list', hidden:true },
   { name: 'product-list', path: '/products/list', component: productComponent, display: 'Product', icon: 'list' },
   { name: 'modifier-list', path: '/modifier/list', component: modifierComponent, display: 'Modifier', icon: 'list' },
   { name: 'category-list', path: '/cateogry/list', component: categoryComponent, display: 'Category', icon: 'list' }

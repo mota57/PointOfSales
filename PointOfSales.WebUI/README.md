@@ -56,3 +56,9 @@ Always initialize list in dto in order to avoid null parameterers on post object
         public List<int> ModifierIds { get; set; } = new List<int>();
     }
 ```
+
+# ISSUES 
+* ISSUE BUG when WEB API route not match return 404 instead redirecting to home/index.cshtml
+* ISSUE disable save btn on click for modal delete, modal create/edit
+* ISSUE can not select more than one option that contains the same name at Product Form
+* ISSUE FEATURE replace vue-select for a select checkbox functionality

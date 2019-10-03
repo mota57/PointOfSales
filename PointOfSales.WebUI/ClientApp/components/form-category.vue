@@ -21,32 +21,32 @@
           </div>
 
         </div>
-        <button v-if="display" type="submit" class="btn btn-primary" :disabled="isAjax">Save</button>
+        <button v-if="displayBtn" type="submit" class="btn btn-primary" :disabled="isAjax">Save</button>
       </form>
     </div>
 
- <pre>
+ <!--<pre>
 {{form}}
-</pre>
+</pre>-->
 
   </div>
 </template>
 
 <script>
 
-  import { eventBus } from './event-bus'
+import { eventBus } from './event-bus'
 
  const nameComponent = 'form-category'
 
   class Category {
     constructor() {
-      this.id = '';
+      this.id = 0;
       this.name = '';
     }
   }
 
  export default {
-    props: { display: Boolean },
+    props: { displayBtn: Boolean, default:false },
     data() {
       return {
         isEdit: true,
@@ -54,16 +54,23 @@
         form: new Category(),
         errList: {  },
         options: [],
+        apiUrl:'',
       }
+    },
+    beforeDestroy() {
+      eventBus.$off(`${nameComponent}::handler`)
+      eventBus.$off(`saveForm::${nameComponent}`)
+      eventBus.$off(`loadForm::${nameComponent}`)
+      eventBus.$off(`clearForm::${nameComponent}`)
+
     },
     created() {
       var vm = this;
-      console.log(this.$refs);
-      eventBus.$on(`saveForm::${nameComponent}`, () => vm.upsert({}))
-      eventBus.$on(`loadForm::${nameComponent}`, (row) => vm.loadRecord(row))
-      eventBus.$on(`clearForm::${nameComponent}`, (row) => {
-        vm.clearForm()
-      })
+      vm.apiUrl = vm.urls.categories;
+      eventBus.$on(`${nameComponent}::handler`, (handlerName) => vm[handlerName]())
+      eventBus.$on(`saveForm::${nameComponent}`,  vm.upsert())
+      eventBus.$on(`loadForm::${nameComponent}`,  vm.loadRecord)
+      eventBus.$on(`clearForm::${nameComponent}`, (row) => { vm.clearForm() })
 
     },
     methods: {
@@ -74,7 +81,7 @@
         this.isAjax = true;
         this.clearForm();
         var vm = this;
-        this.$http.get(vm.urls.categories.getById(row.Id))
+        this.$http.get(vm.apiUrl.getById(row.Id))
           .then((res) => {
             let data = res.data
             Object.assign(vm.form, res.data)
@@ -83,18 +90,19 @@
           .then(() => { vm.isAjax = false; })
 
       },
-      upsert(e) {
+      upsert() {
 
         this.isAjax = true;
         var vm = this;
         this.$http({
-          method: 'post',
-          url: this.urls.categories.upsert(vm.form.id),
-          data: JSON.stringify(this.form),
+          method:  vm.form.id ? 'put' : 'post',
+          url: this.apiUrl.upsert(vm.form.id),
+          data: this.form,
         }).then(function (result) {
           vm.errList = null;
           vm.clearForm();
-          vm.$parent.reloadTable(); //warning remove this
+          eventBus.$emit(`reloadTable::${nameComponent}`)
+          vm.$emit(`save-success`)
         }).catch(function (error) {
           if (error) {
             vm.errList = error.response.data.errors;

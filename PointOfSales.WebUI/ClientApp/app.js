@@ -4,6 +4,7 @@ import router from './router/index'
 import store from './store'
 import { sync } from 'vuex-router-sync'
 import App from 'components/app-root'
+import AppUrl from './api-url'
 import formProduct from 'components/form-product'
 import formModifier from 'components/form-modifier'
 import formCategory from 'components/form-category'
@@ -14,6 +15,9 @@ import { FontAwesomeIcon } from './icons'
 import jQuery from 'jquery'
 import vSelect from 'vue-select'
 import { ServerTable, ClientTable, Event } from 'vue-tables-2';
+import Toasted from '@gitlab/vue-toasted';
+import BootstrapVue from 'bootstrap-vue'
+
 
 
 
@@ -27,7 +31,9 @@ window.axios = axios;
 
 // Registration of global components
 
+Vue.use(BootstrapVue)
 Vue.use(ServerTable, {}, true, 'bootstrap4', 'default');
+Vue.use(Toasted)
 
 Vue.component('form-image', formImage)
 Vue.component('form-product', formProduct)
@@ -42,90 +48,8 @@ Vue.prototype.$http = axios
 
 Vue.mixin({
   data: function () {
-
-   
-    class BASE_URL {
-      constructor(name) {
-        this.name = name;
-      }
-
-
-      getURL(resource) {
-        let result = `${window.APP_GLOBALS.URL}${this.name}${resource}`
-        return result;
-      }
-
-      delete(id = '') {
-        var result = this.getURL(`/${id}`)
-        return result;
-      }
-
-      picklist (partUrl = '') {
-        var result = this.getURL(`/GetPickList/${partUrl}`)
-        return result;
-      }
-
-      list() {
-        let result = this.getURL();
-        return result;
-      }
-
-      getById(id) {
-        let result = this.getURL(`/${id}`);
-        return result;
-      }
-
-      upsert (id = '') {
-        let result = this.getURL(`/${id}`);
-        return result;
-      }
-
-      get datatable() {
-        let result = this.getURL(`/GetDataTable`)
-        return result;
-      }
-
-      get tableMetadata() {
-        let result = this.getURL(`/GetTableMetadata`)
-        return result;
-      }
-
-
-    }
-
-    class categories extends BASE_URL {
-      constructor() {
-        super('/Categories')
-      }
-
-    }
-
-    class products extends BASE_URL {
-      constructor() {
-        super('/Products')
-      }
-     }
-
-    class modifier extends BASE_URL {
-      constructor() {
-        super('/Modifier')
-      }
-
-      upsertProductModifier(productId) {
-        let result = this.getURL(`UpsertProductModifiers/${productId}`);
-        return result;
-      }
-
-     }
-
-
-
     return {
-      urls: {
-        categories: new categories(),
-        products: new products(),
-        modifier: new modifier()
-      }
+      ...AppUrl,
     }
   }
 })

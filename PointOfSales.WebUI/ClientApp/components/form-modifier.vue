@@ -57,8 +57,8 @@
 
 <script>
 
-  import { formHelper } from './form-helper'
   import { eventBus } from './event-bus'
+ const nameComponent = 'form-modifier'
 
   class Modifier {
     constructor() {
@@ -92,9 +92,9 @@
     created() {
       var vm = this;
       console.log(this.$refs);
-      eventBus.$on('saveForm::form-modifier', () => vm.upsert({}))
-      eventBus.$on('loadForm::form-modifier', (row) => vm.loadRecord(row))
-      eventBus.$on('clearForm::form-modifier', (row) => {
+      eventBus.$on(`saveForm::${nameComponent}`, () => vm.upsert({}))
+      eventBus.$on(`loadForm::${nameComponent}`, (row) => vm.loadRecord(row))
+      eventBus.$on(`clearForm::${nameComponent}`, (row) => {
         vm.clearForm()
       })
 
@@ -129,13 +129,13 @@
         this.isAjax = true;
         var vm = this;
         this.$http({
-          method: 'post',
+          method:  'post',
           url: this.urls.modifier.upsert(vm.form.id),
           data: this.form,
         }).then(function (result) {
           vm.errList = null;
           vm.clearForm();
-          vm.$parent.reloadTable();
+          eventBus.$emit(`reloadTable::${nameComponent}`)
         }).catch(function (error) {
           if (error) {
             vm.errList = error.response.data.errors;

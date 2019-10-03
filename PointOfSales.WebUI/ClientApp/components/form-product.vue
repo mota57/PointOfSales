@@ -8,129 +8,136 @@
     </div>
 
     <div v-if="!isAjax">
+      <form ref="formElement" :class="{ 'sr-only' : isEdit == false}" @submit.prevent="upsert">
+        <div class="row">
+          <input type="hidden" v-model="form.Id" />
 
-    <form ref="formElement"  :class="{ 'sr-only' : isEdit == false}"  @submit.prevent="upsert">
-      <div class="row">
-        <input type="hidden" v-model="form.Id" />
+          <div class="col-6">
+            <div class="form-group">
+              <label for="Name">Name</label>
+              <input id="Name" type="text" v-model="form.name" class="form-control" placeholder="Enter name">
 
-        <div class="col-6">
-          <div class="form-group">
-            <label for="Name">Name</label>
-            <input id="Name" type="text" v-model="form.name" class="form-control" placeholder="Enter name">
+              <template v-if="errList && errList.Name">
+                <p class="text-danger" v-for="err in errList.Name"> {{err}} </p>
+              </template>
+            </div>
 
-            <template v-if="errList && errList.Name">
-              <p class="text-danger" v-for="err in errList.Name"> {{err}} </p>
-            </template>
+            <div class="form-group">
+              <label for="Price">Price</label>
+              <input id="Price" type="number" v-model="form.price" class="form-control" placeholder="Enter Price">
+              <template v-if="errList && errList.Price">
+                <p class="text-danger" v-for="err in errList.Price"> {{err}} </p>
+              </template>
+            </div>
+
           </div>
 
-          <div class="form-group">
-            <label for="Price">Price</label>
-            <input id="Price" type="number" v-model="form.price" class="form-control" placeholder="Enter Price">
-            <template v-if="errList && errList.Price">
-              <p class="text-danger" v-for="err in errList.Price"> {{err}} </p>
-            </template>
+          <div class="col-6">
+            <div class="form-group">
+              <label for="ProductCode">Product Code</label>
+              <input id="ProductCode" type="text" v-model="form.productCode" class="form-control" placeholder="Enter product code">
+              <template v-if="errList && errList.ProductCode">
+                <p class="text-danger" v-for="err in errList.ProductCode"> {{err}} </p>
+              </template>
+            </div>
+
+            <div class="form-group">
+              <label for="Category">Category </label>
+              <v-select id="Category" label="name" :options="options" :reduce="m => m.id" v-model="form.categoryId" @search="onSearch" />
+
+              <b-button v-b-modal.form-category>Open Second Modal</b-button>
+
+              <template v-if="errList && errList.Category">
+                <p class="text-danger" v-for="err in errList.Category"> {{err}} </p>
+              </template>
+            </div>
+          </div>
+          <div class="col-6">
+
+            <div class="form-group">
+              <label for="ProductModifier">Product Modifier </label>
+              <v-select id="ProductModifier" multiple label="name" :options="optionModifier" :reduce="m => m.id" v-model="form.modifierIds" @search="onSearchModifier" />
+              <template v-if="errList && errList.ProductModifier">
+                <p class="text-danger" v-for="err in errList.ProductModifier"> {{err}} </p>
+              </template>
+            </div>
+
+            <form-image v-on:image-deleted="isImageDeleted = true" ref="formImage1" :imagebytes="form.mainImage" v-model="form.mainImageForm">
+              <template v-if="errList && errList.MainImage">
+                <p class="text-danger" v-for="err in errList.MainImage"> {{err}} </p>
+              </template>
+            </form-image>
+
+
           </div>
 
         </div>
+        <button v-if="display" type="submit" class="btn btn-primary" :disabled="isAjax">Save</button>
+      </form>
 
-        <div class="col-6">
-          <div class="form-group">
-            <label for="ProductCode">Product Code</label>
-            <input id="ProductCode" type="text" v-model="form.productCode" class="form-control" placeholder="Enter product code">
-            <template v-if="errList && errList.ProductCode">
-              <p class="text-danger" v-for="err in errList.ProductCode"> {{err}} </p>
-            </template>
-          </div>
-
-          <div class="form-group">
-            <label for="Category">Category </label>
-            <v-select id="Category" label="name" :options="options" :reduce="m => m.id" v-model="form.categoryId" @search="onSearch" />
-            <template v-if="errList && errList.Category">
-              <p class="text-danger" v-for="err in errList.Category"> {{err}} </p>
-            </template>
-          </div>
+      <!-- MODAL CATEGORY-->
+      <b-modal id="form-category" title="Category" ok-only hide-footer>
+        <form-category v-on:save-success="$bvModal.hide('form-category')"></form-category>
+        <div class="modal-footer">
+          <button type="button" @click="$bvModal.hide('form-category')" class="btn btn-secondary">Close</button>
+          <!--<button type="button" class="btn btn-primary" @click="eventAppBus.$emit('form-category::handler','upsert')">Save</button>-->
         </div>
-        <div class="col-6">
-
-          <div class="form-group">
-            <label for="ProductModifier">Product Modifier </label>
-            <v-select id="ProductModifier" multiple  label="name" :options="optionModifier" :reduce="m => m.id" v-model="form.modifierIds" @search="onSearchModifier" />
-            <template v-if="errList && errList.ProductModifier">
-              <p class="text-danger" v-for="err in errList.ProductModifier"> {{err}} </p>
-            </template>
-          </div>
-
-          <form-image ref="formImage1" :imagebytes="form.mainImage" v-model="form.mainImageForm">
-            <template v-if="errList && errList.MainImage">
-              <p class="text-danger" v-for="err in errList.MainImage"> {{err}} </p>
-            </template>
-          </form-image>
-
-
-        </div>
-
-      </div>
-      <button v-if="display" type="submit" class="btn btn-primary" :disabled="isAjax">Save</button>
-    </form>
-      <pre>
-{{form}}
-</pre>
-
+      </b-modal>
 
       <!--<div :class="{'row':true,  'sr-only': isEdit == true}">
 
-        <div class="col-6">
-          <div class="form-group">
-            <label >Name</label>
-            <span class="form-detail-value">
-              {{form.name}}
-              <icon icon="pen" class="mr-2 menu-icon" style="float:right;cursor:pointer" @click="isEdit=!isEdit"/>
-            </span>
-          </div>
+    <div class="col-6">
+      <div class="form-group">
+        <label >Name</label>
+        <span class="form-detail-value">
+          {{form.name}}
+          <icon icon="pen" class="mr-2 menu-icon" style="float:right;cursor:pointer" @click="isEdit=!isEdit"/>
+        </span>
+      </div>
 
-          <div class="form-group">
-            <label >Price</label>
-            <span class="form-detail-value">
-              {{form.price}}
-              <icon icon="pen" class="mr-2 menu-icon" style="float:right;cursor:pointer;" @click="isEdit=!isEdit"/>
-            </span>
+      <div class="form-group">
+        <label >Price</label>
+        <span class="form-detail-value">
+          {{form.price}}
+          <icon icon="pen" class="mr-2 menu-icon" style="float:right;cursor:pointer;" @click="isEdit=!isEdit"/>
+        </span>
 
-          </div>
+      </div>
 
+    </div>
+
+    <div class="col-6">
+      <div class="form-group">
+        <label >Product Code</label>
+        <span class="form-detail-value">
+          {{form.productCode}}
+          <icon icon="pen" class="mr-2 menu-icon" style="float:right;cursor:pointer" @click="isEdit=!isEdit"/>
+        </span>
+      </div>
+
+      <div class="form-group">
+        <label >Category </label>
+        <div>
+          <v-select :disabled="isEdit == false" label="name" :options="options" :reduce="m => m.id" v-model="form.categoryId" @search="onSearch" />
         </div>
-
-        <div class="col-6">
-          <div class="form-group">
-            <label >Product Code</label>
-            <span class="form-detail-value">
-              {{form.productCode}}
-              <icon icon="pen" class="mr-2 menu-icon" style="float:right;cursor:pointer" @click="isEdit=!isEdit"/>
-            </span>
-          </div>
-
-          <div class="form-group">
-            <label >Category </label>
-            <div>
-              <v-select :disabled="isEdit == false" label="name" :options="options" :reduce="m => m.id" v-model="form.categoryId" @search="onSearch" />
-            </div>
-          </div>
-        </div>
-        <div class="col-6">
+      </div>
+    </div>
+    <div class="col-6">
 
 
-          <div class="form-group">
-            <label for="Product Modifier">Product Modifier </label>
-            <v-select  :disabled="isEdit == false"  label="name" :options="optionModifier" :reduce="m => m.id" v-model="form.modifierIds" @search="onSearchModifier" />
-          </div>
+      <div class="form-group">
+        <label for="Product Modifier">Product Modifier </label>
+        <v-select  :disabled="isEdit == false"  label="name" :options="optionModifier" :reduce="m => m.id" v-model="form.modifierIds" @search="onSearchModifier" />
+      </div>
 
-          <div class="form-group" @click="isEdit=!isEdit">
-            <label>Image </label>
-            <span class="form-detail-image">
-              <img :src="'data:image/png;base64, '+ form.mainImage" /><br />
-            </span>
-          </div>
-        </div>
-      </div>-->
+      <div class="form-group" @click="isEdit=!isEdit">
+        <label>Image </label>
+        <span class="form-detail-image">
+          <img :src="'data:image/png;base64, '+ form.mainImage" /><br />
+        </span>
+      </div>
+    </div>
+  </div>-->
 
     </div>
 
@@ -138,10 +145,12 @@
 </template>
 
 <script>
+ 
+import _ from 'lodash'
+import { eventBus } from './event-bus'
+import { formHelper } from './form-helper'
 
-  import _ from 'lodash'
-  import { eventBus } from './event-bus'
-  import { formHelper } from './form-helper'
+const nameComponent = 'form-product'
 
 
   class ProductFormDTO {
@@ -167,26 +176,31 @@
         form: new ProductFormDTO(),
         errList: { MainImage: ['test error'] },
         options: [],
-        optionModifier:[]
+        optionModifier:[],
+        isImageDeleted: false,
       }
+    },
+    beforeDestroy() {
+      eventBus.$off(`saveForm::${nameComponent}`)
+      eventBus.$off(`loadForm::${nameComponent}`)
+      eventBus.$off(`clearForm::${nameComponent}`)
+
     },
     created() {
       var vm = this;
-      console.log(this.$refs);
-      eventBus.$on('saveForm::form-product', () => vm.upsert({}))
-      eventBus.$on('loadForm::form-product', (row) => vm.loadRecord(row))
-      eventBus.$on('clearForm::form-product', (row) => {
-        console.log('$refs');
-        console.log(vm.$refs);
-        vm.$refs.formImage1.removeImage();
-        vm.clearForm()
-      })
+      eventBus.$on(`saveForm::${nameComponent}`, vm.upsert)
+      eventBus.$on(`loadForm::${nameComponent}`, vm.loadRecord)
+      eventBus.$on(`clearForm::${nameComponent}`, vm.callClearForm)
       //init searches 
       vm.onSearch('', () => { })
       vm.onSearchModifier('', () => { })
 
     },
     methods: {
+      callClearForm() {
+        vm.$refs.formImage1.removeImage();
+        vm.clearForm()
+      },
       clearForm() {
         this.form = new ProductFormDTO()
         console.log('clearForm');
@@ -235,7 +249,7 @@
         //avoid sending bytes
         formData.delete('mainImage');
 
-        if (this.$refs.formImage1.isImageDeleted()) {
+        if (this.isImageDeleted) {
           formData.append('imageDeleted', true)
         }
 
@@ -247,7 +261,7 @@
         }).then(function (result) {
           vm.errList = null;
           vm.clearForm();
-          vm.$parent.reloadTable();
+          eventBus.$emit(`reloadTable::${nameComponent}`)
         }).catch(function (error) {
           if (error) {
             vm.errList = error.response.data.errors;

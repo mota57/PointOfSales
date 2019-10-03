@@ -16,6 +16,10 @@ namespace PointOfSales.Core.Service
         }
 
 
+        /// <summary>
+        /// Add or update modifier and Item modifier
+        /// </summary>
+        /// <param name="modClient"></param>
         public void UpsertDeleteModiferAndItemModifier(Modifier modClient)
         {
             //load the modifier
@@ -60,6 +64,12 @@ namespace PointOfSales.Core.Service
         }
 
 
+        /// <summary>
+        /// Assing a modifiers to a product
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <param name="productModifierClient"></param>
+        /// <returns></returns>
         public async Task UpsertDeleteProductModifiers(int productId, List<ProductModifier> productModifierClient)
         {
            

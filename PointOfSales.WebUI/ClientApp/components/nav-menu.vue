@@ -1,4 +1,4 @@
-﻿<template>
+<template>
     <div class="main-nav">
         <nav class="navbar navbar-expand-md navbar-dark">
             <button class="navbar-toggler" type="button" @click="toggleCollapsed">
@@ -13,7 +13,7 @@
             <transition name="slide">
                 <div :class="'collapse navbar-collapse' + (!collapsed ? ' show':'')" v-show="!collapsed">
                     <ul class="navbar-nav">
-                        <li class="nav-item" v-for="(route, index) in routes" :key="index">
+                        <li class="nav-item" v-for="(route, index) in routes" :key="index" v-if="!route.hidden">
                             <router-link :to="route.path" exact-active-class="active">
                                 <icon :icon="route.icon" class="mr-2 menu-icon" /><span>{{ route.display }}</span>
                             </router-link>
