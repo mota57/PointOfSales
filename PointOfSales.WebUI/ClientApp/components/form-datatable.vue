@@ -96,7 +96,7 @@
           </div>
 
           <div slot="Edit" slot-scope="props">
-            <a style="cursor:pointer" :data-target="'#form' + name" data-toggle="modal" @click="callLoad(props.row)"> <icon icon="edit" class="mr-2 menu-icon" /> </a>
+            <a style="cursor:pointer"    @click="callLoad(props.row)"> <icon icon="edit" class="mr-2 menu-icon" /> </a>
             <a style="cursor:pointer" :data-target="'#confirm' + name" data-toggle="modal" @click="rowToDelete = props.row"> <icon icon="trash" class="mr-2 menu-icon" /> </a>
             <slot name="sectionAction" :row="props.row"></slot>
           </div>
