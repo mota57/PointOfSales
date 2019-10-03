@@ -16,7 +16,7 @@
     </div>
     <!-- modal form CREATE /UPDATE -->
 
-    <b-modal scrollable class="modal-dialog-scrollable" :id="'form-'+name" size="xl" :title="title" hide-footer>
+    <b-modal scrollable class="modal-dialog-scrollable" :id="modalFormId" size="xl" :title="title" hide-footer>
 
       <slot name="edit"></slot>
 
@@ -48,7 +48,7 @@
     </div>
   </div>-->
     <!-- modal delete  -->
-    <div class="modal fade" :id="'confirm'+name" tabindex="-1" role="dialog" aria-hidden="true">
+    <!--<div class="modal fade" :id="'confirm-'+modalFormId" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -67,7 +67,17 @@
           </div>
         </div>
       </div>
-    </div>
+    </div>-->
+
+    <b-modal :id="'modal-delete-'+modalFormId" size="lg" title="Large Modal" hide-footer>
+      <p>Are you sure you want to delete this record?</p>
+
+      <div class="modal-footer">
+        <button type="button" @click="$bvModal.hide('modal-delete'+modalFormId)" class="btn btn-secondary">Close</button>
+        <button type="button" class="btn btn-primary" @click="deleteRecord()">Save</button>
+      </div>
+
+    </b-modal>
 
 
     <div class="row">
@@ -138,16 +148,19 @@
   </div>
 </template>
 <script>
-  import { eventBus } from './event-bus'
 
   export default {
     props: ['name', 'eventpostfix', 'title'],
     methods: {
-      callClearForm() { eventBus.$emit(`clearForm::${this.eventpostfix}`);},
-      callSave() {
-        eventBus.$emit(`saveForm::${this.eventpostfix}`);
+      callClearForm() {
+        this.eventBus.$emit(`clearForm::${this.eventpostfix}`);
       },
-      callLoad(row) { eventBus.$emit(`loadForm::${this.eventpostfix}`,row);  },
+      callSave() {
+        this.eventBus.$emit(`saveForm::${this.eventpostfix}`);
+      },
+      callLoad(row) {
+        this.eventBus.$emit(`loadForm::${this.eventpostfix}`, row);
+      },
       reloadTable() {
         if (this.$refs.btnCloseEdit) {
           this.$refs.btnCloseEdit.click();
@@ -157,7 +170,7 @@
         //}
         this.$refs.tableObj.refresh();
       },
-      deleteRecord(row) {
+      deleteRecord() {
         this.isAjax = true;
         var vm = this;
         this.$http.delete(vm.urls[this.name].delete(this.rowToDelete.Id))
@@ -190,12 +203,12 @@
       //}
     },
     beforeDestroy() {
-      eventBus.$off(`reloadTable::${this.eventpostfix}`)
+      this.eventBus.$off(`reloadTable::${this.eventpostfix}`)
     },
     async created() {
       var vm = this;
       vm.modalFormId = 'form-' + vm.name;
-      eventBus.$on(`reloadTable::${this.eventpostfix}`, function () {
+      vm.eventBus.$on(`reloadTable::${this.eventpostfix}`, function () {
         vm.$bvModal.hide(vm.modalFormId)
         vm.reloadTable()
       })

@@ -48,16 +48,15 @@
         <button v-if="display" type="submit" class="btn btn-primary" :disabled="isAjax">Save</button>
       </form>
     </div>
- <pre>
+ <!--<pre>
 {{form}}
-</pre>
+</pre>-->
 
   </div>
 </template>
 
 <script>
 
-  import { eventBus } from './event-bus'
  const nameComponent = 'form-modifier'
 
   class Modifier {
@@ -89,12 +88,18 @@
         formItemModifier: new ItemModifier()
       }
     },
+    beforeDestroy() {
+      this.eventBus.$on(`${nameComponent}::handler`)
+      this.eventBus.$off(`saveForm::${nameComponent}`)
+      this.eventBus.$off(`loadForm::${nameComponent}`)
+      this.eventBus.$off(`clearForm::${nameComponent}`)
+    },
     created() {
       var vm = this;
-      console.log(this.$refs);
-      eventBus.$on(`saveForm::${nameComponent}`, () => vm.upsert({}))
-      eventBus.$on(`loadForm::${nameComponent}`, (row) => vm.loadRecord(row))
-      eventBus.$on(`clearForm::${nameComponent}`, (row) => {
+      this.eventBus.$on(`${nameComponent}::handler`, (handlerName) => vm[handlerName]())
+      this.eventBus.$on(`saveForm::${nameComponent}`, () => vm.upsert({}))
+      this.eventBus.$on(`loadForm::${nameComponent}`, (row) => vm.loadRecord(row))
+      this.eventBus.$on(`clearForm::${nameComponent}`, (row) => {
         vm.clearForm()
       })
 
@@ -135,7 +140,8 @@
         }).then(function (result) {
           vm.errList = null;
           vm.clearForm();
-          eventBus.$emit(`reloadTable::${nameComponent}`)
+          vm.eventBus.$emit(`reloadTable::${nameComponent}`)
+          vm.$emit(`save-success`)
         }).catch(function (error) {
           if (error) {
             vm.errList = error.response.data.errors;

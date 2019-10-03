@@ -34,7 +34,6 @@
 
 <script>
 
-import { eventBus } from './event-bus'
 
  const nameComponent = 'form-category'
 
@@ -58,19 +57,19 @@ import { eventBus } from './event-bus'
       }
     },
     beforeDestroy() {
-      eventBus.$off(`${nameComponent}::handler`)
-      eventBus.$off(`saveForm::${nameComponent}`)
-      eventBus.$off(`loadForm::${nameComponent}`)
-      eventBus.$off(`clearForm::${nameComponent}`)
+      this.eventBus.$off(`${nameComponent}::handler`)
+      this.eventBus.$off(`saveForm::${nameComponent}`)
+      this.eventBus.$off(`loadForm::${nameComponent}`)
+      this.eventBus.$off(`clearForm::${nameComponent}`)
 
     },
     created() {
       var vm = this;
       vm.apiUrl = vm.urls.categories;
-      eventBus.$on(`${nameComponent}::handler`, (handlerName) => vm[handlerName]())
-      eventBus.$on(`saveForm::${nameComponent}`,  vm.upsert())
-      eventBus.$on(`loadForm::${nameComponent}`,  vm.loadRecord)
-      eventBus.$on(`clearForm::${nameComponent}`, (row) => { vm.clearForm() })
+      this.eventBus.$on(`${nameComponent}::handler`, (handlerName) => vm[handlerName]())
+      this.eventBus.$on(`saveForm::${nameComponent}`,  vm.upsert)
+      this.eventBus.$on(`loadForm::${nameComponent}`,  vm.loadRecord)
+      this.eventBus.$on(`clearForm::${nameComponent}`, (row) => { vm.clearForm() })
 
     },
     methods: {
@@ -101,11 +100,13 @@ import { eventBus } from './event-bus'
         }).then(function (result) {
           vm.errList = null;
           vm.clearForm();
-          eventBus.$emit(`reloadTable::${nameComponent}`)
+          vm.eventBus.$emit(`reloadTable::${nameComponent}`)
           vm.$emit(`save-success`)
         }).catch(function (error) {
           if (error) {
-            vm.errList = error.response.data.errors;
+            if (error.response) {
+              vm.errList = error.response.data.errors;
+            }
           }
         }).then(function () {
           vm.isAjax = false;

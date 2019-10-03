@@ -18,6 +18,7 @@ import { ServerTable, ClientTable, Event } from 'vue-tables-2';
 import Toasted from '@gitlab/vue-toasted';
 import BootstrapVue from 'bootstrap-vue'
 
+import { eventBus } from 'components/event-bus'
 
 
 
@@ -50,6 +51,7 @@ Vue.mixin({
   data: function () {
     return {
       ...AppUrl,
+      eventBus: eventBus
     }
   }
 })

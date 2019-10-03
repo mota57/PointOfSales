@@ -45,7 +45,10 @@
               <label for="Category">Category </label>
               <v-select id="Category" label="name" :options="options" :reduce="m => m.id" v-model="form.categoryId" @search="onSearch" />
 
-              <b-button v-b-modal.form-category>Open Second Modal</b-button>
+              <b-button class="btn btn-light" v-b-modal.form-category>
+                <icon icon="plus" class="mr-2 menu-icon" />
+                Category
+              </b-button>
 
               <template v-if="errList && errList.Category">
                 <p class="text-danger" v-for="err in errList.Category"> {{err}} </p>
@@ -57,6 +60,11 @@
             <div class="form-group">
               <label for="ProductModifier">Product Modifier </label>
               <v-select id="ProductModifier" multiple label="name" :options="optionModifier" :reduce="m => m.id" v-model="form.modifierIds" @search="onSearchModifier" />
+
+              <b-button class="btn btn-light" v-b-modal.form-modifier>
+                <icon icon="plus" class="mr-2 menu-icon" />
+               Modifier 
+              </b-button>
               <template v-if="errList && errList.ProductModifier">
                 <p class="text-danger" v-for="err in errList.ProductModifier"> {{err}} </p>
               </template>
@@ -80,7 +88,17 @@
         <form-category v-on:save-success="$bvModal.hide('form-category')"></form-category>
         <div class="modal-footer">
           <button type="button" @click="$bvModal.hide('form-category')" class="btn btn-secondary">Close</button>
-          <!--<button type="button" class="btn btn-primary" @click="eventAppBus.$emit('form-category::handler','upsert')">Save</button>-->
+          <button type="button" class="btn btn-primary" @click="eventBus.$emit('form-category::handler','upsert')">Save</button>
+        </div>
+      </b-modal>
+
+
+      <!-- MODAL MODIFIER-->
+      <b-modal id="form-modifier" size="lg" title="Modifier" ok-only hide-footer>
+        <form-modifier v-on:save-success="$bvModal.hide('form-modifier')"></form-modifier>
+        <div class="modal-footer">
+          <button type="button" @click="$bvModal.hide('form-modifier')" class="btn btn-secondary">Close</button>
+          <button type="button" class="btn btn-primary" @click="eventBus.$emit('form-modifier::handler','upsert')">Save</button>
         </div>
       </b-modal>
 
@@ -147,7 +165,6 @@
 <script>
  
 import _ from 'lodash'
-import { eventBus } from './event-bus'
 import { formHelper } from './form-helper'
 
 const nameComponent = 'form-product'
@@ -181,16 +198,16 @@ const nameComponent = 'form-product'
       }
     },
     beforeDestroy() {
-      eventBus.$off(`saveForm::${nameComponent}`)
-      eventBus.$off(`loadForm::${nameComponent}`)
-      eventBus.$off(`clearForm::${nameComponent}`)
+      this.eventBus.$off(`saveForm::${nameComponent}`)
+      this.eventBus.$off(`loadForm::${nameComponent}`)
+      this.eventBus.$off(`clearForm::${nameComponent}`)
 
     },
     created() {
       var vm = this;
-      eventBus.$on(`saveForm::${nameComponent}`, vm.upsert)
-      eventBus.$on(`loadForm::${nameComponent}`, vm.loadRecord)
-      eventBus.$on(`clearForm::${nameComponent}`, vm.callClearForm)
+      this.eventBus.$on(`saveForm::${nameComponent}`, vm.upsert)
+      this.eventBus.$on(`loadForm::${nameComponent}`, vm.loadRecord)
+      this.eventBus.$on(`clearForm::${nameComponent}`, vm.callClearForm)
       //init searches 
       vm.onSearch('', () => { })
       vm.onSearchModifier('', () => { })
@@ -261,7 +278,7 @@ const nameComponent = 'form-product'
         }).then(function (result) {
           vm.errList = null;
           vm.clearForm();
-          eventBus.$emit(`reloadTable::${nameComponent}`)
+          vm.eventBus.$emit(`reloadTable::${nameComponent}`)
         }).catch(function (error) {
           if (error) {
             vm.errList = error.response.data.errors;
