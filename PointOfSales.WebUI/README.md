@@ -39,6 +39,7 @@ https://simonkollross.de/posts/vuejs-using-v-model-with-objects-for-custom-compo
 
 https://support.revelsystems.com/hc/en-us/articles/203585239-Introduction-to-Modifiers
 https://squareup.com/dashboard/
+https://ehoppersupport.zendesk.com/hc/en-us
 
 # vue third party components
 https://vue-multi-select.tuturu.io/#filters
