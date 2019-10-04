@@ -1,6 +1,5 @@
 <template>
   <div>
-    <h1>Product Information</h1>
 
     <div v-if="isAjax" class="text-center">
       <p><em>Loading...</em></p>
@@ -43,7 +42,7 @@
 
             <div class="form-group">
               <label for="Category">Category </label>
-              <v-select id="Category" label="name" :options="options" :reduce="m => m.id" v-model="form.categoryId" @search="onSearch" />
+              <v-select  label="name" :options="options" :reduce="m => m.id" v-model="form.categoryId" @search="onSearch" />
 
               <b-button class="btn btn-light" v-b-modal.form-category>
                 <icon icon="plus" class="mr-2 menu-icon" />
@@ -70,7 +69,7 @@
               </template>
             </div>
 
-            <form-image v-on:image-deleted="isImageDeleted = true" ref="formImage1" :imagebytes="form.mainImage" v-model="form.mainImageForm">
+            <form-image  ref="formImage1" :imagebytes="form.mainImage" v-model="form.mainImageForm">
               <template v-if="errList && errList.MainImage">
                 <p class="text-danger" v-for="err in errList.MainImage"> {{err}} </p>
               </template>
@@ -195,6 +194,7 @@ const nameComponent = 'form-product'
         options: [],
         optionModifier:[],
         isImageDeleted: false,
+        apiUrl:''
       }
     },
     beforeDestroy() {
@@ -205,33 +205,35 @@ const nameComponent = 'form-product'
     },
     created() {
       var vm = this;
+      this.apiUrl = this.urls.products
+      console.log(`${nameComponent}::created`)
       this.eventBus.$on(`saveForm::${nameComponent}`, vm.upsert)
-      this.eventBus.$on(`loadForm::${nameComponent}`, vm.loadRecord)
-      this.eventBus.$on(`clearForm::${nameComponent}`, vm.callClearForm)
+      this.eventBus.$on(`loadForm::${nameComponent}`, (row) => vm.loadRecord(row))
+      this.eventBus.$on(`clearForm::${nameComponent}`, vm.clearForm)
       //init searches 
-      vm.onSearch('', () => { })
-      vm.onSearchModifier('', () => { })
+      this.onSearch('', () => { })
+      this.onSearchModifier('', () => { })
 
     },
     methods: {
-      callClearForm() {
-        vm.$refs.formImage1.removeImage();
-        vm.clearForm()
-      },
       clearForm() {
+        console.log(`${nameComponent}::clearform`);
+        //if (this.$refs && this.$refs.formImage1) {
+        //  this.$refs.formImage1.removeImage();
+        //}
         this.form = new ProductFormDTO()
-        console.log('clearForm');
       },
       loadRecord(row) {
+        //alert(JSON.stringify(row));
         this.isAjax = true;
         this.clearForm();
         var vm = this;
-        this.$http.get(vm.urls.products.getById(row.Id))
+        this.$http.get(vm.apiUrl.getById(row.Id))
           .then((res) => {
             let data = res.data
             Object.assign(vm.form, data);
           })
-          .then((err) => { if (err) { console.log(err); } })
+          .catch((err) => { if (err) { console.error(err); } })
           .then(() => { vm.isAjax = false; })
 
       },
@@ -266,14 +268,14 @@ const nameComponent = 'form-product'
         //avoid sending bytes
         formData.delete('mainImage');
 
-        if (this.isImageDeleted) {
+        if (this.$refs.formImage1.isImageDeleted()) {
           formData.append('imageDeleted', true)
         }
 
         var vm = this;
         this.$http({
           method: vm.form.id ? 'put' : 'post',
-          url: this.urls.products.upsert(vm.form.id),
+          url: this.apiUrl.upsert(vm.form.id),
           data: formData,
         }).then(function (result) {
           vm.errList = null;
@@ -281,7 +283,10 @@ const nameComponent = 'form-product'
           vm.eventBus.$emit(`reloadTable::${nameComponent}`)
         }).catch(function (error) {
           if (error) {
-            vm.errList = error.response.data.errors;
+            if (error.response) {
+              vm.errList = error.response.data.errors;
+            }
+            console.error(error);
           }
         }).then(function () {
           vm.isAjax = false;

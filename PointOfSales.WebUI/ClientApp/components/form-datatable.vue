@@ -14,10 +14,9 @@
         <li>fix on blur reset form</li>
       </ul>
     </div>
+
     <!-- modal form CREATE /UPDATE -->
-
-    <b-modal scrollable class="modal-dialog-scrollable" :id="modalFormId" size="xl" :title="title" hide-footer>
-
+    <b-modal static scrollable class="modal-dialog-scrollable" :id="modalFormId" size="xl" :title="title" hide-footer @shown="callLoad">
       <slot name="edit"></slot>
 
       <div class="modal-footer">
@@ -25,123 +24,88 @@
         <button type="button" class="btn btn-primary" @click="callSave">Save</button>
       </div>
     </b-modal>
+    <!--/ modal form CREATE /UPDATE -->
 
-    <!--<div class="modal fade" :id="modalFormId" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">{{title}} </h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
 
-          <slot name="edit"></slot>
-
-        </div>
-        <div class="modal-footer">
-          <button type="button" ref="btnCloseEdit" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary" @click="callSave">Save</button>
-        </div>
-      </div>
-    </div>
-  </div>-->
-    <!-- modal delete  -->
-    <!--<div class="modal fade" :id="'confirm-'+modalFormId" tabindex="-1" role="dialog" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">{{title}}</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="rowToDelete = null">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <p>Are you sure you want to delete this record?</p>
-
-          </div>
-          <div class="modal-footer">
-            <button type="button" ref="btnCloseDelete" class="btn btn-secondary" @click="rowToDelete = null" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" @click="deleteRecord()" data-dismiss="modal">Save changes</button>
-          </div>
-        </div>
-      </div>
-    </div>-->
-
-    <b-modal :id="'modal-delete-'+modalFormId" size="lg" title="Large Modal" hide-footer>
+    <!-- MODAL DELETE  -->
+    <b-modal :id="modalFormDelete" size="sm" :title="title" hide-footer centered >
       <p>Are you sure you want to delete this record?</p>
 
       <div class="modal-footer">
-        <button type="button" @click="$bvModal.hide('modal-delete'+modalFormId)" class="btn btn-secondary">Close</button>
-        <button type="button" class="btn btn-primary" @click="deleteRecord()">Save</button>
+        <button type="button" @click="$bvModal.hide(modalFormDelete)" class="btn btn-secondary">Close</button>
+        <button type="button" class="btn btn-primary" @click="() => { $bvModal.hide(this.modalFormDelete);  deleteRecord(); }">Save</button>
       </div>
 
     </b-modal>
+    <!-- /MODAL DELETE  -->
 
-
+    <!-- TABLE -->
     <div class="row">
       <div class="col-12" v-if="isComplete">
         <v-server-table ref="tableObj" :name="name" :url="urls[name].datatable" :columns="columns" :options="options">
           <div slot="beforeTable" style="border-bottom-width: 2px; border: 1px solid #dee2e6;">
-            <!--<button @click="callClearForm()" :data-target="'#form' + name" data-toggle="modal" type="button" class="btn " style="border: 1px solid #dee2e6">
-            <icon icon="plus" class="mr-2 menu-icon" />Add
-          </button>-->
-            <b-button @click="$bvModal.show(modalFormId)">
+
+            <b-button  @click="() => { currentRow = null; callClearForm();   $bvModal.show(modalFormId)}">
               <icon icon="plus" class="mr-2 menu-icon" /> Add
             </b-button>
+
+            <!--<b-button  @click="$bvModal.show(modalFilterId)"> <icon icon="filter" class="mr-2 menu-icon" /> </b-button>-->
 
             <slot name="sectionBeforeTable"></slot>
 
           </div>
-
+          <!-- column actions -->
           <div slot="Edit" slot-scope="props">
-            <a style="cursor:pointer"    @click="callLoad(props.row)"> <icon icon="edit" class="mr-2 menu-icon" /> </a>
-            <a style="cursor:pointer" :data-target="'#confirm' + name" data-toggle="modal" @click="rowToDelete = props.row"> <icon icon="trash" class="mr-2 menu-icon" /> </a>
+            <a style="cursor:pointer" @click="() => { currentRow = props.row; $bvModal.show(modalFormId);  }"> <icon icon="edit" class="mr-2 menu-icon" /> </a>
+            <a style="cursor:pointer" @click="()=> { currentRow = props.row; $bvModal.show(modalFormDelete);  }"> <icon icon="trash" class="mr-2 menu-icon" /> </a>
             <slot name="sectionAction" :row="props.row"></slot>
           </div>
+          <!--/ column actions -->
         </v-server-table>
       </div>
+      <!-- /TABLE-->
 
-      <!--<div class="card col-6">
-      <div class="card-body">
-        <h5 class="card-title">Create filter</h5>
+      <b-modal static scrollable class="modal-dialog-scrollable" :id="modalFilterId" size="lg" title="Filters" hide-footer >
+        <div class="card col-12">
+          <div class="card-body">
+            <h5 class="card-title">Create filter</h5>
 
-        <div class="form-group row">
-          <label class="col-sm-2 col-form-label">Field</label>
-          <div class="col-sm-10">
-            <select class="form-control" >
-              <option value="Name">Name</option>
-              <option value="Id">Id</option>
-            </select>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Field</label>
+              <div class="col-sm-10">
+                <select class="form-control">
+                  <option value="Name">Name</option>
+                  <option value="Id">Id</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Operator</label>
+              <div class="col-sm-10">
+                <select class="form-control">
+                  <option>Equals</option>
+                  <option>Not equal to</option>
+                  <option>less than</option>
+                  <option>greater or equal</option>
+                  <option>contains</option>
+                  <option>does not contain</option>
+                  <option>start with</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Value</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" />
+              </div>
+            </div>
+
+            <a href="#" class="btn btn-primary">Go somewhere</a>
           </div>
         </div>
-
-        <div class="form-group row">
-          <label class="col-sm-2 col-form-label">Operator</label>
-          <div class="col-sm-10">
-            <select class="form-control">
-              <option>Equals</option>
-              <option>Not equal to</option>
-              <option>less than</option>
-              <option>greater or equal</option>
-              <option>contains</option>
-              <option>does not contain</option>
-              <option>start with</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="form-group row">
-          <label class="col-sm-2 col-form-label">Value</label>
-          <div class="col-sm-10">
-            <input type="text"  class="form-control"/>
-          </div>
-        </div>
-
-        <a href="#" class="btn btn-primary">Go somewhere</a>
-      </div>
-    </div>-->
+        </b-modal>
 
     </div>
 
@@ -158,24 +122,19 @@
       callSave() {
         this.eventBus.$emit(`saveForm::${this.eventpostfix}`);
       },
-      callLoad(row) {
-        this.eventBus.$emit(`loadForm::${this.eventpostfix}`, row);
+      callLoad() {
+        if (this.currentRow) {
+          this.eventBus.$emit(`loadForm::${this.eventpostfix}`, this.currentRow);
+        }
       },
       reloadTable() {
-        if (this.$refs.btnCloseEdit) {
-          this.$refs.btnCloseEdit.click();
-        }
-        //if (this.$refs.btnCloseDelete) {
-        //  this.$refs.btnCloseDelete.click();
-        //}
         this.$refs.tableObj.refresh();
       },
       deleteRecord() {
         this.isAjax = true;
         var vm = this;
-        this.$http.delete(vm.urls[this.name].delete(this.rowToDelete.Id))
+        this.$http.delete(vm.urls[this.name].delete(this.currentRow.Id))
           .then((res) => {
-            //show success modal
             this.$toasted.success('save success', {
               position:'top-center',
               duration:3000,
@@ -184,7 +143,6 @@
             vm.reloadTable()
           })
           .catch((err) => {
-            //show error modal
               console.info('err' + JSON.stringify(err.response.data));
               this.$toasted.error(err.response.data.title, {
                 position: 'top-center',
@@ -194,9 +152,6 @@
           })
           .then(() => { vm.isAjax = false; })
       },
-      //callDelete() {
-      //  if (this.rowToDelete) { eventBus.$emit(`deleteForm::${this.eventpostfix}`, this.rowToDelete); }
-      //},
       //to call custom fitler 
       //emitName: function() {
       //  this.$store.commit('${this.name}/SET_FILTER', { '<property_name>': <value> });
@@ -207,8 +162,12 @@
     },
     async created() {
       var vm = this;
-      vm.modalFormId = 'form-' + vm.name;
+      vm.modalFormId = 'modal-form-' + vm.name;
+      vm.modalFormDelete = 'modal-form-delete-' + vm.name;
+      vm.modalFilterId = 'modal-filter-' + vm.name;
+
       vm.eventBus.$on(`reloadTable::${this.eventpostfix}`, function () {
+        console.log(`on::reloadTable::${this.eventpostfix}`)
         vm.$bvModal.hide(vm.modalFormId)
         vm.reloadTable()
       })
@@ -251,7 +210,9 @@
     data() {
       return {
         modalFormId:'',
-        rowToDelete:null, //set this field to the current row on click icon delete
+        modalFormDelete:'',
+        modalFilterId:'',
+        currentRow:null, //set this field to the current row on click icon delete
         isEdit:false,
         isComplete:false,
         isAjax: false,

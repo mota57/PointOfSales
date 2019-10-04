@@ -1,6 +1,5 @@
 <template>
   <div style="padding:1rem">
-    <h1>Modifier Information</h1>
 
     <div v-if="isAjax" class="text-center">
       <p><em>Loading...</em></p>
@@ -14,7 +13,7 @@
 
           <div class="col-6">
             <div class="form-group">
-              <label for="Name">Modifier Name</label>
+              <label for="Name">Name</label>
               <input type="text" v-model="form.name" class="form-control" placeholder="Enter name">
 
               <template v-if="errList && errList.Name">
@@ -31,14 +30,15 @@
               </thead>
               <tbody>
                   <tr v-for="(item, index) in form.itemModifier" :key="index">
-                    <td> <input v-model="item.name"/> </td>
-                    <td> <input type="number" v-model="item.price"/> </td>
-                    <td> <button type="button" @click="removeItemModifier(index)">Remove</button> </td>
+                    <td> <input class="form-control form-control-sm" v-model="item.name"/> </td>
+                    <td> <input class="form-control form-control-sm" type="number" v-model="item.price"/> </td>
+                    <td> <button type="button" class="btn-sm btn-block btn-secondary" @click="removeItemModifier(index)">Remove</button> </td>
+
                   </tr>
                   <tr>
-                    <td> <input placeholder="enter name" v-model="formItemModifier.name"/> </td>
-                    <td> <input type="number" placeholder="enter the price" v-model="formItemModifier.price"/> </td>
-                    <td> <button type="button" @click="addItemModifier()">Add</button> </td>
+                    <td> <input class="form-control form-control-sm" placeholder="enter name" v-model="formItemModifier.name"/> </td>
+                    <td> <input class="form-control form-control-sm" type="number" placeholder="enter the price" v-model="formItemModifier.price"/> </td>
+                    <td> <button type="button" class="btn-sm btn-block btn-primary" @click="addItemModifier()">Add</button> </td>
                   </tr>
               </tbody>
             </table>
@@ -48,9 +48,6 @@
         <button v-if="display" type="submit" class="btn btn-primary" :disabled="isAjax">Save</button>
       </form>
     </div>
- <!--<pre>
-{{form}}
-</pre>-->
 
   </div>
 </template>
@@ -85,7 +82,8 @@
         form: new Modifier(),
         errList: {  },
         options: [],
-        formItemModifier: new ItemModifier()
+        formItemModifier: new ItemModifier(),
+        apiUrl:''
       }
     },
     beforeDestroy() {
@@ -96,6 +94,7 @@
     },
     created() {
       var vm = this;
+      this.apiUrl = this.urls.modifier
       this.eventBus.$on(`${nameComponent}::handler`, (handlerName) => vm[handlerName]())
       this.eventBus.$on(`saveForm::${nameComponent}`, () => vm.upsert({}))
       this.eventBus.$on(`loadForm::${nameComponent}`, (row) => vm.loadRecord(row))
@@ -120,7 +119,7 @@
         this.isAjax = true;
         this.clearForm();
         var vm = this;
-        this.$http.get(vm.urls.modifier.getById(row.id))
+        this.$http.get(vm.apiUrl.getById(row.Id))
           .then((res) => {
             let data = res.data
             Object.assign(vm.form, res.data)
@@ -135,7 +134,7 @@
         var vm = this;
         this.$http({
           method:  'post',
-          url: this.urls.modifier.upsert(vm.form.id),
+          url: this.apiUrl.upsert(),
           data: this.form,
         }).then(function (result) {
           vm.errList = null;

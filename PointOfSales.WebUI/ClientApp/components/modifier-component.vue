@@ -71,74 +71,29 @@
       }, 350),
     },
 
-    upsert(e) {
-
-      this.isAjax = true;
-      let formData = new FormData();
-
-      for (let key in this.form) {
-        let value = this.form[key];
-        if (value) {
-          if (Array.isArray(value)) {
-            for (let i in value) {
-              formData.append(key + "[" + i + "]", JSON.stringify(value[i]));
-            }
-          } else {
-            formData.append(key, value);
-          }
-        }
-      }
-
-      //avoid sending bytes
-      formData.delete('MainImage');
-
-      if (this.$refs.formImage1.isImageDeleted()) {
-        formData.append('imageDeleted', true)
-      }
-
-      var vm = this;
-      this.$http({
-        method: vm.form.Id ? 'put' : 'post',
-        url: this.urls.products.upsert(vm.form.Id),
-        data: formData,
-      }).then(function (result) {
-        vm.errList = null;
-        vm.clearForm();
-        vm.$parent.reloadTable();
-      }).catch(function (error) {
-        if (error) {
-          vm.errList = error.response.data.errors;
-        }
-      }).then(function () {
-        vm.isAjax = false;
-
-      });
-
-    },
-    upsertProductModifiers(e) {
-
-      this.isAjax = true;
+    //upsertProductModifiers(e) {
+    //  this.isAjax = true;
 
 
-      var vm = this;
-      this.$http({
-        method: 'post',
-        url: this.urls.products.upsert(vm.form.Id),
-        data: formData,
-      }).then(function (result) {
-        vm.errList = null;
-        vm.clearForm();
-        vm.$parent.reloadTable();
-      }).catch(function (error) {
-        if (error) {
-          vm.errList = error.response.data.errors;
-        }
-      }).then(function () {
-        vm.isAjax = false;
+    //  var vm = this;
+    //  this.$http({
+    //    method: 'post',
+    //    url: this.urls.products.upsert(vm.form.Id),
+    //    data: formData,
+    //  }).then(function (result) {
+    //    vm.errList = null;
+    //    vm.clearForm();
+    //    vm.$parent.reloadTable();
+    //  }).catch(function (error) {
+    //    if (error) {
+    //      vm.errList = error.response.data.errors;
+    //    }
+    //  }).then(function () {
+    //    vm.isAjax = false;
 
-      });
+    //  });
 
-    },
+    //},
   }
 </script>
 

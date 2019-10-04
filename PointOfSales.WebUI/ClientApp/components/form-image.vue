@@ -48,8 +48,6 @@
       },
       removeImage: function (e) {
         this.ImagePicture = ''
-        console.log('removeImage');
-        this.$emit('image-deleted');
       },
     }
   }

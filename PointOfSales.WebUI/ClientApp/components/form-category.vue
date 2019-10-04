@@ -6,14 +6,13 @@
     </div>
 
     <div v-if="!isAjax">
-      <form ref="formElement" v-if="isEdit" @submit.prevent="upsert">
+      <form  v-if="isEdit" @submit.prevent="upsert">
         <div class="row">
 
           <div class="col-6">
             <div class="form-group">
               <label for="Name">Category Name</label>
               <input type="text" v-model="form.name" class="form-control" placeholder="Enter name">
-
               <template v-if="errList && errList.Name">
                 <p class="text-danger" v-for="err in errList.Name"> {{err}} </p>
               </template>
@@ -25,9 +24,6 @@
       </form>
     </div>
 
- <!--<pre>
-{{form}}
-</pre>-->
 
   </div>
 </template>
@@ -90,7 +86,6 @@
 
       },
       upsert() {
-
         this.isAjax = true;
         var vm = this;
         this.$http({

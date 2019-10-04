@@ -1,11 +1,15 @@
 
+
+
 # data tables example
 https://ej2.syncfusion.com/vue/demos/?_ga=2.74712341.662939979.1567944703-949682982.1567944703#/material/grid/grid-overview.html
 
 https://madewithvuejs.com/blog/best-vue-js-datatables
 
-
 https://www.ag-grid.com/?ref=madewithvuejs.com
+
+# application example for generate forms
+https://serenity.is
 
 
 
@@ -19,10 +23,6 @@ https://vuejs.org/v2/guide/migration.html#dispatch-and-broadcast-replaced
 # ignoring self referencing
 
 https://stackoverflow.com/questions/7397207/json-net-error-self-referencing-loop-detected-for-type
-
-# fix issue with form data sending array && fix  send formData object through ajax request 
-https://stackoverflow.com/questions/16104078/appending-array-to-formdata-and-send-via-ajax
-https://stackoverflow.com/questions/42883550/ajax-with-formdata-dose-not-bind-childs-array-of-objects-in-asp-net-controller
 
 # fix form-image to hold an object
 https://simonkollross.de/posts/vuejs-using-v-model-with-objects-for-custom-components
@@ -62,3 +62,9 @@ Always initialize list in dto in order to avoid null parameterers on post object
 * ISSUE disable save btn on click for modal delete, modal create/edit
 * ISSUE can not select more than one option that contains the same name at Product Form
 * ISSUE FEATURE replace vue-select for a select checkbox functionality
+
+* ISSUE CLOSED  fix issue with form data sending array && fix  send formData object through ajax request 
+https://stackoverflow.com/questions/16104078/appending-array-to-formdata-and-send-via-ajax
+https://stackoverflow.com/questions/42883550/ajax-with-formdata-dose-not-bind-childs-array-of-objects-in-asp-net-controller
+
+
