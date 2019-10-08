@@ -1,7 +1,7 @@
 // register event bus
-export const formHelper = {
+export const Helper = {
 
- createFormData(form) {
+  createFormData(form) {
     let formData = new FormData();
     for (let key in form) {
       let value = form[key];
@@ -22,10 +22,10 @@ export const formHelper = {
       }
     }
     return formData;
-},
-removeWhere(arrayList, callBack, total = 1) {
-  let indexEl = arrayList.findIndex(callBack);
-  arrayList.splice(indexEl, total);
-}
+  },
+  removeWhere(arrayList, callBack, total = 1) {
+    let indexEl = arrayList.findIndex(callBack);
+    arrayList.splice(indexEl, total);
+  }
 
 }; 

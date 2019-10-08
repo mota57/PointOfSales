@@ -1,0 +1,36 @@
+﻿using Microsoft.AspNetCore.Http;
+using System.Collections.Generic;
+
+
+namespace PointOfSales.Core.DTO
+{
+    public class {{ModelName}}DTO
+    {
+        {{for field in FieldForms}}
+        
+     
+            public {{TODO if upload ? 'IFormFile' else getFieldType() }} {{field.Name}} { get; set; } 
+
+            {{if field.type == "Upload"}}
+                public byte[]  {{ field.Name + 'Bytes'}}  { get; set; } 
+            {{ end }}
+        {{end}}
+       
+
+    
+
+        //ImageBytesMainImage
+        public byte[] {{ field.Name + 'Bytes'}} { get; set; }
+
+        public IFormFile MainImageForm { get; set; }
+
+
+
+
+
+
+
+
+    }
+
+}

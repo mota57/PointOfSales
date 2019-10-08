@@ -164,7 +164,7 @@
 <script>
  
 import _ from 'lodash'
-import { formHelper } from './form-helper'
+import { Helper } from '../helper'
 
 const nameComponent = 'form-product'
 
@@ -218,13 +218,9 @@ const nameComponent = 'form-product'
     methods: {
       clearForm() {
         console.log(`${nameComponent}::clearform`);
-        //if (this.$refs && this.$refs.formImage1) {
-        //  this.$refs.formImage1.removeImage();
-        //}
         this.form = new ProductFormDTO()
       },
       loadRecord(row) {
-        //alert(JSON.stringify(row));
         this.isAjax = true;
         this.clearForm();
         var vm = this;
@@ -263,7 +259,7 @@ const nameComponent = 'form-product'
       }, 350),
       upsert(e) {
         this.isAjax = true;
-        let formData = formHelper.createFormData(this.form);
+        let formData = Helper.createFormData(this.form);
      
         //avoid sending bytes
         formData.delete('mainImage');

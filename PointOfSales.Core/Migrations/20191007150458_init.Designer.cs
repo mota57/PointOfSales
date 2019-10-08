@@ -9,7 +9,7 @@ using PointOfSales.Core.Entities;
 namespace PointOfSales.Core.Migrations
 {
     [DbContext(typeof(POSContext))]
-    [Migration("20190920182728_init")]
+    [Migration("20191007150458_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -47,6 +47,22 @@ namespace PointOfSales.Core.Migrations
                             Id = 3,
                             Name = "Category 3"
                         });
+                });
+
+            modelBuilder.Entity("PointOfSales.Core.Entities.Discount", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<decimal>("Amount");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Discount");
                 });
 
             modelBuilder.Entity("PointOfSales.Core.Entities.ItemModifier", b =>
@@ -98,6 +114,8 @@ namespace PointOfSales.Core.Migrations
                     b.Property<int>("OrderDetailId")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<int?>("DiscountId");
+
                     b.Property<int>("OrderId");
 
                     b.Property<int>("ProductId");
@@ -105,6 +123,8 @@ namespace PointOfSales.Core.Migrations
                     b.Property<int>("Quantity");
 
                     b.HasKey("OrderDetailId");
+
+                    b.HasIndex("DiscountId");
 
                     b.HasIndex("OrderId");
 
@@ -131,9 +151,13 @@ namespace PointOfSales.Core.Migrations
                     b.Property<string>("ProductCode")
                         .HasMaxLength(50);
 
+                    b.Property<int?>("TaxId");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("TaxId");
 
                     b.ToTable("Product");
                 });
@@ -151,6 +175,22 @@ namespace PointOfSales.Core.Migrations
                     b.ToTable("ProductModifier");
                 });
 
+            modelBuilder.Entity("PointOfSales.Core.Entities.Tax", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<decimal>("Amount");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Tax");
+                });
+
             modelBuilder.Entity("PointOfSales.Core.Entities.ItemModifier", b =>
                 {
                     b.HasOne("PointOfSales.Core.Entities.Modifier", "Modifier")
@@ -161,8 +201,12 @@ namespace PointOfSales.Core.Migrations
 
             modelBuilder.Entity("PointOfSales.Core.Entities.OrderDetail", b =>
                 {
-                    b.HasOne("PointOfSales.Core.Entities.Order", "Order")
+                    b.HasOne("PointOfSales.Core.Entities.Discount", "Discount")
                         .WithMany()
+                        .HasForeignKey("DiscountId");
+
+                    b.HasOne("PointOfSales.Core.Entities.Order", "Order")
+                        .WithMany("OrderDetails")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade);
 
@@ -177,6 +221,10 @@ namespace PointOfSales.Core.Migrations
                     b.HasOne("PointOfSales.Core.Entities.Category", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId");
+
+                    b.HasOne("PointOfSales.Core.Entities.Tax", "Tax")
+                        .WithMany()
+                        .HasForeignKey("TaxId");
                 });
 
             modelBuilder.Entity("PointOfSales.Core.Entities.ProductModifier", b =>

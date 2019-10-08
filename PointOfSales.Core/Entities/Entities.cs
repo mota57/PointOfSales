@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
+﻿using PointOfSales.Core.Infraestructure;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -22,20 +21,14 @@ namespace PointOfSales.Core.Entities
         //public DateTime ModifiedDate { get; set; }
     }
 
-    public class POSContextFactory : IDesignTimeDbContextFactory<POSContext>
-    {
-        public POSContext CreateDbContext(string[] args)
-        {
-            var optionsBuilder = new DbContextOptionsBuilder<POSContext>();
-            optionsBuilder.UseSqlite(GlobalVariables.Connection);
+   
 
-            return new POSContext(optionsBuilder.Options);
-        }
-    }
-
+    [FormLayout("", nameof(Name), nameof(Price), nameof(ProductCode), nameof(Category), nameof(MainImage) )]
     public class Product : BaseEntity
     {
+
         public Product() {
+
             ProductModifier = new HashSet<ProductModifier>();
 
         } 
@@ -46,6 +39,7 @@ namespace PointOfSales.Core.Entities
         [Required]
         public decimal Price { get; set; }
 
+        [DataType(DataType.Upload), Multiple()]
         public byte[] MainImage { get; set; }
 
         public int? CategoryId { get; set; }
@@ -53,7 +47,19 @@ namespace PointOfSales.Core.Entities
 
         public ICollection<ProductModifier> ProductModifier { get; set; }
 
+        [DataType(DataType.MultilineText)]
+        public string Note { get; set; }
+
+        public int? TaxId { get; set; }
+        public Tax Tax { get; set; }
+
     }
+
+    public class Tax : BaseEntity
+    {
+        public decimal Amount { get; set; }
+    }
+
     public class ProductModifier
     {
         public int ProductId { get; set; }
@@ -94,8 +100,18 @@ namespace PointOfSales.Core.Entities
 
     public class Order
     {
+        public Order()
+        {
+            OrderDetails = new HashSet<OrderDetail>();
+        }
+
         public int OrderId { get; set; }
+        public ICollection<OrderDetail> OrderDetails { get; set; }
+        
     }
+    
+
+
 
     public class OrderDetail 
     {
@@ -109,7 +125,31 @@ namespace PointOfSales.Core.Entities
         public Product Product { get; set; }
 
         public int Quantity { get; set; }
+
+
+        public int? DiscountId { get; set; }
+        public Discount Discount { get; set; }
     }
 
+    public class OrderAudit
+    {
+        public int OrderAuditId { get; set; }
+
+        public int ProductId { get; set; }
+        public string CategoryName { get; set; }
+        public decimal Price { get; set; }
+        public string ProductName { get; set; }
+        public int Quantity { get; set; }
+        public decimal? DiscountAmount { get; set; }
+        public decimal? TaxAmmount { get; set; }
+
+    }
+
+    public class Discount : BaseEntity
+    {
+        public decimal Amount { get; set; }
+    }
+
+    
 
 }

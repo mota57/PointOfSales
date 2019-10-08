@@ -5,12 +5,17 @@ import store from './store'
 import { sync } from 'vuex-router-sync'
 import App from 'components/app-root'
 import AppUrl from './api-url'
-import formProduct from 'components/form-product'
-import formModifier from 'components/form-modifier'
-import formCategory from 'components/form-category'
+
+import formProduct from 'components/product/form-product'
+import formModifier from 'components/modifier/form-modifier'
+import formCategory from 'components/category/form-category'
+
+import tableLightModifier from 'components/modifier/tablelight-modifier'
+
+/** common **/
 import formDatatable from 'components/form-datatable'
 import formImage from 'components/form-image'
-import modifierComponent from 'components/modifier-component'
+
 import { FontAwesomeIcon } from './icons'
 import jQuery from 'jquery'
 import vSelect from 'vue-select'
@@ -18,7 +23,7 @@ import { ServerTable, ClientTable, Event } from 'vue-tables-2';
 import Toasted from '@gitlab/vue-toasted';
 import BootstrapVue from 'bootstrap-vue'
 
-import { eventBus } from 'components/event-bus'
+import { eventBus } from 'event-bus'
 
 
 
@@ -41,7 +46,7 @@ Vue.component('form-product', formProduct)
 Vue.component('form-modifier', formModifier)
 Vue.component('form-category', formCategory)
 Vue.component('form-datatable', formDatatable)
-Vue.component('modifier-component', modifierComponent)
+Vue.component('modifier-component', tableLightModifier)
 Vue.component('icon', FontAwesomeIcon)
 Vue.component('v-select', vSelect);
 
