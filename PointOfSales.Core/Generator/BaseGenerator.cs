@@ -9,9 +9,10 @@ using System.ComponentModel.DataAnnotations;
 using System.IO;
 using Scriban;
 using Scriban.Runtime;
+using PointOfSales.Core.Infraestructure;
 
-namespace ConsoleApp1.Generator
-{
+namespace PointOfSales.Core.Generator
+{ 
 
 
     public abstract class AbstractBaseGenerator
@@ -114,8 +115,11 @@ namespace ConsoleApp1.Generator
             var metadata = context.Entry(assembly.CreateInstance(type.FullName)).Metadata;
             //var foreignKeys = metadata.GetReferencingForeignKeys(); to get the collections for the entities where product is principal
             var properties = metadata.GetProperties().Where(_ => !_.IsShadowProperty);
+            var formLayout = type.GetCustomAttribute<FormLayoutAttribute>();
+
             foreach (var item in  properties)
             {
+                
                 var fieldForm = new FieldForm()
                 {
                     Label = item.Name,
@@ -145,12 +149,18 @@ namespace ConsoleApp1.Generator
                 }
 
             }
+            //order entities
+
+
+
             return modelForm;
         }
     }
 
     public class ModelFormHelper
     {
+
+        
         /// <summary>
         /// get a type to render a proper input format
         /// </summary>

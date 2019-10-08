@@ -8,10 +8,10 @@ using PointOfSales.Core.Infraestructure.VueTable;
 using SqlKata.Execution;
 using PointOfSales.Core.Entities;
 using Microsoft.EntityFrameworkCore;
-using ConsoleApp1.Generator;
 using System.IO;
 using System.Reflection;
 using Scriban;
+using PointOfSales.Core.Generator;
 
 namespace ConsoleApp1
 {
@@ -44,9 +44,9 @@ namespace ConsoleApp1
         public static void example_render_model()
         {
             POSContext context = new POSContextFactory().CreateDbContext(new string[]{ });
-            ModelForm model = ModelFormFactory.BuildModelForm(context, typeof(Tax));
+            ModelForm model = ModelFormFactory.BuildModelForm(context, typeof(Order));
             AbstractBaseGenerator generator = new ScribanGeneratorConcrete();
-            generator.Build("form-entity.scriban", "form-tax.vue", model).Wait();
+            generator.Build("form-entity.scriban", "form-order.vue", model).Wait();
             Log("complete");
         }
 
