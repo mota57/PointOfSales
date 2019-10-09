@@ -26,7 +26,6 @@ namespace PointOfSales.Core.Entities
     [FormLayout("", nameof(Name), nameof(Price), nameof(ProductCode), nameof(Category), nameof(MainImage) )]
     public class Product : BaseEntity
     {
-
         public Product() {
 
             ProductModifier = new HashSet<ProductModifier>();
