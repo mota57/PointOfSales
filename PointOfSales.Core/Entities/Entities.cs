@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PointOfSales.Core.Entities
 {
@@ -19,6 +20,32 @@ namespace PointOfSales.Core.Entities
         //public bool SoftDetelete { get; set; }
         //public DateTime CreateDate { get; set; }
         //public DateTime ModifiedDate { get; set; }
+    }
+
+    
+    public class Customer : BaseEntity
+    {
+        public Customer()
+        {
+
+        }
+
+        [NotMapped]
+        public override string Name { get => $"{FirstName} {LastName}";  }
+
+        public string Identification { get; set; }
+
+        [DataType(DataType.MultilineText)]
+        public string Note { get; set; }
+
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        public DateTime BirthDate { get; set; }
+        public string LastName { get; set; }
+        public string FirstName { get; set; }
+
+        [DataType(DataType.Upload)]
+        public byte[] ProfileImage { get; set; }
     }
 
    
@@ -133,6 +160,8 @@ namespace PointOfSales.Core.Entities
 
     public class OrderAudit
     {
+        public string CustomerIdentification { get; set; }
+        public string CustomerName { get; set; }
         public int OrderAuditId { get; set; }
 
         public int ProductId { get; set; }
@@ -143,6 +172,8 @@ namespace PointOfSales.Core.Entities
         public decimal? DiscountAmount { get; set; }
         public decimal? TaxAmmount { get; set; }
 
+        [DataType(DataType.DateTime)]
+        public DateTime CreatedDate { get; set; }
     }
 
     public class Discount : BaseEntity
