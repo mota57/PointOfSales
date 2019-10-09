@@ -57,7 +57,6 @@ namespace PointOfSales.Core.DTO
 
         public bool ImageDeleted { get; set; }
 
-        public List<int> AttributeIds { get; set; }
 
         public List<int> ModifierIds { get; set; } = new List<int>();
 

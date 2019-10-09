@@ -59,13 +59,20 @@ Always initialize list in dto in order to avoid null parameterers on post object
 ```
 
 # ISSUES 
+
 * ISSUE BUG when WEB API route not match return 404 instead redirecting to home/index.cshtml
 * ISSUE disable save btn on click for modal delete, modal create/edit
 * ISSUE can not select more than one option that contains the same name at Product Form
 * ISSUE FEATURE replace vue-select for a select checkbox functionality
-
 * ISSUE CLOSED  fix issue with form data sending array && fix  send formData object through ajax request 
 https://stackoverflow.com/questions/16104078/appending-array-to-formdata-and-send-via-ajax
 https://stackoverflow.com/questions/42883550/ajax-with-formdata-dose-not-bind-childs-array-of-objects-in-asp-net-controller
+
+
+
+
+* implement menu crud.
+* implement identity 
+* implement inventory
 
 
