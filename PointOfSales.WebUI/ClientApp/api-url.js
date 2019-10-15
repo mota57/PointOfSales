@@ -51,14 +51,14 @@ class BASE_URL {
 
 class categories extends BASE_URL {
   constructor() {
-    super('/Categories')
+    super('/Category')
   }
 
 }
 
 class products extends BASE_URL {
   constructor() {
-    super('/Products')
+    super('/Product')
   }
 }
 

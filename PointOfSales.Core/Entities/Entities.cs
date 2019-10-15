@@ -40,7 +40,7 @@ namespace PointOfSales.Core.Entities
 
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-        public DateTime BirthDate { get; set; }
+        public DateTime? BirthDate { get; set; }
         public string LastName { get; set; }
         public string FirstName { get; set; }
 
@@ -169,7 +169,10 @@ namespace PointOfSales.Core.Entities
         public decimal Price { get; set; }
         public string ProductName { get; set; }
         public int Quantity { get; set; }
+        public string DiscountName { get; set; }
         public decimal? DiscountAmount { get; set; }
+
+        public string TaxName { get; set; }
         public decimal? TaxAmmount { get; set; }
 
         [DataType(DataType.DateTime)]
