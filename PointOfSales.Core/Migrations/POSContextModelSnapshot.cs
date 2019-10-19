@@ -144,6 +144,8 @@ namespace PointOfSales.Core.Migrations
                         .IsRequired()
                         .HasMaxLength(50);
 
+                    b.Property<string>("Note");
+
                     b.Property<decimal>("Price");
 
                     b.Property<string>("ProductCode")
