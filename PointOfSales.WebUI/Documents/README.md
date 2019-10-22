@@ -41,6 +41,28 @@ https://support.revelsystems.com/hc/en-us/articles/203585239-Introduction-to-Mod
 https://squareup.com/dashboard/
 https://ehoppersupport.zendesk.com/hc/en-us
 
+## serial port
+* (link1)[https://code.msdn.microsoft.com/SerialPort-brief-Example-ac0d5004]
+
+## example of receipt 
+* (link1)[https://codepen.io/Sambra22/pen/JNexJP]
+
+
+## example of multipayment
+
+* (link2)[https://www.google.com/search?q=split+payment+checkout&safe=active&rlz=1C1GGRV_enDO770DO770&source=lnms&tbm=isch&sa=X&ved=0ahUKEwif4bPb_K3lAhXCnOAKHZRgBTAQ_AUIEigB&biw=1536&bih=772#imgdii=ije9NSY0TSddEM:&imgrc=ije9NSY0TSddEM]
+
+
+* (link3)[https://www.google.com/search?as_st=y&tbm=isch&hl=en&as_q=split+payment+checkout&as_epq=&as_oq=&as_eq=&cr=&as_sitesearch=&safe=active&tbs=ift:gif#imgdii=EuYPyA1eK5M64M:&imgrc=-NV4yFyW6kU3zM]
+
+
+# MIGRATIONS links
+
+* (link1)[https://docs.microsoft.com/en-us/ef/core/managing-schemas/migrations/[]
+* (link2)[https://medium.com/@yostane/entity-framework-core-and-sqlite-database-migration-using-vs2017-macos-28812c64e7ef]
+* (link3)[https://stackoverflow.com/questions/37780136/asp-core-migrate-ef-core-sql-db-on-startup]
+* (link4)[https://github.com/aspnet/Mvc/issues/7772]
+
 # vue third party components
 https://vue-multi-select.tuturu.io/#filters
 https://vue-select.org/
