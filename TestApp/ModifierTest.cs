@@ -12,6 +12,7 @@ using PointOfSales.Core.Service;
 
 namespace TestApp
 {
+
     [TestClass]
     public class ModifierTest
     {

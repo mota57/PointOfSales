@@ -1,8 +1,16 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace PointOfSales.Core.Entities
 {
-    public class POSContext : DbContext 
+
+    public class ApplicationUser : IdentityUser
+    {
+        public string CustomTag { get; set; }
+    }
+
+    public class POSContext : IdentityDbContext<ApplicationUser>
     {
 
         public POSContext(DbContextOptions<POSContext> options)
@@ -40,6 +48,7 @@ namespace PointOfSales.Core.Entities
                 .WithMany(m => m.ProductModifier)
                 .HasForeignKey(pm => pm.ModifierId);
             #endregion
+            //TODO CHECK THIS base.OnModelCreating(builder);
         }
 
     }

@@ -10,6 +10,8 @@ using System.IO;
 using Scriban;
 using Scriban.Runtime;
 using PointOfSales.Core.Infraestructure;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using PointOfSales.Core.Entities;
 
 namespace PointOfSales.Core.Generator
 { 
@@ -51,12 +53,12 @@ namespace PointOfSales.Core.Generator
         private string _templateDirectory { get; set; }
         private string _outputDirectory { get; set; }
 
-        public ScribanGeneratorConcrete()
+        public ScribanGeneratorConcrete(string template = "", string outputDirectory = "")
         {
 
             var rootDirectory = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent;
-            _templateDirectory = Path.Combine(rootDirectory.FullName, "Template");
-            _outputDirectory = Path.Combine(rootDirectory.FullName, "Output");
+            _templateDirectory = string.IsNullOrEmpty(template) ?  Path.Combine(rootDirectory.FullName, "Template") : template;
+            _outputDirectory = string.IsNullOrEmpty(outputDirectory) ? Path.Combine(rootDirectory.FullName, "Output") : outputDirectory;
         }
 
 
@@ -105,9 +107,9 @@ namespace PointOfSales.Core.Generator
         }
     }
 
-    public class ModelFormFactory
+    public static class ModelFormFactory
     {
-        public static ModelForm BuildModelForm(DbContext context, Type type)
+        public static ModelForm BuildModelForm(IdentityDbContext<ApplicationUser> context, Type type)
         {
             var modelForm = new ModelForm();
             modelForm.ModelName = type.Name;

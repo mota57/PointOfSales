@@ -98,3 +98,15 @@ https://stackoverflow.com/questions/42883550/ajax-with-formdata-dose-not-bind-ch
 * implement inventory
 
 
+## Entities
+
+supplier
+customer
+payments
+order
+oderdetail
+product (isProductRent, isProductForRent)
+product_rent (start_date,return_date,)
+category
+discount.
+reports

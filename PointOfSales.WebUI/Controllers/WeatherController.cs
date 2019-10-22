@@ -1,4 +1,5 @@
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -6,6 +7,7 @@ using PointOfSales.WebUI.Providers;
 
 namespace PointOfSales.WebUI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     public class WeatherController : Controller
     {
