@@ -68,7 +68,6 @@ namespace PointOfSales.WebUI.Controllers
             
             var dto = _mapper.Map<ProductFormDTO>(product);
             dto.ModifierIds = product.ProductModifier.Select(_ =>  _.ModifierId ).ToList();
-            dto.AttributeIds = new List<int>() { 2,3 };
 
             return Ok(dto);
         }
