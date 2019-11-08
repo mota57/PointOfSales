@@ -71,6 +71,8 @@ namespace PointOfSales.Core.Entities
         public int? CategoryId { get; set; }
         public Category Category { get; set; } 
 
+        public bool IsProductForRent {get; set;}
+
         public ICollection<ProductModifier> ProductModifier { get; set; }
 
         [DataType(DataType.MultilineText)]
@@ -114,7 +116,7 @@ namespace PointOfSales.Core.Entities
         public decimal Price { get; set; }
     }
 
-    public class  Category : BaseEntity
+    public class Category : BaseEntity
     {
         public Category()
         {
@@ -134,8 +136,37 @@ namespace PointOfSales.Core.Entities
         public int OrderId { get; set; }
         public ICollection<OrderDetail> OrderDetails { get; set; }
         
+        public ICollection<PaymentOrder> PaymentOrders {get;set;} //when want to spit the payment {Amount, paymentType}
+
+
+    }
+
+    
+    public class PaymentOrder 
+    {
+        public int PaymentOrderId {get;set;}
+
+        public int OrderId {get; set;}
+        public decimal Amount {get ;set;}
+        public PaymentType  PaymentType {get;set;}
+    }
+
+    public enum PaymentType {
+        CASH,
+        CARD
     }
     
+    public class ProductRent
+    {
+        public int ProductRentId {get ;set;}
+
+        public int OrderDetailId {get;set;}
+
+        public OrderDetail OrderDetail {get; set;}
+        public DateTime StartDate {get;set;}
+
+        public DateTime EndDate {get;set;}
+    }
 
 
 
@@ -152,9 +183,12 @@ namespace PointOfSales.Core.Entities
 
         public int Quantity { get; set; }
 
-
         public int? DiscountId { get; set; }
         public Discount Discount { get; set; }
+
+        public int? ProductRentId {get ;set;}
+        public ProductRent ProductRent {get; set;}
+
     }
 
     public class OrderAudit
