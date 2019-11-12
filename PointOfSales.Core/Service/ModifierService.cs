@@ -9,9 +9,9 @@ namespace PointOfSales.Core.Service
     {
         
         private readonly POSContext _context;
-        public ModifierService(POSContext _context)
+        public ModifierService(POSContext context)
         {
-            
+            _context = context;
         }
         
         /// <summary>

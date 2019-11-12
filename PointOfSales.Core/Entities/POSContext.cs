@@ -10,6 +10,7 @@ namespace PointOfSales.Core.Entities
         public string CustomTag { get; set; }
     }
 
+
     public class POSContext : IdentityDbContext<ApplicationUser>
     {
 

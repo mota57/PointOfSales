@@ -70,7 +70,22 @@ namespace PointOfSales.Core.Infraestructure.VueTable
         /// <summary>
         ///  Must set SqlField property when VueTableConfig.QueryBuilder is not null. 
         /// </summary>
-        public Query QueryBuilder { get; set; } = null;
+        private Query _queryBuilder = null;
+        public Query QueryBuilder
+        {
+            get
+            {
+                return _queryBuilder;
+            }
+            set
+            {
+                if (Fields.Any(_ => string.IsNullOrEmpty(_.SqlField)))
+                {
+                    throw new Exception("Must set SqlField property in class VueField when VueTableConfig.QueryBuilder is not null");
+                }
+                _queryBuilder = value;
+            }
+        }
 
 
         public string TableName { get; set; }
@@ -101,12 +116,8 @@ namespace PointOfSales.Core.Infraestructure.VueTable
             }
             else
             {
-                queryBuilder = db.FromQuery(config.QueryBuilder);
                 IsCustomInlineQuery = true;
-                if (fields.Any(_ => string.IsNullOrEmpty(_.SqlField)))
-                {
-                    throw new Exception("Must set SqlField property in class VueField whenVueTableConfig.QueryBuilder is not null");
-                }
+                queryBuilder = db.FromQuery(config.QueryBuilder);
                 MapFieldSql = new Dictionary<string, string>(fields.Select(_ =>
                                 new KeyValuePair<string, string>(_.Name,  _.SqlField )));
             }
@@ -182,6 +193,6 @@ namespace PointOfSales.Core.Infraestructure.VueTable
             }
             return queryBuilder;
         }
-
+      
     }
 }

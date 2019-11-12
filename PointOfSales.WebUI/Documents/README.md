@@ -95,6 +95,10 @@ https://stackoverflow.com/questions/42883550/ajax-with-formdata-dose-not-bind-ch
 * implement inventory
 
 
+https://auth0.com/docs/quickstart/backend/aspnet-core-webapi
+https://garywoodfine.com/asp-net-core-2-2-jwt-authentication-tutorial/
+https://medium.com/@ozgurgul/asp-net-core-2-0-webapi-jwt-authentication-with-identity-mysql-3698eeba6ff8
+
 ## Entities
 
 supplier
