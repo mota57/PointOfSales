@@ -22,7 +22,20 @@ namespace PointOfSales.Core.Entities
         //public DateTime ModifiedDate { get; set; }
     }
 
+    public class Supplier : BaseEntity
+    {
+        public string RNC { get; set; }
+        public string Address { get; set; }
+        public string City { get; set; }
     
+        public string Phone1 { get; set; }
+
+        public string Phone2 { get; set; }
+
+        public string Cellphone { get; set; }
+    }
+
+
     public class Customer : BaseEntity
     {
         public Customer()
@@ -79,6 +92,13 @@ namespace PointOfSales.Core.Entities
         public int? TaxId { get; set; }
         public Tax Tax { get; set; }
 
+        public int? UnitId { get; set; }
+        public Unit Unit { get; set; }
+    }
+
+    public class Unit : BaseEntity
+    {
+
     }
 
     public class Tax : BaseEntity
@@ -133,7 +153,9 @@ namespace PointOfSales.Core.Entities
 
         public int OrderId { get; set; }
         public ICollection<OrderDetail> OrderDetails { get; set; }
-        
+        public int? DiscountId { get; set; }
+        public Discount Discount { get; set; }
+
     }
     
 

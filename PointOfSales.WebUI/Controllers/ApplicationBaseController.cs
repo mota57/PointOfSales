@@ -23,7 +23,7 @@ namespace PointOfSales.WebUI.Controllers
             _context = context;
             _mapper = mapper;
             TableConfig = tableConfig;
-
+            
         }
 
 

@@ -91,9 +91,6 @@ https://stackoverflow.com/questions/16104078/appending-array-to-formdata-and-sen
 https://stackoverflow.com/questions/42883550/ajax-with-formdata-dose-not-bind-childs-array-of-objects-in-asp-net-controller
 
 
-
-
-* implement menu crud.
 * implement identity 
 * implement inventory
 

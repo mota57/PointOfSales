@@ -6,6 +6,27 @@ using System.Threading.Tasks;
 
 namespace PointOfSales.Core.Service
 {
+    //handle validation
+    //
+    public class ProductServie
+    {
+        private readonly POSContext context;
+
+        public ProductServie(POSContext context)
+        {
+            this.context = context;
+        }
+
+        public void CreateProduct(ProductDTO dto)
+        {
+
+        }
+        public void UppdateProduct()
+        {
+
+        }
+    }
+
    public  class POSService 
     {
         private readonly POSContext _context;

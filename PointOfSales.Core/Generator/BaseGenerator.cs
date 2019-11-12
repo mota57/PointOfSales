@@ -223,22 +223,4 @@ namespace PointOfSales.Core.Generator
         public string ForeignEntityName { get; internal set; }
     }
 
-    //public class RazorGeneratorConcrete : AbstractBaseGenerator
-    //{
-    //    private RazorLightEngine _engine { get; }
-
-    //    public RazorGeneratorConcrete()
-    //    {
-    //        _engine = new RazorLightEngineBuilder()
-    //          .UseFilesystemProject(@"C:\Users\hmota\Documents\RESOURCES\Projects\PointOfSales\Template")
-    //          .UseMemoryCachingProvider()
-    //          .Build();
-    //    }
-
-    //    public override async Task<string> Build(string template, object objTemplate)
-    //    {
-    //        string result = await _engine.CompileRenderAsync(template, objTemplate);
-    //        return result;
-    //    }
-    //}
 }

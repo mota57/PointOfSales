@@ -67,7 +67,7 @@ namespace PointOfSales.WebUI.Controllers
             }
             
             var dto = _mapper.Map<ProductFormDTO>(product);
-            dto.ModifierIds = product.ProductModifier.Select(_ =>  _.ModifierId ).ToList();
+            //dto.ModifierIds = product.ProductModifier.Select(_ =>  _.ModifierId ).ToList();
 
             return Ok(dto);
         }
@@ -84,29 +84,28 @@ namespace PointOfSales.WebUI.Controllers
                 return BadRequest(ModelState);
             }
 
-            Product product = await _context.Product.Include(_ => _.ProductModifier).FirstOrDefaultAsync(_ => _.Id == id);
-
-
-            if (product == null) return BadRequest();
-
-            //if the user click on the delete button
-            if (dto.ImageDeleted)
-            {
-                product.MainImage = null;
-            } else if (dto.MainImageForm != null)
-            {
-                product.MainImage = await dto.MainImageForm.ToBytes();
-            }
-
-
-            _mapper.Map(dto, product);
-            product.ProductModifier = new HashSet<ProductModifier>(dto.ModifierIds.Select(modId => new ProductModifier() { ProductId = id, ModifierId = modId }));
-            _context.Entry(product).State = EntityState.Modified;
-
-            await _POSService.UpsertDeleteProductModifiers(id, product.ProductModifier.ToList());
-
             try
             {
+                Product product = await _context.Product.Include(_ => _.ProductModifier).FirstOrDefaultAsync(_ => _.Id == id);
+
+
+                //if the user click on the delete button
+                if (dto.ImageDeleted)
+                {
+                    product.MainImage = null;
+                } else if (dto.MainImageForm != null)
+                {
+                    product.MainImage = await dto.MainImageForm.ToBytes();
+                }
+
+
+                _mapper.Map(dto, product);
+              
+                _context.Entry(product).State = EntityState.Modified;
+
+                await _POSService.UpsertDeleteProductModifiers(id, product.ProductModifier.ToList());
+
+            
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -129,14 +128,12 @@ namespace PointOfSales.WebUI.Controllers
         //[ValidateAntiForgeryToken]
         [IgnoreAntiforgeryToken]
         public async Task<ActionResult<Product>> PostProduct([FromForm] ProductFormDTO dto)
-        {
-            Product product = _mapper.Map<Product>(dto);
-            product.ProductModifier = new HashSet<ProductModifier>(dto.ModifierIds.Select(modId => new ProductModifier() { ModifierId = modId }));
-            product.MainImage = await dto.MainImageForm.ToBytes();
-            
+        {            
 
             if (ModelState.IsValid)
             {
+                Product product = _mapper.Map<Product>(dto);
+                product.MainImage = await dto.MainImageForm.ToBytes();
 
                 _context.Product.Add(product);
 
