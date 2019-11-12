@@ -29,9 +29,9 @@ namespace PointOfSales.WebUI.Controllers
 
         // GET: api/Entity/5
         [HttpGet("{id}")]
-        public virtual ActionResult Get(int id)
+        public virtual async Task<ActionResult> Get(int id)
         {
-            var entity = _context.Set<TEntity>().FirstOrDefault(p => p.Id == id);
+            var entity = await _context.Set<TEntity>().FirstOrDefaultAsync(p => p.Id == id);
 
             if (entity == null)
             {

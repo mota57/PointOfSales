@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Linq;
 using System;
 using PointOfSales.Core.Service;
+using PointOfSales.Core.Infraestructure;
 
 namespace TestApp
 {
@@ -55,13 +56,16 @@ namespace TestApp
                         };
 
                     //assert add one more
-                    var posService = new POSService(context);
-                    posService.UpsertDeleteProductModifiers(productId, dto).Wait();
+                    var productService = new ProductService(context);
+                    var product = productService.GetProduct(productId).Result;
+                    productService.UpsertDeleteProductModifiers(product, dto);
                     Assert.AreEqual(2, context.Product.FirstOrDefault().ProductModifier.Count());
 
                     //asssert remove all 
                     dto = new List<ProductModifier>() {};
-                    posService.UpsertDeleteProductModifiers(productId, dto).Wait();
+                    
+                    var product2 = productService.GetProduct(productId).Result;
+                    productService.UpsertDeleteProductModifiers(product2, dto);
                     Assert.AreEqual(0, context.Product.FirstOrDefault().ProductModifier.Count());
                      
                 }
@@ -114,8 +118,8 @@ namespace TestApp
                         }
                     };
 
-                    var posService = new POSService(context);
-                    posService.UpsertDeleteModiferAndItemModifier(modClient);
+                    var modifierService = new ModifierService(context);
+                    modifierService.UpsertDeleteModiferAndItemModifier(modClient);
 
                     Assert.AreEqual(context.Modifier.First().Name, "mod1.1");
 
@@ -145,8 +149,8 @@ namespace TestApp
                     var totalChilds = 1;
                     var modClient = DataFactory.BuildModifierData(name:"hello1", totalItemModifier: totalChilds);
 
-                    var posService = new POSService(context);
-                    posService.UpsertDeleteModiferAndItemModifier(modClient);
+                    var modifierService = new ModifierService(context);
+                    modifierService.UpsertDeleteModiferAndItemModifier(modClient);
 
 
                     Assert.AreEqual(

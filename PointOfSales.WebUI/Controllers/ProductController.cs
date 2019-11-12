@@ -12,6 +12,7 @@ using SqlKata;
 using System;
 using Newtonsoft.Json;
 using PointOfSales.Core.Service;
+using PointOfSales.Core.Infraestructure;
 
 namespace PointOfSales.WebUI.Controllers
 {
@@ -44,22 +45,21 @@ namespace PointOfSales.WebUI.Controllers
     public class ProductsController : ApplicationBaseController<Product>
     {
         private readonly POSService _POSService;
-
+        private readonly ProductService _productService;
 
         public ProductsController(POSContext context, IMapper mapper, POSService pOSService)
             : base(context, new ProductDataTableConfig(), mapper)
         {
             _POSService = pOSService;
-
+            _productService = new ProductService(context);
         }
 
 
         // GET: api/Categories/5
         [HttpGet("{id}")]
-        public  override ActionResult Get(int id)
+        public  async override Task<ActionResult> Get(int id)
         {
-
-            var product =  _context.Product.Include(_ => _.ProductModifier).FirstOrDefault(p => p.Id == id);
+            var product =  await _productService.GetProduct(id);
 
             if (product == null)
             {
@@ -67,7 +67,6 @@ namespace PointOfSales.WebUI.Controllers
             }
             
             var dto = _mapper.Map<ProductFormDTO>(product);
-            //dto.ModifierIds = product.ProductModifier.Select(_ =>  _.ModifierId ).ToList();
 
             return Ok(dto);
         }
@@ -86,10 +85,11 @@ namespace PointOfSales.WebUI.Controllers
 
             try
             {
-                Product product = await _context.Product.Include(_ => _.ProductModifier).FirstOrDefaultAsync(_ => _.Id == id);
+                Product product = await _context.Product
+                                        .Include(_ => _.ProductModifier)
+                                        .FirstOrDefaultAsync(_ => _.Id == id);
 
-
-                //if the user click on the delete button
+            
                 if (dto.ImageDeleted)
                 {
                     product.MainImage = null;
@@ -103,8 +103,9 @@ namespace PointOfSales.WebUI.Controllers
               
                 _context.Entry(product).State = EntityState.Modified;
 
-                await _POSService.UpsertDeleteProductModifiers(id, product.ProductModifier.ToList());
+                var productModifierClient = ProductMapper.CreateListOfProductModifier(dto);
 
+                 _productService.UpsertDeleteProductModifiers(product, productModifierClient);
             
                 await _context.SaveChangesAsync();
             }

@@ -20,10 +20,13 @@ namespace PointOfSales.Core.Infraestructure
 
     public static class ProductMapper
     {
-        public static HashSet<ProductModifier> CreateListOfProductModifier(ProductFormDTO dto)
+        public static List<ProductModifier> CreateListOfProductModifier(ProductFormDTO dto)
         {
-            return new HashSet<ProductModifier>(dto.ModifierIds
-                 .Select(modId => new ProductModifier() { ProductId = dto.Id, ModifierId = modId }));
+            return  dto.ModifierIds
+                 .Select(modId => new ProductModifier() { 
+                        ProductId = dto.Id, 
+                        ModifierId = modId 
+                }).ToList();
         }
 
 
@@ -34,8 +37,7 @@ namespace PointOfSales.Core.Infraestructure
                   p.ProductModifier.Select(_ => _.ModifierId).ToList()));
 
             vm.CreateMap<ProductFormDTO, Product>()
-                .ForMember(_ => _.MainImage, cfg => cfg.Ignore())
-                .ForMember(_ => _.ProductModifier, cfg => cfg.MapFrom(dto => CreateListOfProductModifier(dto)));
+                .ForMember(_ => _.MainImage, cfg => cfg.Ignore());
         }
     }
 }
