@@ -83,6 +83,7 @@ namespace PointOfSales.Core.Infraestructure.VueTable
                 {
                     throw new Exception("Must set SqlField property in class VueField when VueTableConfig.QueryBuilder is not null");
                 }
+                
                 _queryBuilder = value;
             }
         }
