@@ -164,7 +164,7 @@
 <script>
  
 import _ from 'lodash'
-import { Helper } from '../helper'
+import { Helper } from '../../helper'
 
 const nameComponent = 'form-product'
 

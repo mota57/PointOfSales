@@ -10,6 +10,7 @@ namespace PointOfSales.Core.Entities
         public string CustomTag { get; set; }
     }
 
+
     public class POSContext : IdentityDbContext<ApplicationUser>
     {
 
@@ -48,7 +49,8 @@ namespace PointOfSales.Core.Entities
                 .WithMany(m => m.ProductModifier)
                 .HasForeignKey(pm => pm.ModifierId);
             #endregion
-            //TODO CHECK THIS base.OnModelCreating(builder);
+
+            base.OnModelCreating(modelBuilder);
         }
 
     }

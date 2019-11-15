@@ -9,9 +9,36 @@ using System.Diagnostics;
 using System.Linq;
 using System;
 using PointOfSales.Core.Service;
+using PointOfSales.Core.Infraestructure;
 
 namespace TestApp
 {
+    public class TestHandler {
+        public static void Handle(Action<DbContextOptions<POSContext>> action)
+        {
+            var connection = new SqliteConnection("DataSource=:memory:");
+            connection.Open();
+            
+            var options = new DbContextOptionsBuilder<POSContext>()
+                .UseSqlite(connection)
+                .Options;
+            
+            try
+            {
+                using (var context = new POSContext(options))
+                {
+                    //create database
+                    context.Database.EnsureCreated();
+                }
+                action(options);
+            
+            } finally
+            {
+                connection.Close();
+            }
+        }
+    }
+
 
     [TestClass]
     public class ModifierTest
@@ -19,23 +46,10 @@ namespace TestApp
         [TestMethod]
         public void TestUpsertProductModifiers()
         {
+            TestHandler.Handle((DbContextOptions<POSContext> options) => {
 
-            var connection = new SqliteConnection("DataSource=:memory:");
-            connection.Open();
-
-            try
-            {
-                var options = new DbContextOptionsBuilder<POSContext>()
-                    .UseSqlite(connection)
-                    .Options;
-
-                // Create the schema in the database
-                using (var context = new POSContext(options))
-                {
-                    //create database
-                    context.Database.EnsureCreated();
-                }
-
+                var productId = 1;
+              
                 using (var context = new POSContext(options))
                 {
 
@@ -46,8 +60,8 @@ namespace TestApp
 
                     context.Add(new ProductModifier { ModifierId = 1, ProductId = 1 });
                     context.SaveChanges();
-
-                    var productId = 1;
+              
+                
                     var dto = new List<ProductModifier>()
                         {
                             new ProductModifier { ProductId = productId, ModifierId = 1},
@@ -55,22 +69,27 @@ namespace TestApp
                         };
 
                     //assert add one more
-                    var posService = new POSService(context);
-                    posService.UpsertDeleteProductModifiers(productId, dto).Wait();
-                    Assert.AreEqual(2, context.Product.FirstOrDefault().ProductModifier.Count());
+                    var productService = new ProductService(context);
+                    var product = productService.GetProduct(productId).Result;
+                    productService.UpsertDeleteProductModifiers(product, dto);
+                    context.SaveChanges();
 
-                    //asssert remove all 
-                    dto = new List<ProductModifier>() {};
-                    posService.UpsertDeleteProductModifiers(productId, dto).Wait();
-                    Assert.AreEqual(0, context.Product.FirstOrDefault().ProductModifier.Count());
-                     
+                    Assert.AreEqual(2, context.Product.FirstOrDefault().ProductModifier.Count());
                 }
 
-            }
-            finally
-            {
-                connection.Close();
-            }
+                using (var context = new POSContext(options))
+                {
+                    //asssert remove all 
+                    var dto = new List<ProductModifier>() {};
+                    var productService = new ProductService(context);
+                    var product2 = productService.GetProduct(productId).Result;
+                    productService.UpsertDeleteProductModifiers(product2, dto);
+                    context.SaveChanges();
+
+                    Assert.AreEqual(0, context.Product.FirstOrDefault().ProductModifier.Count());
+                }   
+            });
+         
         }
 
       
@@ -78,17 +97,7 @@ namespace TestApp
         [TestMethod]
         public void TestAddUpdateDeleteInsertRelatedEntities()
         {
-            //setup
-            // In-memory database only exists while the connection is open
-            var connection = new SqliteConnection("DataSource=:memory:");
-            connection.Open();
-
-            try
-            {
-                var options = new DbContextOptionsBuilder<POSContext>()
-                    .UseSqlite(connection)
-                    .Options;
-
+             TestHandler.Handle((DbContextOptions<POSContext> options) => {
                 // Create the schema in the database
                 using (var context = new POSContext(options))
                 {
@@ -114,9 +123,10 @@ namespace TestApp
                         }
                     };
 
-                    var posService = new POSService(context);
-                    posService.UpsertDeleteModiferAndItemModifier(modClient);
-
+                    var modifierService = new ModifierService(context);
+                    modifierService.UpsertDeleteModiferAndItemModifier(modClient);
+                    context.SaveChanges();
+                    
                     Assert.AreEqual(context.Modifier.First().Name, "mod1.1");
 
                     Assert.AreEqual(context.ItemModifier.Count(), 3);
@@ -145,9 +155,9 @@ namespace TestApp
                     var totalChilds = 1;
                     var modClient = DataFactory.BuildModifierData(name:"hello1", totalItemModifier: totalChilds);
 
-                    var posService = new POSService(context);
-                    posService.UpsertDeleteModiferAndItemModifier(modClient);
-
+                    var modifierService = new ModifierService(context);
+                    modifierService.UpsertDeleteModiferAndItemModifier(modClient);
+                    context.SaveChanges();
 
                     Assert.AreEqual(
                         context.Modifier
@@ -157,11 +167,8 @@ namespace TestApp
                 }
 
 
-            }
-            finally
-            {
-                connection.Close();
-            }
+            });
+          
         }
     }
 }

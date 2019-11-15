@@ -33,8 +33,8 @@ namespace PointOfSales.WebUI
                 .AddRazorPagesOptions(options =>
                 {
                     options.AllowAreas = true;
-                    options.Conventions.AuthorizeAreaFolder("Identity", "/Account/Manage");
-                    options.Conventions.AuthorizeAreaPage("Identity", "/Account/Logout");
+                    // options.Conventions.AuthorizeAreaFolder("Identity", "/Account/Manage");
+                    // options.Conventions.AuthorizeAreaPage("Identity", "/Account/Logout");
                 })
                 .AddJsonOptions(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
@@ -77,9 +77,9 @@ namespace PointOfSales.WebUI
 
             services.ConfigureApplicationCookie(options =>
             {
-                options.LoginPath = $"/Identity/Account/Login";
-                options.LogoutPath = $"/Identity/Account/Logout";
-                options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
+                // options.LoginPath = $"/Identity/Account/Login";
+                // options.LogoutPath = $"/Identity/Account/Logout";
+                // options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
             });
 
 

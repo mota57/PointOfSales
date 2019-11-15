@@ -48,7 +48,7 @@ namespace PointOfSales.Core.DTO
         [Required]
         public decimal Price { get; set; }
 
-        //ImageBytesMainImage
+        
         public byte[] MainImage { get; set; }
 
         public IFormFile MainImageForm { get; set; }

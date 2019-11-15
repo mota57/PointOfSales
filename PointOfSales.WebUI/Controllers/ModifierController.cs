@@ -16,21 +16,21 @@ namespace PointOfSales.WebUI.Controllers
     public class ModifierDataTableConfig : VueTableConfig
     {
         public ModifierDataTableConfig()
+        : base(
+            nameof(Modifier),
+            new List<VueField>()
+            {
+                 new VueField(name:"Id", sqlField:"Modifier.Id" ),
+                 new VueField(name:"Name", sqlField:"Modifier.Name"),
+                 new VueField(name:"ModifierCount", sqlField:"ModifierCount"),
+            },
+            new Query(nameof(Modifier))
+            .Select("Modifier.Id", "Modifier.Name")
+            .ForSqlite(q => q.SelectRaw("(Select (COUNT(Name) || ' Modifiers') from ItemModifier WHERE  ItemModifier.ModifierId = Modifier.Id) as ModifierCount"))
+            .ForSqlServer(q => q.SelectRaw("(Select (COUNT(Name) + ' Modifiers') from ItemModifier WHERE  ItemModifier.ModifierId = Modifier.Id) as ModifierCount"))
+        )
         {
-            TableName = nameof(Modifier);
-            Fields.AddRange(new List<VueField>()
-                {
-                     new VueField(name:"Id", sqlField:"Modifier.Id" ),
-                     new VueField(name:"Name", sqlField:"Modifier.Name"),
-                     new VueField(name:"ModifierCount", sqlField:"ModifierCount"),
-                });
-
-
-            QueryBuilder = new Query("Modifier")
-                     .Select("Modifier.Id", "Modifier.Name")
-                     .ForSqlite(q => q.SelectRaw("(Select (COUNT(Name) || ' Modifiers') from ItemModifier WHERE  ItemModifier.ModifierId = Modifier.Id) as ModifierCount"))
-                     .ForSqlServer(q => q.SelectRaw("(Select (COUNT(Name) + ' Modifiers') from ItemModifier WHERE  ItemModifier.ModifierId = Modifier.Id) as ModifierCount"));
-
+              
         }
     }
 
@@ -40,24 +40,26 @@ namespace PointOfSales.WebUI.Controllers
     public class ModifierController : ApplicationBaseController<Modifier>
     {
         private readonly POSService _POSService;
+        private readonly ModifierService _modifierService;
 
         public ModifierController(POSContext context, IMapper mapper, POSService POSService)
             : base(context, new ModifierDataTableConfig(), mapper)
         {
             _POSService = POSService;
+            _modifierService  = new ModifierService(context);
         }
 
 
         // GET: api/Modifier/5
         [HttpGet("{id}")]
-        public override  ActionResult Get(int id)
+        public async override  Task<ActionResult> Get(int id)
         {
 
-            var entity = _context.Modifier
+            var entity = await _context.Modifier
                 .Include(_ => _.ItemModifier)
                 .AsNoTracking()
                 .Where(_ => _.Id == id)
-                .FirstOrDefault();
+                .FirstOrDefaultAsync();
 
             if (entity == null)
             {
@@ -70,12 +72,15 @@ namespace PointOfSales.WebUI.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> UpsertProductModifiers(int productId, List<ProductModifier> productModifierClient)
         {
-            if (_context.Product.FirstOrDefault(_ => _.Id == productId)  == null)
+            if (!_context.Set<Product>().Any(_ => _.Id == productId))
             {
                 return NotFound();
             }
+            var productService = new ProductService(_context);
+            var product = await productService.GetProduct(productId);
 
-            await _POSService.UpsertDeleteProductModifiers(productId, productModifierClient);
+            productService.UpsertDeleteProductModifiers(product, productModifierClient);
+            await _context.SaveChangesAsync();
             return Ok();
         }
 
@@ -91,7 +96,7 @@ namespace PointOfSales.WebUI.Controllers
         {
             if (ModelState.IsValid)
             {
-                _POSService.UpsertDeleteModiferAndItemModifier(entity);
+                _modifierService.UpsertDeleteModiferAndItemModifier(entity);
 
                 await _context.SaveChangesAsync();
 

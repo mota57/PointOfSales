@@ -12,26 +12,28 @@ using SqlKata;
 using System;
 using Newtonsoft.Json;
 using PointOfSales.Core.Service;
+using PointOfSales.Core.Infraestructure;
 
 namespace PointOfSales.WebUI.Controllers
 {
     public class ProductDataTableConfig : VueTableConfig
     {
         public ProductDataTableConfig()
-        {
-            TableName = nameof(Product);
-            Fields.AddRange(new List<VueField>()
+        : base(
+                nameof(Product),
+                new List<VueField>()
                 {
                      new VueField(name:"Id", sqlField:"Product.Id"),
                      new VueField(name:"Name", sqlField:"Product.Name"),
                      new VueField(name:"Price", sqlField:"Product.Price"),
                      new VueField(name:"ProductCode", sqlField:"Product.ProductCode"),
                      new VueField(name:"CategoryName", sqlField:"Category.Name")
-                });
-
-            QueryBuilder = new Query(TableName)
-                          .LeftJoin("Category", "Category.Id", "Product.CategoryId")
-                          .Select("Product.{Id,Name,Price,ProductCode}", "Category.Name as CategoryName");
+                },
+                new Query(nameof(Product))
+                .LeftJoin("Category", "Category.Id", "Product.CategoryId")
+                .Select("Product.{Id,Name,Price,ProductCode}", "Category.Name as CategoryName")
+        )
+        {
 
         }
     }
@@ -44,22 +46,21 @@ namespace PointOfSales.WebUI.Controllers
     public class ProductsController : ApplicationBaseController<Product>
     {
         private readonly POSService _POSService;
-
+        private readonly ProductService _productService;
 
         public ProductsController(POSContext context, IMapper mapper, POSService pOSService)
             : base(context, new ProductDataTableConfig(), mapper)
         {
             _POSService = pOSService;
-
+            _productService = new ProductService(context);
         }
 
 
         // GET: api/Categories/5
         [HttpGet("{id}")]
-        public  override ActionResult Get(int id)
+        public  async override Task<ActionResult> Get(int id)
         {
-
-            var product =  _context.Product.Include(_ => _.ProductModifier).FirstOrDefault(p => p.Id == id);
+            var product =  await _productService.GetProduct(id);
 
             if (product == null)
             {
@@ -67,7 +68,6 @@ namespace PointOfSales.WebUI.Controllers
             }
             
             var dto = _mapper.Map<ProductFormDTO>(product);
-            dto.ModifierIds = product.ProductModifier.Select(_ =>  _.ModifierId ).ToList();
 
             return Ok(dto);
         }
@@ -84,29 +84,30 @@ namespace PointOfSales.WebUI.Controllers
                 return BadRequest(ModelState);
             }
 
-            Product product = await _context.Product.Include(_ => _.ProductModifier).FirstOrDefaultAsync(_ => _.Id == id);
-
-
-            if (product == null) return BadRequest();
-
-            //if the user click on the delete button
-            if (dto.ImageDeleted)
-            {
-                product.MainImage = null;
-            } else if (dto.MainImageForm != null)
-            {
-                product.MainImage = await dto.MainImageForm.ToBytes();
-            }
-
-
-            _mapper.Map(dto, product);
-            product.ProductModifier = new HashSet<ProductModifier>(dto.ModifierIds.Select(modId => new ProductModifier() { ProductId = id, ModifierId = modId }));
-            _context.Entry(product).State = EntityState.Modified;
-
-            await _POSService.UpsertDeleteProductModifiers(id, product.ProductModifier.ToList());
-
             try
             {
+                Product product = await _context.Product
+                                        .Include(_ => _.ProductModifier)
+                                        .FirstOrDefaultAsync(_ => _.Id == id);
+
+            
+                if (dto.ImageDeleted)
+                {
+                    product.MainImage = null;
+                } else if (dto.MainImageForm != null)
+                {
+                    product.MainImage = await dto.MainImageForm.ToBytes();
+                }
+
+
+                _mapper.Map(dto, product);
+              
+                _context.Entry(product).State = EntityState.Modified;
+
+                var productModifierClient = ProductMapper.CreateListOfProductModifier(dto);
+
+                 _productService.UpsertDeleteProductModifiers(product, productModifierClient);
+            
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -129,14 +130,12 @@ namespace PointOfSales.WebUI.Controllers
         //[ValidateAntiForgeryToken]
         [IgnoreAntiforgeryToken]
         public async Task<ActionResult<Product>> PostProduct([FromForm] ProductFormDTO dto)
-        {
-            Product product = _mapper.Map<Product>(dto);
-            product.ProductModifier = new HashSet<ProductModifier>(dto.ModifierIds.Select(modId => new ProductModifier() { ModifierId = modId }));
-            product.MainImage = await dto.MainImageForm.ToBytes();
-            
+        {            
 
             if (ModelState.IsValid)
             {
+                Product product = _mapper.Map<Product>(dto);
+                product.MainImage = await dto.MainImageForm.ToBytes();
 
                 _context.Product.Add(product);
 

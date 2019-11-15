@@ -13,14 +13,15 @@ namespace PointOfSales.WebUI.Controllers
     public class CategoryVueDataTableConfig : VueTableConfig
     {
         public CategoryVueDataTableConfig()
-        {
-            TableName = nameof(Category);
-            Fields.AddRange(new List<VueField>()
-            {
+        :base(
+            nameof(Category), 
+            new List<VueField>() {
                  new VueField("Id", false),
                  new VueField("Name")
-            });
-
+            }
+        )
+        {
+          
         }
     }
 

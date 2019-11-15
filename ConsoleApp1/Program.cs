@@ -1,16 +1,10 @@
-﻿using Newtonsoft.Json.Schema;
+﻿
 using System;
-using System.Linq;
-using PointOfSales.Core.DTO;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using PointOfSales.Core.Infraestructure.VueTable;
 using SqlKata.Execution;
-using PointOfSales.Core.Entities;
-using Microsoft.EntityFrameworkCore;
-using System.IO;
-using System.Reflection;
-using Scriban;
+
 using PointOfSales.Core.Generator;
 
 namespace ConsoleApp1
@@ -45,14 +39,14 @@ namespace ConsoleApp1
         {
 
             VueTableReader reader = new VueTableReader();
-            var db = reader.BuildQueryFactory();
+            var db = QueryFactoryBuilder.BuildQueryFactory();
 
 
             var q = db.Query("Modifier")
                            .Select("Modifier.Id", "Modifier.Name")
                            .SelectRaw("(Select (COUNT(Name) || 'Modifiers') from ItemModifier WHERE  ItemModifier.ModifierId = Modifier.Id) as ModifierCount");
                             
-               var result =         q.Get();
+               var result = q.Get();
 
             Console.WriteLine(JsonConvert.SerializeObject(result));
 

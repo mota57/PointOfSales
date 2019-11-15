@@ -22,7 +22,20 @@ namespace PointOfSales.Core.Entities
         //public DateTime ModifiedDate { get; set; }
     }
 
+    public class Supplier : BaseEntity
+    {
+        public string RNC { get; set; }
+        public string Address { get; set; }
+        public string City { get; set; }
     
+        public string Phone1 { get; set; }
+
+        public string Phone2 { get; set; }
+
+        public string Cellphone { get; set; }
+    }
+
+
     public class Customer : BaseEntity
     {
         public Customer()
@@ -40,7 +53,7 @@ namespace PointOfSales.Core.Entities
 
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-        public DateTime BirthDate { get; set; }
+        public DateTime? BirthDate { get; set; }
         public string LastName { get; set; }
         public string FirstName { get; set; }
 
@@ -80,6 +93,13 @@ namespace PointOfSales.Core.Entities
 
         public int? TaxId { get; set; }
         public Tax Tax { get; set; }
+
+        public int? UnitId { get; set; }
+        public Unit Unit { get; set; }
+    }
+
+    public class Unit : BaseEntity
+    {
 
     }
 
@@ -135,40 +155,15 @@ namespace PointOfSales.Core.Entities
 
         public int OrderId { get; set; }
         public ICollection<OrderDetail> OrderDetails { get; set; }
+
         
         public ICollection<PaymentOrder> PaymentOrders {get;set;} //when want to spit the payment {Amount, paymentType}
 
+        public int? DiscountId { get; set; }
+        public Discount Discount { get; set; }
+
 
     }
-
-    
-    public class PaymentOrder 
-    {
-        public int PaymentOrderId {get;set;}
-
-        public int OrderId {get; set;}
-        public decimal Amount {get ;set;}
-        public PaymentType  PaymentType {get;set;}
-    }
-
-    public enum PaymentType {
-        CASH,
-        CARD
-    }
-    
-    public class ProductRent
-    {
-        public int ProductRentId {get ;set;}
-
-        public int OrderDetailId {get;set;}
-
-        public OrderDetail OrderDetail {get; set;}
-        public DateTime StartDate {get;set;}
-
-        public DateTime EndDate {get;set;}
-    }
-
-
 
     public class OrderDetail 
     {
@@ -186,11 +181,40 @@ namespace PointOfSales.Core.Entities
         public int? DiscountId { get; set; }
         public Discount Discount { get; set; }
 
-        public int? ProductRentId {get ;set;}
-        public ProductRent ProductRent {get; set;}
-
     }
 
+    public class ProductRentDetail
+    {
+        public int OrderId { get; set; }
+        public Order Order { get; set; } 
+
+        public int ProductId { get; set; }
+        public Product Product { get; set; }
+
+        public DateTime StartDate {get;set;}
+
+        public DateTime EndDate {get;set;}
+
+        public int? DiscountId { get; set; }
+        public Discount Discount { get; set; }
+    }
+
+    
+    public class PaymentOrder 
+    {
+        public int PaymentOrderId {get;set;}
+
+        public int OrderId {get; set;}
+        public decimal Amount {get ;set;}
+        public PaymentType  PaymentType {get;set;}
+    }
+
+    public enum PaymentType { CASH, CARD}
+
+    
+    
+
+   
     public class OrderAudit
     {
         public string CustomerIdentification { get; set; }
@@ -202,7 +226,10 @@ namespace PointOfSales.Core.Entities
         public decimal Price { get; set; }
         public string ProductName { get; set; }
         public int Quantity { get; set; }
+        public string DiscountName { get; set; }
         public decimal? DiscountAmount { get; set; }
+
+        public string TaxName { get; set; }
         public decimal? TaxAmmount { get; set; }
 
         [DataType(DataType.DateTime)]

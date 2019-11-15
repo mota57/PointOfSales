@@ -91,12 +91,13 @@ https://stackoverflow.com/questions/16104078/appending-array-to-formdata-and-sen
 https://stackoverflow.com/questions/42883550/ajax-with-formdata-dose-not-bind-childs-array-of-objects-in-asp-net-controller
 
 
-
-
-* implement menu crud.
 * implement identity 
 * implement inventory
 
+
+https://auth0.com/docs/quickstart/backend/aspnet-core-webapi
+https://garywoodfine.com/asp-net-core-2-2-jwt-authentication-tutorial/
+https://medium.com/@ozgurgul/asp-net-core-2-0-webapi-jwt-authentication-with-identity-mysql-3698eeba6ff8
 
 ## Entities
 
