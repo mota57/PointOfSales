@@ -61,9 +61,9 @@ namespace PointOfSales.Core.Infraestructure.VueTable
     public class VueTableConfig
     {
 
-        public VueTableConfig()
+        public VueTableConfig(List<VueField> fields)
         {
-            Fields = new List<VueField>();
+            Fields = fields;
 
         }
 
@@ -83,14 +83,14 @@ namespace PointOfSales.Core.Infraestructure.VueTable
                 {
                     throw new Exception("Must set SqlField property in class VueField when VueTableConfig.QueryBuilder is not null");
                 }
-                
+
                 _queryBuilder = value;
             }
         }
 
 
         public string TableName { get; set; }
-        public List<VueField> Fields { get; set; } 
+        public List<VueField> Fields { get; private set; } 
         
     }
 
