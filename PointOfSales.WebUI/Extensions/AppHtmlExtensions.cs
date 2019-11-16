@@ -4,11 +4,20 @@ using Newtonsoft.Json.Linq;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Linq;
+using PointOfSales.Core.Extensions;
+using System;
 
-namespace PointOfSales.Core.Extensions
+namespace PointOfSales.WebUI.Extensions
 {
     public static class AppHtmlExtensions
-    {
+    { 
+    
+        public static bool IsInAreaName(this IHtmlHelper helper, string key){
+            var router = helper.ViewContext.RouteData.Values;
+            return router.ContainsKey("area") && router.Values.Any(v => v.ToString().EqualIgnoreCase(key));
+        }
+
         public static async Task GenerateApiUrl(this IHtmlHelper helper)
         {
 

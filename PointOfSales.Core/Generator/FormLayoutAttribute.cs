@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PointOfSales.Core.Infraestructure
+namespace PointOfSales.Core.Generator
 {
     /// <summary>
     /// Specify the  

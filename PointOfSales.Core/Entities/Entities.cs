@@ -1,4 +1,5 @@
-﻿using PointOfSales.Core.Infraestructure;
+﻿using PointOfSales.Core.Generator;
+using PointOfSales.Core.Infraestructure;
 using System;
 using System.Collections;
 using System.Collections.Generic;

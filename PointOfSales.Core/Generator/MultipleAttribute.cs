@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PointOfSales.Core.Infraestructure
+namespace PointOfSales.Core
 {
     /// <summary>
     /// Allow to indicate more than one abstract entity 

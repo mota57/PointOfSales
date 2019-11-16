@@ -13,6 +13,10 @@ using PointOfSales.Core.Infraestructure;
 using PointOfSales.Core.Service;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using System;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using PointOfSales.WebUI.Extensions;
 
 namespace PointOfSales.WebUI
 {
@@ -28,29 +32,43 @@ namespace PointOfSales.WebUI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+                options.CheckConsentNeeded = context => false; //!!!!!!!!!!!!!!!!!!!!!! Turned off
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
+
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(options => {
+                options.LoginPath = $"/Identity/Account/Login";
+                options.LogoutPath = $"/Identity/Account/Logout";
+                options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
+            });
+           
+
             // Add framework services.
             services.AddMvc()
                 .AddRazorPagesOptions(options =>
                 {
                     options.AllowAreas = true;
-                    // options.Conventions.AuthorizeAreaFolder("Identity", "/Account/Manage");
-                    // options.Conventions.AuthorizeAreaPage("Identity", "/Account/Logout");
+                    options.Conventions.AuthorizeAreaFolder("Identity", "/Account/Manage");
+                    options.Conventions.AuthorizeAreaPage("Identity", "/Account/Logout");
                 })
                 .AddJsonOptions(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
 
-            services.AddAutoMapper(typeof(POSMapperConfiguration));
-            // Simple example with dependency injection for a data provider.
-            services.AddSingleton<IWeatherProvider, WeatherProviderFake>();
-            services.AddDbContext<POSContext>(cfg => cfg.UseSqlite(GlobalVariables.Connection));
-            services.AddScoped<POSService>();
-
+            services.AddApplicationFeatures();
             #region identity
+
             services.AddIdentity<ApplicationUser, IdentityRole>()
-           // services.AddDefaultIdentity<IdentityUser>()
            .AddEntityFrameworkStores<POSContext>()
            .AddDefaultTokenProviders();
+
+
+            // services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, AddPermissionsToUserClaims>();
 
             // using Microsoft.AspNetCore.Identity.UI.Services;
             services.AddSingleton<IEmailSender, EmailSender>();
@@ -59,17 +77,17 @@ namespace PointOfSales.WebUI
             services.Configure<IdentityOptions>(options =>
             {
                 // Password settings.
-                //options.Password.RequireDigit = true;
-                //options.Password.RequireLowercase = true;
-                //options.Password.RequireNonAlphanumeric = true;
-                //options.Password.RequireUppercase = true;
-                //options.Password.RequiredLength = 6;
-                //options.Password.RequiredUniqueChars = 1;
+                options.Password.RequireDigit = true;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequiredLength = 4;
+                options.Password.RequiredUniqueChars = 1;
 
                 // Lockout settings.
-                //options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
-                //options.Lockout.MaxFailedAccessAttempts = 5;
-                //options.Lockout.AllowedForNewUsers = true;
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+                options.Lockout.MaxFailedAccessAttempts = 5;
+                options.Lockout.AllowedForNewUsers = true;
 
                 // User settings.
                 //options.User.RequireUniqueEmail = false;
@@ -77,20 +95,16 @@ namespace PointOfSales.WebUI
 
             services.ConfigureApplicationCookie(options =>
             {
-                // options.LoginPath = $"/Identity/Account/Login";
-                // options.LogoutPath = $"/Identity/Account/Logout";
-                // options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
+                options.LoginPath = $"/Identity/Account/Login";
+                options.LogoutPath = $"/Identity/Account/Logout";
+                options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
             });
 
 
             #endregion
 
 
-            // Register the Swagger generator, defining 1 or more Swagger documents
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
-            });
+        
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -114,20 +128,11 @@ namespace PointOfSales.WebUI
                 app.UseHsts();
             }
 
-            // Enable middleware to serve generated Swagger as a JSON endpoint.
-            app.UseSwagger();
-
-            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
-            // specifying the Swagger JSON endpoint.
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-            });
-
-
+            app.UseApplicationFeatures();
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseCookiePolicy();
             app.UseAuthentication();
 
             app.UseMvc(routes =>

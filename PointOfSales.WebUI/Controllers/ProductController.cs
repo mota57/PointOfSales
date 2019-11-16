@@ -7,10 +7,9 @@ using PointOfSales.Core.DTO;
 using AutoMapper;
 using PointOfSales.WebUI.Extensions;
 using PointOfSales.Core.Infraestructure.VueTable;
-using System.Linq;
+
 using SqlKata;
-using System;
-using Newtonsoft.Json;
+
 using PointOfSales.Core.Service;
 using PointOfSales.Core.Infraestructure;
 
@@ -38,7 +37,7 @@ namespace PointOfSales.WebUI.Controllers
         }
     }
 
-
+   
 
 
     [Route("api/[controller]")]
@@ -140,7 +139,7 @@ namespace PointOfSales.WebUI.Controllers
                 _context.Product.Add(product);
 
                 await _context.SaveChangesAsync();
-
+              
                 return CreatedAtAction(nameof(Get), new { id = product.Id }, product);
             }
             else

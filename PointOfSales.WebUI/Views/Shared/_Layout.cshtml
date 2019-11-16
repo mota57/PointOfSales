@@ -14,8 +14,11 @@
 </head>
 
 <body>
-    @RenderBody()
-
+   
+    <div class="@(Html.IsInAreaName("Identity") ? "container" : "")">
+        
+        @RenderBody()
+    </div>
 
     <script>
         window.APP_GLOBALS = {
