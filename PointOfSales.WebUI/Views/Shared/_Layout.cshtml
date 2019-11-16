@@ -14,9 +14,14 @@
 </head>
 
 <body>
-   
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="collapse navbar-collapse" id="navbarNav">
+                @{ await Html.RenderPartialAsync("_loginPartial"); }
+        </div>
+    </nav>
+
     <div class="@(Html.IsInAreaName("Identity") ? "container" : "")">
-        
+
         @RenderBody()
     </div>
 

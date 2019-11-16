@@ -1,5 +1,5 @@
 <template>
-    <div class="main-nav">
+    <div class="main-nav" style="margin-top: 5rem;">
         <nav class="navbar navbar-expand-md navbar-dark">
             <button class="navbar-toggler" type="button" @click="toggleCollapsed">
                 <span class="navbar-toggler-icon"></span>
