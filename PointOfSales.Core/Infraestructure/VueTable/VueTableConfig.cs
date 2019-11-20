@@ -15,16 +15,26 @@ namespace PointOfSales.Core.Infraestructure.VueTable
             this.TableName = tableName;
             this.Fields = fields;
 
-            
-            Contract.Requires<ArgumentNullException>(!string.IsNullOrEmpty(this.TableName), "Table Name is required");
-            Contract.Requires<ArgumentNullException>(fields != null && fields.Count != 0, "Fields must at least contain a field");
-            
+
+            //Contract.Requires<ArgumentNullException>(!string.IsNullOrEmpty(this.TableName), "Table Name is required");
+
+            if (string.IsNullOrEmpty(tableName))
+                throw new ArgumentNullException("tableName");
+
+            if (fields == null || fields.Count == 0)
+                throw new ArgumentNullException("fields");
+
+            //Contract.Requires<ArgumentNullException>(fields != null && fields.Count != 0, "Fields must at least contain a field");
+
 
             if(queryBuilder != null )
             {
-                Contract.Requires<ArgumentNullException>(fields.All(_ => !string.IsNullOrEmpty(_.SqlField)), 
-                    "Must set SqlField property in class VueField when VueTableConfig.QueryBuilder is not null");
+                if(fields.Any(_ => string.IsNullOrEmpty(_.SqlField)))
+                    throw new ApplicationException("Must set SqlField property in class VueField when VueTableConfig.QueryBuilder is not null");
+            //    Contract.Requires<ArgumentNullException>(fields.All(_ => !string.IsNullOrEmpty(_.SqlField)), 
+            //        "Must set SqlField property in class VueField when VueTableConfig.QueryBuilder is not null");
             }
+            QueryBuilder = queryBuilder;
         }
 
         /// <summary>

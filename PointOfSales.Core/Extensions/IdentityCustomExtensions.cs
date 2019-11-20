@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using PointOfSales.Core.Entities;
 using System;
 using System.Collections.Generic;
@@ -25,12 +26,21 @@ namespace PointOfSales.Core.Extensions
         public static async Task SignInWithClaimsAsync(this SignInManager<ApplicationUser> signIn,ApplicationUser user, AuthenticationProperties authenticationProperties, IEnumerable<Claim> additionalClaims)
         {
             var userPrincipal =  await signIn.ClaimsFactory.CreateAsync(user);
-            var identity = userPrincipal.Identities.First();
-            foreach (var claim in additionalClaims)
+            userPrincipal.Identities.First().AddClaims(additionalClaims);
+
+            var logger = ((ILogger<SignInManager<ApplicationUser>>)signIn.Logger);
+            
+            logger?.LogDebug($"@@@ ApplicationScheme at SigninWithClaimsAsync:: {IdentityConstants.ApplicationScheme}");
+
+            if (additionalClaims != null)
             {
-                identity.AddClaim(claim);
+                var claimsInfo = additionalClaims?.Select(_ => $"Type::{_.Type}, value:: {_.Value}\n").ToArray();
+                logger?.LogDebug($"@@@ claims = {string.Join(',', claimsInfo)}");
+                
             }
-            await signIn.Context.SignInAsync(IdentityConstants.ApplicationScheme,
+
+
+           await signIn.Context.SignInAsync(IdentityConstants.ApplicationScheme,
                 userPrincipal,
                 authenticationProperties ?? new AuthenticationProperties());
         }
