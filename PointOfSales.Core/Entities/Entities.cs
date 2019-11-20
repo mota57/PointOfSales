@@ -147,12 +147,23 @@ namespace PointOfSales.Core.Entities
         public ICollection<Product> Products { get; set; }
     }
 
+    public enum StatusOrder
+    {
+        OPEN, 
+        CLOSE,
+        LOCK
+    }
+
     public class Order
     {
         public Order()
         {
             OrderDetails = new HashSet<OrderDetail>();
+            StatusOrder = StatusOrder.OPEN;
         }
+
+        public StatusOrder StatusOrder { get; set; }
+     
 
         public int OrderId { get; set; }
         public ICollection<OrderDetail> OrderDetails { get; set; }

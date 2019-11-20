@@ -263,6 +263,8 @@ namespace PointOfSales.Core.Migrations
 
                     b.Property<int?>("DiscountId");
 
+                    b.Property<int>("StatusOrder");
+
                     b.HasKey("OrderId");
 
                     b.HasIndex("DiscountId");

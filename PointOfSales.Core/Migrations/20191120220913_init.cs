@@ -226,6 +226,7 @@ namespace PointOfSales.Core.Migrations
                 {
                     OrderId = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
+                    StatusOrder = table.Column<int>(nullable: false),
                     DiscountId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
