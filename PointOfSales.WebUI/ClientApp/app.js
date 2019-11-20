@@ -21,6 +21,8 @@ import vSelect from 'vue-select'
 import { ServerTable, ClientTable, Event } from 'vue-tables-2';
 import Toasted from '@gitlab/vue-toasted';
 import BootstrapVue from 'bootstrap-vue'
+import VueNumeric from 'vue-numeric'
+import AirbnbStyleDatepicker from 'vue-airbnb-style-datepicker'
 
 import { eventBus } from './event-bus'
 
@@ -64,11 +66,19 @@ axios.interceptors.response.use(function (response) {
 
 
 
+
 // Registration of global components
 
 Vue.use(BootstrapVue)
 Vue.use(ServerTable, {}, true, 'bootstrap4', 'default');
 Vue.use(Toasted)
+Vue.use(VueNumeric)
+
+// see docs for available options
+const datepickerOptions = {}
+
+// make sure we can use it in our components
+Vue.use(AirbnbStyleDatepicker, datepickerOptions)
 
 Vue.component('form-image', formImage)
 Vue.component('form-product', formProduct)
