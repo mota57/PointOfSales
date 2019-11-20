@@ -9,9 +9,6 @@ namespace PointOfSales.WebUI.Controllers
             return View();
         }
 
-        public IActionResult Error()
-        {
-            return View();
-        }
+
     }
 }

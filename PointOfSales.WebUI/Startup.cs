@@ -33,76 +33,36 @@ namespace PointOfSales.WebUI
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.Configure<CookiePolicyOptions>(options =>
-            {
-                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-                options.CheckConsentNeeded = context => false; //!!!!!!!!!!!!!!!!!!!!!! Turned off
-                options.MinimumSameSitePolicy = SameSiteMode.None;
-            });
+            //services.Configure<CookiePolicyOptions>(options =>
+            //{
+            //    // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+            //    options.CheckConsentNeeded = context => false; //!!!!!!!!!!!!!!!!!!!!!! Turned off
+            //    options.MinimumSameSitePolicy = SameSiteMode.None;
+            //});
 
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-            .AddCookie(options => {
-                options.LoginPath = $"/Identity/Account/Login";
-                options.LogoutPath = $"/Identity/Account/Logout";
-                options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
-            });
+            //services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            //.AddCookie(options => {
+            //    options.LoginPath = $"/Identity/Account/Login";
+            //    options.LogoutPath = $"/Identity/Account/Logout";
+            //    options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
+            //});
            
 
             // Add framework services.
             services.AddMvc()
-                .AddRazorPagesOptions(options =>
-                {
-                    options.AllowAreas = true;
-                    options.Conventions.AuthorizeAreaFolder("Identity", "/Account/Manage");
-                    options.Conventions.AuthorizeAreaPage("Identity", "/Account/Logout");
-                })
+                //.AddRazorPagesOptions(options =>
+                //{
+                //    options.AllowAreas = true;
+                //    options.Conventions.AuthorizeAreaFolder("Identity", "/Account/Manage");
+                //    options.Conventions.AuthorizeAreaPage("Identity", "/Account/Logout");
+                //})
                 .AddJsonOptions(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
 
             services.AddApplicationFeatures();
-            #region identity
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
-           .AddEntityFrameworkStores<POSContext>()
-           .AddDefaultTokenProviders();
-
-
-            // services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, AddPermissionsToUserClaims>();
-
-            // using Microsoft.AspNetCore.Identity.UI.Services;
-            services.AddSingleton<IEmailSender, EmailSender>();
-
-
-            services.Configure<IdentityOptions>(options =>
-            {
-                // Password settings.
-                options.Password.RequireDigit = true;
-                options.Password.RequireLowercase = false;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireUppercase = false;
-                options.Password.RequiredLength = 4;
-                options.Password.RequiredUniqueChars = 1;
-
-                // Lockout settings.
-                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
-                options.Lockout.MaxFailedAccessAttempts = 5;
-                options.Lockout.AllowedForNewUsers = true;
-
-                // User settings.
-                //options.User.RequireUniqueEmail = false;
-            });
-
-            services.ConfigureApplicationCookie(options =>
-            {
-                options.LoginPath = $"/Identity/Account/Login";
-                options.LogoutPath = $"/Identity/Account/Logout";
-                options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
-            });
-
-
-            #endregion
-
+            services.AddIdentitySection();
 
         
         }
@@ -132,8 +92,8 @@ namespace PointOfSales.WebUI
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseCookiePolicy();
-            app.UseAuthentication();
+            //app.UseCookiePolicy();
+            //app.UseAuthentication();
 
             app.UseMvc(routes =>
             {

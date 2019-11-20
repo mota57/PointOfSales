@@ -1,5 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
@@ -7,6 +9,7 @@ using PointOfSales.Core.Entities;
 using PointOfSales.Core.Infraestructure;
 using PointOfSales.Core.Service;
 using PointOfSales.WebUI.Providers;
+using System;
 
 namespace PointOfSales.WebUI.Extensions
 {
@@ -29,7 +32,50 @@ namespace PointOfSales.WebUI.Extensions
 
         }
 
-        
+
+        public static void AddIdentitySection(this IServiceCollection services)
+        {
+
+
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+           .AddEntityFrameworkStores<POSContext>()
+           .AddDefaultTokenProviders();
+
+
+            // services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, AddPermissionsToUserClaims>();
+
+           
+            services.AddSingleton<IEmailSender, EmailSender>();
+
+
+            services.Configure<IdentityOptions>(options =>
+            {
+                // Password settings.
+                options.Password.RequireDigit = true;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequiredLength = 4;
+                options.Password.RequiredUniqueChars = 1;
+
+                // Lockout settings.
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+                options.Lockout.MaxFailedAccessAttempts = 5;
+                options.Lockout.AllowedForNewUsers = true;
+
+                // User settings.
+                //options.User.RequireUniqueEmail = false;
+            });
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = $"/Identity/Account/Login";
+                options.LogoutPath = $"/Identity/Account/Logout";
+                options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
+            });
+
+        }
+
         public static void UseApplicationFeatures(this IApplicationBuilder app)
         {
             
