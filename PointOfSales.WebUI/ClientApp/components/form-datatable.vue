@@ -173,7 +173,6 @@
       })
 
       try {
-        debugger;
         let response = await this.$http.get(this.urls[this.name].tableMetadata)
         this.isComplete = true;
         let data = response.data;
@@ -204,7 +203,8 @@
       */
 
       } catch (err) {
-        window.alert(err)
+        console.error("FORM DATATABLE ERROR:: " + err);
+        window.alert("FORM-DATATABLE ERROR REPORT:: " + err);
       }
 
     },
