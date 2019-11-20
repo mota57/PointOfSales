@@ -49,14 +49,14 @@ class BASE_URL {
 
 }
 
-class categories extends BASE_URL {
+class category extends BASE_URL {
   constructor() {
     super('/Category')
   }
 
 }
 
-class products extends BASE_URL {
+class product extends BASE_URL {
   constructor() {
     super('/Product')
   }
@@ -77,8 +77,8 @@ class modifier extends BASE_URL {
 
 export default {
   urls: {
-    categories: new categories(),
-    products: new products(),
+    category: new category(),
+    product: new product(),
     modifier: new modifier()
   }
 }

@@ -12,6 +12,12 @@ https://www.ag-grid.com/?ref=madewithvuejs.com
 https://serenity.is
 
 
+# Handling errors in an ASP.NET Core Web API
+
+https://www.devtrends.co.uk/blog/handling-errors-in-asp.net-core-web-api
+https://docs.microsoft.com/en-us/aspnet/core/fundamentals/error-handling?view=aspnetcore-2.2
+
+
 
 # calling a child from parent
 

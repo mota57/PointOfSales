@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -6,48 +5,25 @@ using PointOfSales.Core.Entities;
 using PointOfSales.Core.DTO;
 using AutoMapper;
 using PointOfSales.WebUI.Extensions;
-using PointOfSales.Core.Infraestructure.VueTable;
-
-using SqlKata;
 
 using PointOfSales.Core.Service;
 using PointOfSales.Core.Infraestructure;
+using PointOfSales.WebUI.Models;
 
 namespace PointOfSales.WebUI.Controllers
 {
-    public class ProductDataTableConfig : VueTableConfig
-    {
-        public ProductDataTableConfig()
-        : base(
-                nameof(Product),
-                new List<VueField>()
-                {
-                     new VueField(name:"Id", sqlField:"Product.Id"),
-                     new VueField(name:"Name", sqlField:"Product.Name"),
-                     new VueField(name:"Price", sqlField:"Product.Price"),
-                     new VueField(name:"ProductCode", sqlField:"Product.ProductCode"),
-                     new VueField(name:"CategoryName", sqlField:"Category.Name")
-                },
-                new Query(nameof(Product))
-                .LeftJoin("Category", "Category.Id", "Product.CategoryId")
-                .Select("Product.{Id,Name,Price,ProductCode}", "Category.Name as CategoryName")
-        )
-        {
 
-        }
-    }
 
-   
 
 
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductsController : ApplicationBaseController<Product>
+    public class ProductController : ApplicationBaseController<Product>
     {
         private readonly POSService _POSService;
         private readonly ProductService _productService;
 
-        public ProductsController(POSContext context, IMapper mapper, POSService pOSService)
+        public ProductController(POSContext context, IMapper mapper, POSService pOSService)
             : base(context, new ProductDataTableConfig(), mapper)
         {
             _POSService = pOSService;

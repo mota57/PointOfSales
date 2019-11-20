@@ -1,5 +1,8 @@
 <template>
   <div>
+    <!--<pre>
+{{form}}
+</pre>-->
 
     <div v-if="isAjax" class="text-center">
       <p><em>Loading...</em></p>
@@ -205,7 +208,7 @@ const nameComponent = 'form-product'
     },
     created() {
       var vm = this;
-      this.apiUrl = this.urls.products
+      this.apiUrl = this.urls.product
       console.log(`${nameComponent}::created`)
       this.eventBus.$on(`saveForm::${nameComponent}`, vm.upsert)
       this.eventBus.$on(`loadForm::${nameComponent}`, (row) => vm.loadRecord(row))
@@ -250,7 +253,7 @@ const nameComponent = 'form-product'
         this.search(loading, search, this);
       },
       search: _.debounce((loading, search, vm) => {
-        vm.$http.get(vm.urls.categories.picklist(search))
+        vm.$http.get(vm.urls.category.picklist(search))
           .then(res => {
             vm.options = res.data;
             loading(false)

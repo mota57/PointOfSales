@@ -2,7 +2,7 @@
   <div>
 
     <h3>Categories</h3>
-   <form-datatable name="categories" eventpostfix="form-category" title="Category">
+   <form-datatable name="category" eventpostfix="form-category" title="Category">
      <template v-slot:edit>
         <form-category></form-category>
      </template>

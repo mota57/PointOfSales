@@ -40,6 +40,7 @@
     }
   }
 
+ 
  export default {
     props: { displayBtn: Boolean, default:false },
     data() {
@@ -53,6 +54,7 @@
       }
     },
     beforeDestroy() {
+      
       this.eventBus.$off(`${nameComponent}::handler`)
       this.eventBus.$off(`saveForm::${nameComponent}`)
       this.eventBus.$off(`loadForm::${nameComponent}`)
@@ -61,7 +63,7 @@
     },
     created() {
       var vm = this;
-      vm.apiUrl = vm.urls.categories;
+      vm.apiUrl = vm.urls.category;
       this.eventBus.$on(`${nameComponent}::handler`, (handlerName) => vm[handlerName]())
       this.eventBus.$on(`saveForm::${nameComponent}`,  vm.upsert)
       this.eventBus.$on(`loadForm::${nameComponent}`,  vm.loadRecord)

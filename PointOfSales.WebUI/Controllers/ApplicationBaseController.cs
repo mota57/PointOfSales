@@ -85,7 +85,7 @@ namespace PointOfSales.WebUI.Controllers
         [HttpGet("GetTableMetadata")]
         public object GetTableMetadata()
         {
-            return TableConfig;
+            return new VueTableConfigDTO(TableConfig);
         }
 
         [NonAction]

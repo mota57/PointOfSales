@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PointOfSales.Core", "PointO
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PointOfSales.WebUI", "PointOfSales.WebUI\PointOfSales.WebUI.csproj", "{6484FF3A-5B26-4180-9F09-092669A3F894}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp1", "ConsoleApp1\ConsoleApp1.csproj", "{D7D296ED-221A-4EB2-8440-09B7A83A8F38}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PointOfSales.AppConsole", "ConsoleApp1\PointOfSales.AppConsole.csproj", "{D7D296ED-221A-4EB2-8440-09B7A83A8F38}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PointOfSales.Test", "TestApp\PointOfSales.Test.csproj", "{BF8D6453-5EFC-44B4-B1FF-BE1B6CD61801}"
 EndProject

@@ -2,7 +2,7 @@
   <div>
 
     <h3>Products</h3>
-   <form-datatable name="products" eventpostfix="form-product" title="Product">
+   <form-datatable name="product" eventpostfix="form-product" title="Product">
      <template v-slot:edit>
         <form-product></form-product>
      </template>

@@ -6,10 +6,11 @@ using SqlKata;
 
 namespace PointOfSales.Core.Infraestructure.VueTable
 {
+
     public class VueTableConfig
     {
 
-        public VueTableConfig(string tableName, List<VueField> fields, Query queryBuilder = null)
+        public VueTableConfig(string tableName = null, List<VueField> fields = null, Query queryBuilder = null)
         {
             
             this.TableName = tableName;
@@ -41,7 +42,7 @@ namespace PointOfSales.Core.Infraestructure.VueTable
         ///  Must set SqlField property when VueTableConfig.QueryBuilder is not null. 
         /// </summary>
      
-        public Query QueryBuilder { get;  private set;}
+        public Query QueryBuilder { get;  set;}
 
 
         public string TableName { get; private set; }

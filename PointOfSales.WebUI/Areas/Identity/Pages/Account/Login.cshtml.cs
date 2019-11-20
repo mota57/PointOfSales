@@ -82,7 +82,11 @@ namespace PointOfSales.WebUI.Areas.Identity.Pages.Account
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
 
-                var user = _userManager.Users.FirstOrDefault(_ => _.UserName.EqualIgnoreCase(Input.Email));
+                var user = _userManager
+                            .Users
+                            .FirstOrDefault(_ => _.UserName.EqualIgnoreCase(Input.Email))
+                            ??  new ApplicationUser() { UserName = Input.Email,   Email = Input.Email };
+
                 var result = await _signInManager.CheckPasswordSignInAsync(user, Input.Password, false);
 
                 if (result.Succeeded)

@@ -173,6 +173,7 @@
       })
 
       try {
+        debugger;
         let response = await this.$http.get(this.urls[this.name].tableMetadata)
         this.isComplete = true;
         let data = response.data;

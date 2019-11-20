@@ -1,37 +1,20 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PointOfSales.Core.Entities;
-using PointOfSales.Core.Infraestructure.VueTable;
+using PointOfSales.WebUI.Models;
 
 namespace PointOfSales.WebUI.Controllers
 {
-    public class CategoryVueDataTableConfig : VueTableConfig
-    {
-        public CategoryVueDataTableConfig()
-        :base(
-            nameof(Category), 
-            new List<VueField>() {
-                 new VueField("Id", false),
-                 new VueField("Name")
-            }
-        )
-        {
-          
-        }
-    }
-
-
     [Route("api/[controller]")]
     [ApiController]
-    public class CategoriesController : ApplicationBaseController<Category>
+    public class CategoryController : ApplicationBaseController<Category>
     {
 
-        public CategoriesController(POSContext context, IMapper mapper):
+        public CategoryController(POSContext context, IMapper mapper) :
             base(context, new CategoryVueDataTableConfig(), mapper)
         {
         }
@@ -75,7 +58,7 @@ namespace PointOfSales.WebUI.Controllers
             _context.Category.Add(category);
             await _context.SaveChangesAsync();
 
-            return Ok(); 
+            return Ok();
         }
 
     }
