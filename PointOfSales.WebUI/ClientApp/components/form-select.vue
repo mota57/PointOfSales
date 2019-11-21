@@ -5,6 +5,9 @@
 </template>
 
 <script>
+
+import _ from 'lodash'
+
 export default {
   data () {
     return {
@@ -26,7 +29,7 @@ export default {
       },
       urlapi: {
         type: string,
-        default: ''
+        required: true
       },
       initsearch: {
         type: Boolean,
@@ -38,6 +41,7 @@ export default {
     if (this.initsearch) {
       this.onSearch('', () => { })
     }
+   
   },
   methods: {
     onSearch(search, loading) {

@@ -9,27 +9,30 @@
         <div v-if="!isAjax">
             <form ref="formElement"  @submit.prevent="upsert">
                 <div class="row">
+
+
+                    
+                            <div class="form-group">
+                                    <label for="Name">Name</label>
+                                        <input id="Name" type="text" v-model="form.name" class="form-control" placeholder="Enter Name">
+                                    <template v-if="errList && errList.Name">
+                                        <p class="text-danger" :key="$index" v-for="(err,$index) in errList.Name">  </p>
+                                    </template>
+                            </div>
+                        
+                        
                      
                             <div class="form-group">
                                     <label for="Amount">Amount</label>
                                         <input id="Amount" type="number" v-model="form.amount" class="form-control" placeholder="Enter Amount">
                                     <template v-if="errList && errList.Amount">
-                                        <p class="text-danger" v-for="err in errList.Amount">  </p>
+                                        <p class="text-danger" :key="$index" v-for="(err,$index) in errList.Amount">  </p>
                                     </template>
                             </div>
                         
                         
                         
                  
-                            <div class="form-group">
-                                    <label for="Name">Name</label>
-                                        <input id="Name" type="text" v-model="form.name" class="form-control" placeholder="Enter Name">
-                                    <template v-if="errList && errList.Name">
-                                        <p class="text-danger" v-for="err in errList.Name">  </p>
-                                    </template>
-                            </div>
-                        
-                        
                         
                 
                 </div>
@@ -44,7 +47,7 @@
 <script>
 
     import _ from 'lodash'
-    import { Helper } from '../helper'
+    import { Helper } from '../../helper'
 
     const nameComponent = 'form-discount'
 

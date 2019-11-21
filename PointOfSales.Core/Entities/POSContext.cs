@@ -24,6 +24,7 @@ namespace PointOfSales.Core.Entities
         public DbSet<OrderDetail> OrderDetail { get; set; }
         public DbSet<Modifier> Modifier { get; set; }
         public DbSet<ItemModifier> ItemModifier { get; set; }
+        public DbSet<Discount> Discounts { get; set; }
         //public DbSet<ProductModifier> ItemModifier { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

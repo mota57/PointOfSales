@@ -18,6 +18,7 @@ import formCategory from 'components/category/form-category'
 import formDatatable from 'components/form-datatable'
 import formImage from 'components/form-image'
 import formSelect from 'components/form-select'
+import formDiscount from 'components/discount/form-discount'
 
 
 export default {
@@ -32,6 +33,7 @@ export default {
         Vue.component('form-category', formCategory)
         Vue.component('form-datatable', formDatatable)
         Vue.component('form-select', formSelect)
+        Vue.component('form-discount', formDiscount);
         return this;
     },
     UseCustomComponents(Vue){

@@ -77,7 +77,7 @@
            //TODO set orderId
          }
 
-         this.$http({
+        this.$http({
           method:  'post',
           url: this.urls.merchant.pay,
           data: formData,

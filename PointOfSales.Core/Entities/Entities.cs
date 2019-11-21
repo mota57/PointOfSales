@@ -254,6 +254,7 @@ namespace PointOfSales.Core.Entities
 
     public class Discount : BaseEntity
     {
+        [Required]
         public decimal Amount { get; set; }
     }
 

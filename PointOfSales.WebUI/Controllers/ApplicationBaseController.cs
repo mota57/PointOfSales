@@ -9,7 +9,7 @@ using PointOfSales.Core.Infraestructure.VueTable;
 
 namespace PointOfSales.WebUI.Controllers
 {
-   
+      
     public class ApplicationBaseController<TEntity> : ControllerBase
         where TEntity : BaseEntity
     {

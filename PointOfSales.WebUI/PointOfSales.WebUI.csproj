@@ -10,15 +10,15 @@
   <ItemGroup>
     <!-- Files not to show in IDE -->
     <None Remove="yarn.lock" />
+    <Compile Remove="ClientApp\**" />
 
     <!-- Files not to publish (note that the 'dist' subfolders are re-added below) -->
     <Content Remove="ClientApp\**" />
+    <EmbeddedResource Remove="ClientApp\**" />
+    <None Remove="ClientApp\**" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PointOfSales.Core\PointOfSales.Core.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ClientApp\components\Discount\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Areas\Identity\Pages\Account\AccessDenied.cshtml" />

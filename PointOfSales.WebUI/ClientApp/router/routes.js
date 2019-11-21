@@ -2,9 +2,11 @@ import CounterExample from 'components/counter-example'
 import FetchData from 'components/fetch-data'
 import HomePage from 'components/home-page'
 import About from 'components/about'
+
 import tableLightProduct from 'components/product/tablelight-product' 
 import tableLightModifier from 'components/modifier/tablelight-modifier' 
 import tableLightCategory from 'components/category/tablelight-category' 
+import tableLightDiscount from 'components/category/tablelight-discount' 
 
 import posComponent from  'components/merchant/pos'
 import checkoutComponent from  'components/merchant/checkout'
@@ -21,4 +23,5 @@ export const routes = [
   { name: 'pos', path: '/merchant/pos', component: posComponent, display: 'POS', icon: 'list' },
   { name: 'checkout', path: '/merchant/checkout', component: checkoutComponent, display: 'CHECKOUT', icon: 'list', hidden:true },
   { name: 'item-date', path: '/merchant/product-set-dates', component: itemDateComponent, display: 'Configure product dates', icon: 'list', hidden:false },
+  { name: 'discount', path: '/discount', component: tableLightDiscount, display: 'Discount', icon: 'list', hidden:false },
 ]

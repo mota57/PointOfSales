@@ -3,8 +3,7 @@
     <div>
       <b-card title="Checkout">
         <div class="row">
-          
-          <div class="form-group">
+          <div class="form-group" v-if="orderItem && orderItem.isProductForRent">
             <input type="text"
                   id="datepicker-trigger"
                   placeholder="Select dates"
@@ -24,23 +23,35 @@
           </div>
 
 
-           <div class="form-group">
-              <label for="Discount">Discount </label>
-              <form-select></form-select>
+          <b-form-group label="Discount Type">
+            <b-form-radio v-model="disscountType" value="custom">Custom discount</b-form-radio>
+            <b-form-radio v-model="disscountType" value="system">System discount</b-form-radio>
+          </b-form-group>
 
-              <template v-if="errList && errList.Category">
+
+           <div class="form-group" v-if="disscountType == 'system'">
+              <label for="Discount">Discount </label>
+              <form-select urlapi='discount'></form-select>
+
+              <!-- <template v-if="errList && errList.Disscount">
                 <p class="text-danger" v-bind:key="$index" v-for="(err, $index) in errList.Category"> {{err}} </p>
-              </template>
+              </template> -->
           </div>
-          
+
+          <div class="form-group" v-if="disscountType == 'custom'">
+              <label for="CustomDiscount">Custom  Discount </label>
+              <vue-numeric currency="$" separator="," v-model="pts.change" read-only></vue-numeric>
+
+              <!-- <template v-if="errList && errList.Category">
+                <p class="text-danger" v-bind:key="$index" v-for="(err, $index) in errList.Category"> {{err}} </p>
+              </template> -->
+          </div>
+
           <br/>
           <b-button class="float-right" v-on:click="saveConfiguration">Save</b-button>
           <a href="#" @click="goBack()" class="btn btn-secondary">Back</a>
           
         </div>
-
-
-
       </b-card>
     </div>
   </div>
@@ -58,6 +69,7 @@
         dateOne: '',
         dateTwo: '',
         discountId:'',
+        disscountType:'',
         orderItem: {}
       };
     },
@@ -78,22 +90,16 @@
         return formattedDates
       },
      
-      saveConfiguration()
-      { 
-        var orderItemPropsToUpdate = {
-           productId : this.productId,
-           discount : this.discount
+      saveConfiguration(){ 
+        var propsToUpdate = {
+           productId : this.orderItem.id,
+           discount : this.disscountType == 'system' ? this.discountId : null,
+           customDiscountAmount: this.disscountType == 'custom' ?  this.customDiscountAmount : null,
+           startDate : (this.orderItem.isProductForRent) ? this.dateOne : null,
+           endDate : (this.orderItem.isProductForRent) ? this.dateTwo : null
         }
-
-        if(this.orderItem.isProductForRent){
-          if(dateAreInvalid) return;
-          
-        }
-        this.$store.commit('setOrderItemConfiguration', {
-            productId: this.$route.params.productId,
-            starDate: dateOne,
-            endDate: dateTwo
-        })
+        
+        this.$store.commit('setOrderItemConfiguration', propsToUpdate);
       },
       setDataValues(){
         this.orderItem = this.$route.params.orderItem;

@@ -9,7 +9,7 @@ Vue.use(Vuex)
 const MAIN_SET_COUNTER = 'MAIN_SET_COUNTER'
 const SET_ORDER_ITEM_LIST = 'setOrderItemList';
 const CLEAR_ORDER_ITEM_LIST = 'clearOrderItemList';
-
+const SET_ORDER_ITEM_CONFIG = 'setOrderItemConfiguration'
 // STATE
 const state = {
   counter: 1,
@@ -31,10 +31,9 @@ const mutations = {
       orderItem.quantity += 1;
     }
   },
-  [SET_DATE_TO_ORDER_ITEM] (state, payload){
+  [SET_ORDER_ITEM_CONFIG] (state, payload){
     var orderItem = MerchantHelper.findOrderItemById(state, payload.id);
-    orderItem.startDate = payload.startDate;
-    orderItem.endDate = payload.endDate;
+    Object.assign(orderItem, payload);
   },
   [CLEAR_ORDER_ITEM_LIST] (state) {
     state.orderItemList = [];
