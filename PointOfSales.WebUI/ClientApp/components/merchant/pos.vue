@@ -29,7 +29,7 @@
                       <b-badge>{{orderItem.quantity}}</b-badge>
                       <span class="float-right">{{orderItem.price * orderItem.quantity}}</span>
                     </div>
-                    <div v-if="orderItem.IsProductForRent">
+                    <div v-if="orderItem.isProductForRent">
                       <b-button class="btn btn-primary">
                         <router-link :to="{ name: 'item-date', params: { productId: orderItem.productId }}">SET DATE</router-link>
                       </b-button>
@@ -119,7 +119,7 @@
           imgSrc: imgSrc,
           body: faker.lorem.sentence(),
           price: faker.random.number({ min: 5, max: 20000 }),
-          IsProductForRent: true,
+          isProductForRent: true,
           startDate: '',
           endDate: ''
         })

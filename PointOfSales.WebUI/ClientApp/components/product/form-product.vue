@@ -20,7 +20,7 @@
               <input id="Name" type="text" v-model="form.name" class="form-control" placeholder="Enter name">
 
               <template v-if="errList && errList.Name">
-                <p class="text-danger" v-for="err in errList.Name"> {{err}} </p>
+                <p class="text-danger" v-bind:key="$index" v-for="(err, $index) in errList.Name"> {{err}} </p>
               </template>
             </div>
 
@@ -28,7 +28,7 @@
               <label for="Price">Price</label>
               <input id="Price" type="number" v-model="form.price" class="form-control" placeholder="Enter Price">
               <template v-if="errList && errList.Price">
-                <p class="text-danger" v-for="err in errList.Price"> {{err}} </p>
+                <p class="text-danger" v-bind:key="$index" v-for="(err, $index) in errList.Price"> {{err}} </p>
               </template>
             </div>
 
@@ -39,7 +39,7 @@
               <label for="ProductCode">Product Code</label>
               <input id="ProductCode" type="text" v-model="form.productCode" class="form-control" placeholder="Enter product code">
               <template v-if="errList && errList.ProductCode">
-                <p class="text-danger" v-for="err in errList.ProductCode"> {{err}} </p>
+                <p class="text-danger" v-bind:key="$index" v-for="(err, $index) in errList.ProductCode"> {{err}} </p>
               </template>
             </div>
 
@@ -53,7 +53,7 @@
               </b-button>
 
               <template v-if="errList && errList.Category">
-                <p class="text-danger" v-for="err in errList.Category"> {{err}} </p>
+                <p class="text-danger" v-bind:key="$index" v-for="(err, $index) in errList.Category"> {{err}} </p>
               </template>
             </div>
           </div>
@@ -68,13 +68,13 @@
                Modifier 
               </b-button>
               <template v-if="errList && errList.ProductModifier">
-                <p class="text-danger" v-for="err in errList.ProductModifier"> {{err}} </p>
+                <p class="text-danger" v-bind:key="$index" v-for="(err, $index) in errList.ProductModifier"> {{err}} </p>
               </template>
             </div>
 
             <form-image  ref="formImage1" :imagebytes="form.mainImage" v-model="form.mainImageForm">
               <template v-if="errList && errList.MainImage">
-                <p class="text-danger" v-for="err in errList.MainImage"> {{err}} </p>
+                <p class="text-danger" v-bind:key="$index" v-for="(err, $index) in errList.MainImage"> {{err}} </p>
               </template>
             </form-image>
 

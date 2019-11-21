@@ -1,9 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using PointOfSales.Core.Entities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
 namespace PointOfSales.WebUI.Controllers

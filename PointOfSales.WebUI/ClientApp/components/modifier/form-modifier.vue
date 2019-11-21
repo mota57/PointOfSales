@@ -17,7 +17,7 @@
               <input type="text" v-model="form.name" class="form-control" placeholder="Enter name">
 
               <template v-if="errList && errList.Name">
-                <p class="text-danger" v-for="err in errList.Name"> {{err}} </p>
+                <p class="text-danger" v-bind:key="$index" v-for="(err, $index) in errList.Name"> {{err}} </p>
               </template>
             </div>
             <table class="table table-bordered">
