@@ -8,7 +8,7 @@ import tableLightCategory from 'components/category/tablelight-category'
 
 import posComponent from  'components/merchant/pos'
 import checkoutComponent from  'components/merchant/checkout'
-
+import itemDateComponent from 'components/merchant/item-date'
 
 export const routes = [
   { name: 'home', path: '/', component: HomePage, display: 'Home', icon: 'home',  },
@@ -19,5 +19,6 @@ export const routes = [
   { name: 'modifier-list', path: '/modifier/list', component: tableLightModifier, display: 'Modifier', icon: 'list' },
   { name: 'category-list', path: '/cateogry/list', component: tableLightCategory, display: 'Category', icon: 'list' },
   { name: 'pos', path: '/merchant/pos', component: posComponent, display: 'POS', icon: 'list' },
-  { name: 'checkout', path: '/checkout', component: checkoutComponent, display: 'CHECKOUT', icon: 'list', hidden:true },
+  { name: 'checkout', path: '/merchant/checkout', component: checkoutComponent, display: 'CHECKOUT', icon: 'list', hidden:true },
+  { name: 'item-date', path: '/merchant/product-set-dates', component: itemDateComponent, display: 'Configure product dates', icon: 'list', hidden:false },
 ]

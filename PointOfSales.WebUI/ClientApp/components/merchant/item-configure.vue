@@ -16,22 +16,27 @@
                                  :date-two="dateTwo"
                                  @date-one-selected="val => { dateOne = val }"
                                  @date-two-selected="val => { dateTwo = val }" />
-          <b-button class="float-right">Pay</b-button>
+          
 
-
+          <div v-if="dateAreInvalid" class="text-danger">
+              Both dates are required  
+          </div>
+          <br/>>
+          <b-button class="float-right" v-on:click="setDateToOrderItem">Save</b-button>
+          <a href="#" @click="goBack()" class="btn btn-secondary">Back</a>
+          
         </div>
 
 
 
-        <a href="#" @click="goBack()" class="btn btn-secondary">Back</a>
       </b-card>
     </div>
   </div>
 </template>
 
 <script>
-  import { mapGetters } from "vuex";
-  import { MethodType, Payment } from "../domain";
+
+  import format from 'date-fns/format'
 
 
   export default {
@@ -57,10 +62,26 @@
           formattedDates += ' - ' + format(dateTwo, this.dateFormat)
         }
         return formattedDates
+      },
+     
+      setDateToOrderItem(){ 
+        if(dateAreInvalid) return;
+        this.$store.commit('setDateToOrderItem', {
+          productId: this.$route.params.productId,
+          starDate: dateOne,
+          endDate: dateTwo
+        })
+      }
+  
+    },
+    computed: {
+      dateAreInvalid(){
+         return (!dateOne || !dateTwo)
       }
     },
     created() {
-
+      console.info('route paramss!! ');
+      console.info(this.$route.params); //productId
     }
   };
 </script>

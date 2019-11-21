@@ -1,7 +1,7 @@
 export class Payment {
   constructor(due, paymentType) {
     this.due = due;
-    this.tendered = 0.0;
+    this.amount = 0.0;
     this.paymentType = paymentType;
     this.change = 0;
   }

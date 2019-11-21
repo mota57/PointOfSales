@@ -10,14 +10,15 @@
         <div class="mb-2">
           <b-button @click="setNewPayment(MethodType.Cash)">Cash</b-button>
           <b-button class="ml-2" @click="setNewPayment(MethodType.Card)">Card</b-button>
-          <b-button class="float-right">Pay</b-button>
+          <b-button class="float-right" v-on:click="callPay()">Pay</b-button>
+
         </div>
 
         <table class="table">
           <thead>
             <tr>
               <th scope="col">Due</th>
-              <th scope="col">Tendered</th>
+              <th scope="col">Amount</th> <!-- amount -->
               <th scope="col">Change</th>
               <th scope="col">Method</th>
               <th scope="col">Action</th>
@@ -29,7 +30,7 @@
               <td>
                 <vue-numeric currency="$"
                              separator=","
-                             v-model="pts.tendered"
+                             v-model="pts.amount"
                              v-on:input="setCalculations()"></vue-numeric>
               </td>
               <td>
@@ -58,17 +59,42 @@
     data() {
       return {
         MethodType: MethodType,
-        payments: []
+        payments: [],
+        isAjax: false,
       };
     },
     computed: {
       ...mapGetters(["totalOrderItemCharge"])
     },
     methods: {
+      callPay(){
+         var vm  = this;
+         vm.isAjax = true;
+         let formData = {
+           PaymentOrders : this.payments,
+           OrderDetails: this.$store.orderItemList
+           //TODO set discount
+           //TODO set orderId
+         }
+
+         this.$http({
+          method:  'post',
+          url: this.urls.merchant.pay,
+          data: formData,
+        }).then(function(result){
+          console.info(result);
+        }).catch(function (errorResult) {
+          console.info(errorResult);
+        }).then(function () {
+          vm.isAjax = false;
+        });
+
+
+      },
       setCalculations() {
         let total = this.totalOrderItemCharge;
         this.payments.forEach(p => {
-          total -= p.tendered;
+          total -= p.amount;
           p.due = total > 0 ? total : 0;
           p.change =
             p.paymentType === MethodType.Cash && total < 0 ? -1 * total : 0;

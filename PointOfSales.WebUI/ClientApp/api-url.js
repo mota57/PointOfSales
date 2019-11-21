@@ -49,6 +49,8 @@ class BASE_URL {
 
 }
 
+
+
 class category extends BASE_URL {
   constructor() {
     super('/Category')
@@ -74,11 +76,20 @@ class modifier extends BASE_URL {
 
 }
 
+const merchant = function(){
+  let _merchantUrl = new BASE_URL('/Merchant');
+  return  {
+    pay: _merchantUrl.getURL('/pay')
+  }
+}
+
 
 export default {
   urls: {
     category: new category(),
     product: new product(),
-    modifier: new modifier()
+    modifier: new modifier(),
+    merchant : merchant()
+   
   }
 }

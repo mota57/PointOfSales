@@ -169,10 +169,12 @@ namespace PointOfSales.Core.Entities
         public ICollection<OrderDetail> OrderDetails { get; set; }
 
         
-        public ICollection<PaymentOrder> PaymentOrders {get;set;} //when want to spit the payment {Amount, paymentType}
+        public ICollection<PaymentOrder> PaymentOrders {get;set;} 
 
         public int? DiscountId { get; set; }
         public Discount Discount { get; set; }
+
+        public decimal? CustomDiscountAmount { get; set; }
 
 
     }
@@ -217,7 +219,9 @@ namespace PointOfSales.Core.Entities
         public int PaymentOrderId {get;set;}
 
         public int OrderId {get; set;}
+        public decimal Due { get; set; }
         public decimal Amount {get ;set;}
+        public decimal? Change { get; set; }
         public PaymentType  PaymentType {get;set;}
     }
 

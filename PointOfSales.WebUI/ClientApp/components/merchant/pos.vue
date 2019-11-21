@@ -29,6 +29,12 @@
                       <b-badge>{{orderItem.quantity}}</b-badge>
                       <span class="float-right">{{orderItem.price * orderItem.quantity}}</span>
                     </div>
+                    <div v-if="orderItem.IsProductForRent">
+                      <b-button class="btn btn-primary">
+                        <router-link :to="{ name: 'item-date', params: { productId: orderItem.productId }}">SET DATE</router-link>
+                      </b-button>
+                      
+                    </div>
                   </div>
 
                 </b-list-group-item>
@@ -108,11 +114,14 @@
         let imgSrc = faker.image.avatar();
 
         this.products.push({
-          id: i + 1,
+          productId: i + 1,
           title: faker.name.firstName(),
           imgSrc: imgSrc,
           body: faker.lorem.sentence(),
-          price: faker.random.number({ min: 5, max: 20000 })
+          price: faker.random.number({ min: 5, max: 20000 }),
+          IsProductForRent: true,
+          startDate: '',
+          endDate: ''
         })
       }
     }

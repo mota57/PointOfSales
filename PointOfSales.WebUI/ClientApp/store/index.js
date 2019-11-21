@@ -22,14 +22,19 @@ const mutations = {
     state.counter = obj.counter
   },
   [SET_ORDER_ITEM_LIST] (state, item) {
-    let index = state.orderItemList.findIndex(el => el.id === item.id);
-    if (index === -1) {
-      let orderItem = { quantity: 1, ...item };
+    let orderItem = MerchantHelper.findOrderItemById(state, item.id);
+    if (!orderItem) {
+      orderItem = { quantity: 1, ...item };
       console.log("setOrderItemList::" + JSON.stringify(orderItem));
       state.orderItemList.push(orderItem);
     } else {
-      state.orderItemList[index].quantity += 1;
+      orderItem.quantity += 1;
     }
+  },
+  [SET_DATE_TO_ORDER_ITEM] (state, payload){
+    var orderItem = MerchantHelper.findOrderItemById(state, payload.id);
+    orderItem.startDate = payload.startDate;
+    orderItem.endDate = payload.endDate;
   },
   [CLEAR_ORDER_ITEM_LIST] (state) {
     state.orderItemList = [];
@@ -50,6 +55,9 @@ const actions = ({
 
 
 const MerchantHelper = {
+  findOrderItemById(state, id){
+    return state.orderItemList[state.orderItemList.findIndex(el => el.id === item.id)];
+  },
   getTotalOrderItemCharge(state) {
     let total = 0;
     if (state.orderItemList.length > 0) {
