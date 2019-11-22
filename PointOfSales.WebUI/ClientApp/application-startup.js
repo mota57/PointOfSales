@@ -1,6 +1,8 @@
+
+
 /** third party */
 
-import AxiosStartup from 'axios-startup'
+
 import { FontAwesomeIcon } from './icons'
 import jQuery from 'jquery'
 import vSelect from 'vue-select'
@@ -8,11 +10,13 @@ import { ServerTable, ClientTable, Event } from 'vue-tables-2';
 import Toasted from '@gitlab/vue-toasted';
 import BootstrapVue from 'bootstrap-vue'
 import VueNumeric from 'vue-numeric'
-import AirbnbStyleDatepicker from 'vue-airbnb-style-datepicker'
-
+import DateRangePicker from 'vue2-daterange-picker'
+import moment from 'moment'
 
 
 /** custom */
+import AxiosStartup from './axios-startup'
+
 import formProduct from 'components/product/form-product'
 import formModifier from 'components/modifier/form-modifier'
 import formCategory from 'components/category/form-category'
@@ -20,6 +24,7 @@ import formDatatable from 'components/form-datatable'
 import formImage from 'components/form-image'
 import formSelect from 'components/form-select'
 import formDiscount from 'components/discount/form-discount'
+import itemConfigure from 'components/merchant/item-configure'
 
 
 export default {
@@ -35,22 +40,21 @@ export default {
         Vue.component('form-datatable', formDatatable)
         Vue.component('form-select', formSelect)
         Vue.component('form-discount', formDiscount);
+        Vue.component('item-configure', itemConfigure)
         return this;
     },
-    UseCustomComponents(Vue){
+    UseThirdPartyComponents (Vue){
         // Registration of global components
         Vue.use(BootstrapVue)
         Vue.use(ServerTable, {}, true, 'bootstrap4', 'default');
         Vue.use(Toasted)
         Vue.use(VueNumeric)
+        Vue.component('date-range-picker',DateRangePicker)
         Vue.component('icon', FontAwesomeIcon)
         Vue.component('v-select', vSelect);
 
-        // see docs for available options
-        const datepickerOptions = {}
-
-        // make sure we can use it in our components
-        Vue.use(AirbnbStyleDatepicker, datepickerOptions)
+ 
+    
      
 
         return this;
@@ -59,6 +63,14 @@ export default {
         // Registration of global window variables 
         window.$ = jQuery
         window.axios = axios;
+        return this;
+    },
+    UseCustomFilers(Vue){
+        Vue.filter('formatDate', function(value) {
+            if (value) {
+              return moment(String(value)).format('MM/DD/YYYY')
+            }
+        });
         return this;
     }
 }

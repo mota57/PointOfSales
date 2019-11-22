@@ -1,6 +1,6 @@
 <template>
   <transition>
-    <div class="container">
+    <div class="">
       <div class="row">
         <div class="col-3">
           <b-card no-body
@@ -29,11 +29,11 @@
                       <b-badge>{{orderItem.quantity}}</b-badge>
                       <span class="float-right">{{orderItem.price * orderItem.quantity}}</span>
                     </div>
-                    <div v-if="orderItem.isProductForRent">
-                      <b-button class="btn btn-primary">
-                        <router-link :to="{ name: 'item-date', params: { productId: orderItem.productId }}">SET DATE</router-link>
-                      </b-button>
+                    <div class="col-12" v-if="orderItem.isProductForRent">
                       
+                      <b-button class="btn btn-sm float-right" v-b-modal.item-configure @click="orderItemToConfig=orderItem">
+                         config
+                        </b-button>
                     </div>
                   </div>
 
@@ -78,8 +78,19 @@
         </div>
 
       </div>
+      <b-modal id="item-configure" size="lg" title="Product configure" ok-only hide-footer>
+        <item-configure :orderitem="orderItemToConfig" ></item-configure>
+        <!-- <div class="modal-footer">
+          <button type="button" @click="$bvModal.hide('item-configure')" class="btn btn-secondary">Close</button>
+          <button type="button" class="btn btn-primary" @click="eventBus.$emit('item-configure::handler','upsert')">Save</button>
+        </div> -->
+      </b-modal>
     </div>
+
+      
+
   </transition>
+  
 </template>
 
 <script>
@@ -92,6 +103,7 @@
       return {
         categories: [{ name: 'category1' }, { name: 'category2' }, { name: 'foo' }],
         products: [],
+        orderItemToConfig: null,
         imgCategory: faker.image.avatar(),
       };
     },
@@ -114,14 +126,15 @@
         let imgSrc = faker.image.avatar();
 
         this.products.push({
-          productId: i + 1,
+          id: i + 1,
           title: faker.name.firstName(),
           imgSrc: imgSrc,
           body: faker.lorem.sentence(),
           price: faker.random.number({ min: 5, max: 20000 }),
           isProductForRent: true,
           startDate: '',
-          endDate: ''
+          endDate: '',
+          disscountType: 'none'
         })
       }
     }

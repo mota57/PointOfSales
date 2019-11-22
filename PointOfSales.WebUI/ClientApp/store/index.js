@@ -54,7 +54,7 @@ const actions = ({
 
 const MerchantHelper = {
   findOrderItemById(state, id){
-    return _.find(state.orderItemList, function(el) { el.id === id.id});
+    return _.find(state.orderItemList, l => l.id == id);
   },
   getTotalOrderItemCharge(state) {
     let total = 0;

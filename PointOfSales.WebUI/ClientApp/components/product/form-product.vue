@@ -1,8 +1,8 @@
 <template>
   <div>
-    <!--<pre>
+  <pre>
 {{form}}
-</pre>-->
+</pre>
 
     <div v-if="isAjax" class="text-center">
       <p><em>Loading...</em></p>
@@ -45,7 +45,8 @@
 
             <div class="form-group">
               <label for="Category">Category </label>
-              <v-select  label="name" :options="options" :reduce="m => m.id" v-model="form.categoryId" @search="onSearch" />
+              
+              <form-select urlapi="category" v-model="form.categoryId"  ></form-select>
 
               <b-button class="btn btn-light" v-b-modal.form-category>
                 <icon icon="plus" class="mr-2 menu-icon" />
@@ -61,12 +62,14 @@
 
             <div class="form-group">
               <label for="ProductModifier">Product Modifier </label>
-              <v-select id="ProductModifier" multiple label="name" :options="optionModifier" :reduce="m => m.id" v-model="form.modifierIds" @search="onSearchModifier" />
+           
+              <form-select urlapi="modifier" v-model="form.modifierIds"  ></form-select>
 
               <b-button class="btn btn-light" v-b-modal.form-modifier>
                 <icon icon="plus" class="mr-2 menu-icon" />
                Modifier 
               </b-button>
+              
               <template v-if="errList && errList.ProductModifier">
                 <p class="text-danger" v-bind:key="$index" v-for="(err, $index) in errList.ProductModifier"> {{err}} </p>
               </template>
@@ -138,7 +141,7 @@
       <div class="form-group">
         <label >Category </label>
         <div>
-          <v-select :disabled="isEdit == false" label="name" :options="options" :reduce="m => m.id" v-model="form.categoryId" @search="onSearch" />
+         
         </div>
       </div>
     </div>
@@ -147,7 +150,7 @@
 
       <div class="form-group">
         <label for="Product Modifier">Product Modifier </label>
-        <v-select  :disabled="isEdit == false"  label="name" :options="optionModifier" :reduce="m => m.id" v-model="form.modifierIds" @search="onSearchModifier" />
+        
       </div>
 
       <div class="form-group" @click="isEdit=!isEdit">
@@ -194,8 +197,6 @@ const nameComponent = 'form-product'
         isAjax: false,
         form: new ProductFormDTO(),
         errList: { MainImage: ['test error'] },
-        options: [],
-        optionModifier:[],
         isImageDeleted: false,
         apiUrl:''
       }
@@ -213,9 +214,8 @@ const nameComponent = 'form-product'
       this.eventBus.$on(`saveForm::${nameComponent}`, vm.upsert)
       this.eventBus.$on(`loadForm::${nameComponent}`, (row) => vm.loadRecord(row))
       this.eventBus.$on(`clearForm::${nameComponent}`, vm.clearForm)
-      //init searches 
-      this.onSearch('', () => { })
-      this.onSearchModifier('', () => { })
+ 
+   
 
     },
     methods: {
@@ -236,30 +236,6 @@ const nameComponent = 'form-product'
           .then(() => { vm.isAjax = false; })
 
       },
-      onSearchModifier(search, loading) {
-        loading(true)
-        this.searchModifier(loading, search, this);
-      },
-      searchModifier: _.debounce((loading, search, vm) => {
-        vm.$http.get(vm.urls.modifier.picklist(search))
-          .then(res => {
-            vm.optionModifier = res.data;
-            loading(false)
-          })
-
-      }, 350),
-      onSearch(search, loading) {
-        loading(true)
-        this.search(loading, search, this);
-      },
-      search: _.debounce((loading, search, vm) => {
-        vm.$http.get(vm.urls.category.picklist(search))
-          .then(res => {
-            vm.options = res.data;
-            loading(false)
-          })
-
-      }, 350),
       upsert(e) {
         this.isAjax = true;
         let formData = Helper.createFormData(this.form);

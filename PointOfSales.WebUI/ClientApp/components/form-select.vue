@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-select  multiple="isMultiple" label="label" :options="options" :reduce="reduce" @input="this.$emit('input',  $event.target.value)" @search="onSearch" />
+    <v-select  :multiple="isMultiple" :label="labelprop" :options="optionlist" :reduce="m => m[propkey]" v-model="selected" v-on:input="emitValue" @search="onSearch" />
   </div>
 </template>
 
@@ -9,41 +9,54 @@
 import _ from 'lodash'
 
 export default {
-  data () {
+  data(){
     return {
-      isMultiple: {
-        type:Boolean,
-        default:false
-      },
-      label: {
-        type: String,
-        default:'name'
-      },
-      options: {
-        type:Array,
-        default: []
-      },
-      reduce: {
-        type: Function,
-        default: (m) => m.id
-      },
-      urlapi: {
-        type: string,
-        required: true
-      },
-      initsearch: {
-        type: Boolean,
-        default:true
-      }
+      optionlist:[],
+      selected: ''
+
     }
   },
+  props : {
+    isMultiple: {
+      type:Boolean,
+      default:false
+    },
+    labelprop: {
+      type: String,
+      default:'name'
+    },
+    optionprop: {
+      type:Array,
+      default: function() {
+        return [];
+      }
+    },
+    propkey: {
+      type: String,
+      default:'id'
+    },
+    urlapi: {
+      type: String,
+      required: true
+    },
+    initsearch: {
+      type: Boolean,
+      default:true
+    }
+ 
+  },
   created() {
-    if (this.initsearch) {
+    this.optionlist = this.$props.optionprop;
+    if (this.$props.initsearch) {
       this.onSearch('', () => { })
     }
    
   },
   methods: {
+    emitValue() {
+      console.log('item key selected::'+ this.selected);
+      this.$emit('input', this.selected);
+    },
     onSearch(search, loading) {
       loading(true)
       this.search(loading, search, this);
@@ -51,7 +64,7 @@ export default {
     search: _.debounce((loading, search, vm) => {
       vm.$http.get(vm.urls[vm.urlapi].picklist(search))
         .then(res => {
-          vm.options = res.data;
+          vm.optionlist = res.data;
           loading(false)
         })
 

@@ -124,6 +124,7 @@ li.nav-item {
     }
 }
 
+@import '~vue2-daterange-picker/dist/vue2-daterange-picker.css';
 @import '~vue-select/dist/vue-select.css';
 @import '~bootstrap-vue/dist/bootstrap-vue.css';
 /*@import '~vue-airbnb-style-datepicker/dist/vue-airbnb-style-datepicker.min.css';*/

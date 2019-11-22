@@ -64,6 +64,15 @@ class product extends BASE_URL {
   }
 }
 
+
+
+class discount extends BASE_URL {
+  constructor() {
+    super('/Discount')
+  }
+}
+
+
 class modifier extends BASE_URL {
   constructor() {
     super('/Modifier')
@@ -89,7 +98,8 @@ export default {
     category: new category(),
     product: new product(),
     modifier: new modifier(),
-    merchant : merchant()
+    merchant : merchant(),
+    discount: new discount()
    
   }
 }

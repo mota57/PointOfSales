@@ -8,7 +8,7 @@ namespace PointOfSales.WebUI.Models
     {
         public DiscountVueDataTableConfig()
         : base(
-            nameof(Discount),
+           "Discounts",
 
             new List<VueField>() {
                  new VueField(nameof(Discount.Id), false),

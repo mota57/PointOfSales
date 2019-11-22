@@ -1,137 +1,178 @@
 <template>
   <div class="container">
     <div>
-      <b-card title="Checkout">
-        <div class="row">
-          <div class="form-group" v-if="orderItem && orderItem.isProductForRent">
-            <input type="text"
-                  id="datepicker-trigger"
-                  placeholder="Select dates"
-                  :value="formatDates(dateOne, dateTwo)">
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="form-group" v-if="orderitem && orderitem.isProductForRent">
+            <label for="datepicker-trigger">Dates</label>
+       
+            <date-range-picker
+              ref="picker"
+              opens="center"
+              :locale-data="{ firstDay: 1, format: 'DD-MM-YYYY HH:mm:ss' }"
+             
+              :singleDatePicker="false"
+              :timePicker="false"
+              :showWeekNumbers="true"
+              :showDropdowns="true"
+              :autoApply="false"
+              v-model="dateRange"
+              @update="updateValues"
 
-            <AirbnbStyleDatepicker :trigger-element-id="'datepicker-trigger'"
-                                  :mode="'range'"
-                                  :fullscreen-mobile="true"
-                                  :date-one="dateOne"
-                                  :date-two="dateTwo"
-                                  @date-one-selected="val => { dateOne = val }"
-                                  @date-two-selected="val => { dateTwo = val }" />
-
-            <div v-if="dateAreInvalid" class="text-danger">
-                Both dates are required  
+              :linkedCalendars="true"
+            
+            >
+             <div slot="input" slot-scope="picker" style="min-width: 350px;">
+            {{ picker.startDate | formatDate }} - {{ picker.endDate | formatDate }}
             </div>
+            </date-range-picker>
+
+            <div  class="text-danger"  v-if="errList && errList.dateErrMessage">{{errList.dateErrMessage}}</div>
           </div>
 
-
           <b-form-group label="Discount Type">
+            <b-form-radio v-model="disscountType" value="none">No discount</b-form-radio>
             <b-form-radio v-model="disscountType" value="custom">Custom discount</b-form-radio>
             <b-form-radio v-model="disscountType" value="system">System discount</b-form-radio>
           </b-form-group>
 
+          <div class="form-group" v-if="disscountType == 'system'">
+            <label for="Discount">System discount</label>
+            <form-select urlapi="discount" v-model="discountId"></form-select>
 
-           <div class="form-group" v-if="disscountType == 'system'">
-              <label for="Discount">Discount </label>
-              <form-select urlapi='discount'></form-select>
-
-               <template v-if="errList && errList.Disscount">
-                <p class="text-danger" v-bind:key="$index" v-for="(err, $index) in errList.Category"> {{err}} </p>
-              </template>
+            <template v-if="errList && errList.Disscount">
+              <p
+                class="text-danger"
+                v-bind:key="$index"
+                v-for="(err, $index) in errList.Category"
+              >{{err}}</p>
+            </template>
           </div>
 
           <div class="form-group" v-if="disscountType == 'custom'">
-              <label for="CustomDiscount">Custom  Discount </label>
-              <vue-numeric currency="$" separator="," v-model="customDiscountAmount" ></vue-numeric>
+            <label for="CustomDiscount">Custom Discount</label>
+            <vue-numeric
+              class="form-control"
+              currency="%"
+              separator=","
+              v-bind:min="0"
+              v-bind:max="70"
+              v-model="customDiscountAmount"
+            ></vue-numeric>
 
-              <template v-if="errList && errList.customDiscountAmount">
-                <p class="text-danger">  {{errList.customDiscountAmoun}}  </p>
-              </template>
+            <template v-if="errList && errList.customDiscountAmount">
+              <p class="text-danger">{{errList.customDiscountAmoun}}</p>
+            </template>
           </div>
-
-          <br/>
-          <b-button class="float-right" v-on:click="saveConfiguration">Save</b-button>
-          <a href="#" @click="goBack()" class="btn btn-secondary">Back</a>
-          
         </div>
-      </b-card>
+        <div class="col-6">
+          <label for="quantity">Quantity</label>
+          <input id="quantity" type="number" v-model="quantity" min="0" class="form-control" />
+        </div>
+        <div class="col-12">
+          <div class="form-group float-right">
+            <a href="#" @click="close" class="btn btn-secondary">Cancel</a>
+            <b-button class v-on:click="saveConfiguration">Save</b-button>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <pre>
+            {{orderitem}}
+        </pre>
   </div>
 </template>
 
 <script>
-
-  import format from 'date-fns/format'
-
-
-  export default {
-    data() {
-      return {
-        dateFormat: 'D MMM',
-        dateOne: '',
-        dateTwo: '',
-        discountId:'',
-        disscountType:'',
-        orderItem: {},
-        customDiscountAmount:0,
-        errList: {}
-      };
-    },
-    computed: {
-    },
-    methods: {
-      goBack() {
-        this.$router.push({ name: "pos" })
-      },
-      formatDates(dateOne, dateTwo) {
-        let formattedDates = ''
-        if (dateOne) {
-          formattedDates = format(dateOne, this.dateFormat)
-        }
-        if (dateTwo) {
-          formattedDates += ' - ' + format(dateTwo, this.dateFormat)
-        }
-        return formattedDates
-      },
-      validateForm(){
-        this.errList = {};
-        if(disscountType == 'custom' && (customDiscountAmount == null || customDiscountAmount < 0)){
-          this.errList.customDiscountAmount = 'Custom amount must be greater than 0';
-        }
-        //TODO validate dates
-        
-      },
-      saveConfiguration(){ 
-        if(validateForm()){
-          let propsToUpdate = {
-            productId : this.orderItem.id,
-            discount : this.disscountType == 'system' ? this.discountId : null,
-            customDiscountAmount: this.disscountType == 'custom' ?  this.customDiscountAmount : null,
-            startDate : (this.orderItem.isProductForRent) ? this.dateOne : null,
-            endDate : (this.orderItem.isProductForRent) ? this.dateTwo : null
-          }
-        
-          this.$store.commit('setOrderItemConfiguration', propsToUpdate);
-        }
-      },
-      setDataValues(){
-        this.orderItem = this.$route.params.orderItem;
-        this.dateOne = this.orderItem.startDate;
-        this.dateTwo = this.orderItem.endDate;
-        this.discountId = this.orderItem.discountId;
-        this.customDiscountAmount = this.orderItem.customDiscountAmount;
-      }
-  
-    },
-    computed: {
-      dateAreInvalid(){
-         return (!this.dateOne || !this.dateTwo)
-      }
-    },
-    created() {
-      console.info('route paramss!! ');
-      console.info(this.$route.params.orderItem); //productId
-      this.setDataValues();    
+export default {
+  props: {
+    orderitem: {
+      type: Object,
+      required: true
     }
-  };
+  },
+  data() {
+    return {
+      dateRange:{},
+      dateFormat: "D MMM",
+      starDate: "",
+      endDate: "",
+      discountId: "",
+      disscountType: "none",
+      quantity: 0,
+      customDiscountAmount: 0,
+      errList: {}
+    };
+  },
+  computed: {},
+  methods: {
+    close() {
+      this.$bvModal.hide('item-configure')
+    },
+  
+    updateValues(dataDates){
+      console.log('dates');
+      console.log(dataDates);
+      this.dateRange.startDate = dataDates.startDate
+      this.dateRange.endDate = dataDates.endDate
+    },
+    validateForm() {
+      this.errList = {};
+      if (
+        this.disscountType == "custom" &&
+        (this.customDiscountAmount == null || this.customDiscountAmount < 0)
+      ) {
+        this.errList.customDiscountAmount =
+          "Custom amount must be greater than 0";
+      }
+
+      if(this.dateAreInvalid){
+         this.errList.dateErrMessage =
+          "Dates are required";
+      }
+     
+      return Object.keys(this.errList).length == 0;
+    },
+    saveConfiguration() {
+   
+      if (this.validateForm()) {
+        let propsToUpdate = {
+          quantity: Number.parseInt(this.quantity),
+          id: this.orderitem.id,
+          discount: this.disscountType == "system" ? this.discountId : null,
+          customDiscountAmount: this.disscountType == "custom" ? this.customDiscountAmount : null,
+          startDate: this.orderitem.isProductForRent ? this.dateRange.startDate : null,
+          endDate: this.orderitem.isProductForRent ? this.dateRange.endDate : null,
+          disscountType : this.disscountType
+        };
+
+        this.$store.commit("setOrderItemConfiguration", propsToUpdate);
+        this.close();
+      }
+    },
+    setDataValues() {
+      this.disscountType = this.orderitem.disscountType;
+      this.quantity = this.orderitem.quantity;
+      this.dateRange.startDate = this.orderitem.startDate;
+      this.dateRange.endDate = this.orderitem.endDate;
+      this.discountId = this.orderitem.discountId;
+      this.customDiscountAmount = this.orderitem.customDiscountAmount;
+    }
+  },
+  computed: {
+   
+    dateAreInvalid() {
+      return !this.dateRange.startDate || !this.dateRange.endDate;
+    }
+  },
+  created() {
+    console.log(this.orderitem);
+
+    this.setDataValues();
+  }
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

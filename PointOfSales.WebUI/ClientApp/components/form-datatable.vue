@@ -173,6 +173,9 @@
       })
 
       try {
+        if(this.urls[this.name] == null){
+          throw "THE URL DOESN'T EXISTS PLEASE GO TO API-URL.js AND REGISTER IT THERE.";
+        }
         let response = await this.$http.get(this.urls[this.name].tableMetadata)
         this.isComplete = true;
         let data = response.data;
@@ -204,7 +207,12 @@
 
       } catch (err) {
         console.error("FORM DATATABLE ERROR:: " + err);
-        window.alert("FORM-DATATABLE ERROR REPORT:: " + err);
+
+          this.$bvToast.toast("FORM-DATATABLE ERROR REPORT:: " + err, {
+          title: 'APPLICATION ERROR',
+          autoHideDelay: 5000,
+         
+        })
       }
 
     },

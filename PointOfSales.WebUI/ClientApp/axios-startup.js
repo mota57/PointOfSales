@@ -1,5 +1,5 @@
-export class AxiosStartup {
-    static Config(axios) {
+export default {
+     Config(axios) {
           // Add a request interceptor
         axios.interceptors.request.use(function (config) {
             // Do something before request is sent
