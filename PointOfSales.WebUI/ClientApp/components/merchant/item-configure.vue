@@ -33,18 +33,18 @@
               <label for="Discount">Discount </label>
               <form-select urlapi='discount'></form-select>
 
-              <!-- <template v-if="errList && errList.Disscount">
+               <template v-if="errList && errList.Disscount">
                 <p class="text-danger" v-bind:key="$index" v-for="(err, $index) in errList.Category"> {{err}} </p>
-              </template> -->
+              </template>
           </div>
 
           <div class="form-group" v-if="disscountType == 'custom'">
               <label for="CustomDiscount">Custom  Discount </label>
-              <vue-numeric currency="$" separator="," v-model="pts.change" read-only></vue-numeric>
+              <vue-numeric currency="$" separator="," v-model="customDiscountAmount" ></vue-numeric>
 
-              <!-- <template v-if="errList && errList.Category">
-                <p class="text-danger" v-bind:key="$index" v-for="(err, $index) in errList.Category"> {{err}} </p>
-              </template> -->
+              <template v-if="errList && errList.customDiscountAmount">
+                <p class="text-danger">  {{errList.customDiscountAmoun}}  </p>
+              </template>
           </div>
 
           <br/>
@@ -70,7 +70,9 @@
         dateTwo: '',
         discountId:'',
         disscountType:'',
-        orderItem: {}
+        orderItem: {},
+        customDiscountAmount:0,
+        errList: {}
       };
     },
     computed: {
@@ -89,30 +91,39 @@
         }
         return formattedDates
       },
-     
-      saveConfiguration(){ 
-        var propsToUpdate = {
-           productId : this.orderItem.id,
-           discount : this.disscountType == 'system' ? this.discountId : null,
-           customDiscountAmount: this.disscountType == 'custom' ?  this.customDiscountAmount : null,
-           startDate : (this.orderItem.isProductForRent) ? this.dateOne : null,
-           endDate : (this.orderItem.isProductForRent) ? this.dateTwo : null
+      validateForm(){
+        this.errList = {};
+        if(disscountType == 'custom' && (customDiscountAmount == null || customDiscountAmount < 0)){
+          this.errList.customDiscountAmount = 'Custom amount must be greater than 0';
         }
+        //TODO validate dates
         
-        this.$store.commit('setOrderItemConfiguration', propsToUpdate);
+      },
+      saveConfiguration(){ 
+        if(validateForm()){
+          let propsToUpdate = {
+            productId : this.orderItem.id,
+            discount : this.disscountType == 'system' ? this.discountId : null,
+            customDiscountAmount: this.disscountType == 'custom' ?  this.customDiscountAmount : null,
+            startDate : (this.orderItem.isProductForRent) ? this.dateOne : null,
+            endDate : (this.orderItem.isProductForRent) ? this.dateTwo : null
+          }
+        
+          this.$store.commit('setOrderItemConfiguration', propsToUpdate);
+        }
       },
       setDataValues(){
         this.orderItem = this.$route.params.orderItem;
-        this.dateOne = orderItem.startDate;
-        this.dateTwo = orderItem.endDate;
-        this.discountId = orderItem.discountId;
-        this.customDiscountAmount = orderItem.customDiscountAmount;
+        this.dateOne = this.orderItem.startDate;
+        this.dateTwo = this.orderItem.endDate;
+        this.discountId = this.orderItem.discountId;
+        this.customDiscountAmount = this.orderItem.customDiscountAmount;
       }
   
     },
     computed: {
       dateAreInvalid(){
-         return (!dateOne || !dateTwo)
+         return (!this.dateOne || !this.dateTwo)
       }
     },
     created() {

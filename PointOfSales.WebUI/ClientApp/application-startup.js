@@ -11,6 +11,7 @@ import VueNumeric from 'vue-numeric'
 import AirbnbStyleDatepicker from 'vue-airbnb-style-datepicker'
 
 
+
 /** custom */
 import formProduct from 'components/product/form-product'
 import formModifier from 'components/modifier/form-modifier'
@@ -54,7 +55,7 @@ export default {
 
         return this;
     },
-    RegisterGlobals(){
+    RegisterGlobals(axios){
         // Registration of global window variables 
         window.$ = jQuery
         window.axios = axios;

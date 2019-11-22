@@ -11,14 +11,14 @@ import AppUrl from './api-url'
 /** third party */
 
 import { eventBus } from './event-bus'
-import { ApplicationStartup } from 'application-startup'
+import { ApplicationStartup } from './application-startup'
 
 
 ApplicationStartup
   .UseAxiousConfiguration(axios)
   .UseCustomComponents(Vue)
   .UseThirdPartyComponents(Vue)
-  .RegisterGlobals();
+  .RegisterGlobals(axios);
 
 
 

@@ -1,15 +1,13 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-
+import _ from 'lodash'
 Vue.use(Vuex)
 
 
 
 // TYPES
 const MAIN_SET_COUNTER = 'MAIN_SET_COUNTER'
-const SET_ORDER_ITEM_LIST = 'setOrderItemList';
-const CLEAR_ORDER_ITEM_LIST = 'clearOrderItemList';
-const SET_ORDER_ITEM_CONFIG = 'setOrderItemConfiguration'
+
 // STATE
 const state = {
   counter: 1,
@@ -21,7 +19,7 @@ const mutations = {
   [MAIN_SET_COUNTER] (state, obj) {
     state.counter = obj.counter
   },
-  [SET_ORDER_ITEM_LIST] (state, item) {
+  setOrderItemList (state, item) {
     let orderItem = MerchantHelper.findOrderItemById(state, item.id);
     if (!orderItem) {
       orderItem = { quantity: 1, ...item };
@@ -31,11 +29,12 @@ const mutations = {
       orderItem.quantity += 1;
     }
   },
-  [SET_ORDER_ITEM_CONFIG] (state, payload){
+  setOrderItemConfiguration (state, payload){
     var orderItem = MerchantHelper.findOrderItemById(state, payload.id);
     Object.assign(orderItem, payload);
+
   },
-  [CLEAR_ORDER_ITEM_LIST] (state) {
+  clearOrderItemList (state) {
     state.orderItemList = [];
   },
 }
@@ -55,7 +54,7 @@ const actions = ({
 
 const MerchantHelper = {
   findOrderItemById(state, id){
-    return state.orderItemList[state.orderItemList.findIndex(el => el.id === item.id)];
+    return _.find(state.orderItemList, function(el) { el.id === id.id});
   },
   getTotalOrderItemCharge(state) {
     let total = 0;
