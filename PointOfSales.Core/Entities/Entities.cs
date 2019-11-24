@@ -75,6 +75,7 @@ namespace PointOfSales.Core.Entities
 
         [MaxLength(50)]
         public string ProductCode { get; set; }
+        
 
         [Required]
         public decimal Price { get; set; }
@@ -153,12 +154,14 @@ namespace PointOfSales.Core.Entities
         CLOSE,
         LOCK
     }
-
+    //1-1
+    //
     public class Order
     {
         public Order()
         {
             OrderDetails = new HashSet<OrderDetail>();
+            PaymentOrders = new HashSet<PaymentOrder>();
             StatusOrder = StatusOrder.OPEN;
         }
 
@@ -168,7 +171,6 @@ namespace PointOfSales.Core.Entities
         public int OrderId { get; set; }
         public ICollection<OrderDetail> OrderDetails { get; set; }
 
-        
         public ICollection<PaymentOrder> PaymentOrders {get;set;} 
 
         public int? DiscountId { get; set; }
@@ -176,12 +178,16 @@ namespace PointOfSales.Core.Entities
 
         public decimal? CustomDiscountAmount { get; set; }
 
-
     }
 
-    public class OrderDetail 
-    {
+    
 
+    public class OrderDetail 
+    {   
+        public OrderDetail(){
+            
+        }
+        
         public int OrderDetailId { get; set; }
 
         public int OrderId { get; set; }
@@ -195,24 +201,13 @@ namespace PointOfSales.Core.Entities
         public int? DiscountId { get; set; }
         public Discount Discount { get; set; }
 
+        public decimal? CustomDiscountAmount { get; set; }
+
+        public DateTime? StartDate {get;set;}
+
+        public DateTime? EndDate {get;set;}
+
     }
-
-    public class ProductRentDetail
-    {
-        public int OrderId { get; set; }
-        public Order Order { get; set; } 
-
-        public int ProductId { get; set; }
-        public Product Product { get; set; }
-
-        public DateTime StartDate {get;set;}
-
-        public DateTime EndDate {get;set;}
-
-        public int? DiscountId { get; set; }
-        public Discount Discount { get; set; }
-    }
-
     
     public class PaymentOrder 
     {

@@ -83,6 +83,11 @@
 
 
           </div>
+          <div class="col-6">
+             <b-form-checkbox v-model="form.isProductForRent">
+              For Rent
+            </b-form-checkbox>
+          </div>
 
         </div>
         <button v-if="display" type="submit" class="btn btn-primary" :disabled="isAjax">Save</button>
@@ -185,6 +190,7 @@ const nameComponent = 'form-product'
       this.mainImage = '';
       this.mainImageForm = null;
       this.modifierIds = [];
+      this.isProductForRent = false;
     }
   }
 

@@ -21,7 +21,7 @@
     "update-packages": "npx npm-check -u"
   },
   "dependencies": {
-    "@gitlab/vue-toasted": "^1.2.1",
+    "@gitlab/vue-toasted": "^1.3.0",
     "axios": "^0.18.0",
     "bootstrap-vue": "^2.0.2",
     "core-js": "^2.5.3",
@@ -38,6 +38,7 @@
     "vue-server-renderer": "^2.6.10",
     "vue-tables-2": "^1.4.70",
     "vue-template-compiler": "^2.6.10",
+    "vue-toasted": "^1.1.27",
     "vue2-daterange-picker": "^0.3.1",
     "vuex": "^3.1.0",
     "vuex-router-sync": "^5.0.0",

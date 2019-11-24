@@ -9,7 +9,7 @@ using PointOfSales.Core.Entities;
 namespace PointOfSales.Core.Migrations
 {
     [DbContext(typeof(POSContext))]
-    [Migration("20191122145853_init")]
+    [Migration("20191124164017_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -281,13 +281,19 @@ namespace PointOfSales.Core.Migrations
                     b.Property<int>("OrderDetailId")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<decimal?>("CustomDiscountAmount");
+
                     b.Property<int?>("DiscountId");
+
+                    b.Property<DateTime?>("EndDate");
 
                     b.Property<int>("OrderId");
 
                     b.Property<int>("ProductId");
 
                     b.Property<int>("Quantity");
+
+                    b.Property<DateTime?>("StartDate");
 
                     b.HasKey("OrderDetailId");
 

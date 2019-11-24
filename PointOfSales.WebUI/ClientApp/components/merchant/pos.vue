@@ -31,7 +31,8 @@
                     </div>
                     <div class="col-12" v-if="orderItem.isProductForRent">
                       
-                      <b-button class="btn btn-sm float-right" v-b-modal.item-configure @click="orderItemToConfig=orderItem">
+                      <b-button class="btn btn-sm float-right" 
+                      @click="orderItemToConfig=orderItem;$bvModal.show('item-configure')">
                          config
                         </b-button>
                     </div>
@@ -134,7 +135,8 @@
           isProductForRent: true,
           startDate: '',
           endDate: '',
-          disscountType: 'none'
+          disscountType: 'none',
+          discountId: -1,
         })
       }
     }

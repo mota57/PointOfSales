@@ -279,13 +279,19 @@ namespace PointOfSales.Core.Migrations
                     b.Property<int>("OrderDetailId")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<decimal?>("CustomDiscountAmount");
+
                     b.Property<int?>("DiscountId");
+
+                    b.Property<DateTime?>("EndDate");
 
                     b.Property<int>("OrderId");
 
                     b.Property<int>("ProductId");
 
                     b.Property<int>("Quantity");
+
+                    b.Property<DateTime?>("StartDate");
 
                     b.HasKey("OrderDetailId");
 

@@ -8,11 +8,16 @@ namespace PointOfSales.Core.Infraestructure
     {
         public POSMapperConfiguration()
         {
-
+            CreateMap<OrderForPayDTO, Order>();
+            CreateMap<OrderDetailForPayDTO, OrderDetail>();
+            CreateMap<PaymentOrderForPayDTO, PaymentOrder>();
             ProductMapper.Configure(this);
           
+          
+            // CreateMap<ProductRentDetail, ProductRentDetail>();
             
             CreateMap<ProductModifier, ProductModifierDTO>().ReverseMap();
+        
         }
     }
 }

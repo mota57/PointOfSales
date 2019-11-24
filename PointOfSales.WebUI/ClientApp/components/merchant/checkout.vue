@@ -1,6 +1,7 @@
 <template>
   <div class="container">
-    <div>
+
+    <div v-if="!isAjax">
       <b-card title="Checkout">
         <h2>
           <b-badge>Total: {{totalOrderItemCharge}}</b-badge>
@@ -47,6 +48,12 @@
        <a href="#" @click="goBack()" class="btn btn-secondary">Back</a>
       </b-card>
     </div>
+    
+    <div class="text-center" v-if="isAjax">
+      <b-spinner style="width: 10rem; height: 10rem;" variant="primary" label="Text Centered"></b-spinner>
+      <br/><span style="position: relative;top: -5.48rem;">processing payment</span>
+    </div>
+    
   </div>
 </template>
 
@@ -72,7 +79,7 @@
          vm.isAjax = true;
          let formData = {
            PaymentOrders : this.payments,
-           OrderDetails: this.$store.orderItemList
+           OrderDetails: this.$store.state.orderItemList
            //TODO set discount
            //TODO set orderId
          }

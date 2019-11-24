@@ -333,7 +333,10 @@ namespace PointOfSales.Core.Migrations
                     OrderId = table.Column<int>(nullable: false),
                     ProductId = table.Column<int>(nullable: false),
                     Quantity = table.Column<int>(nullable: false),
-                    DiscountId = table.Column<int>(nullable: true)
+                    DiscountId = table.Column<int>(nullable: true),
+                    CustomDiscountAmount = table.Column<decimal>(nullable: true),
+                    StartDate = table.Column<DateTime>(nullable: true),
+                    EndDate = table.Column<DateTime>(nullable: true)
                 },
                 constraints: table =>
                 {
