@@ -41,13 +41,13 @@
             <label for="Discount">System discount</label>
             <form-select urlapi="discount" v-model="discountId"></form-select>
 
-            <template v-if="errList && errList.Disscount">
+            <!-- <template v-if="errList && errList.Disscount">
               <p
                 class="text-danger"
                 v-bind:key="$index"
-                v-for="(err, $index) in errList.Category"
+                v-for="(err, $index) in errList.Disscount"
               >{{err}}</p>
-            </template>
+            </template> -->
           </div>
 
           <div class="form-group" v-if="disscountType == 'custom'">

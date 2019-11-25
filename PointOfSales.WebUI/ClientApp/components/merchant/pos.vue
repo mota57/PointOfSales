@@ -40,6 +40,8 @@
 
                 </b-list-group-item>
               </b-list-group>
+              
+              <b-button class="btn btn-sm float-right"  @click="$bvModal.show('order-configure')"> set disccount </b-button>
             </div>
             <!--/orderItem -->
             <b-card-footer>
@@ -116,13 +118,14 @@
     },
     computed: {
       ...mapState([
-        'orderItemList'
+        'orderItemList',
       ]),
       ...mapGetters([
         'totalOrderItemCharge'
       ])
     },
     created() {
+      
       for (let i = 0; i < 10; i++) {
         let imgSrc = faker.image.avatar();
 

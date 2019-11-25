@@ -25,6 +25,7 @@ import formImage from 'components/form-image'
 import formSelect from 'components/form-select'
 import formDiscount from 'components/discount/form-discount'
 import itemConfigure from 'components/merchant/item-configure'
+import orderConfigure from 'components/merchant/order-configure'
 
 
 export default {
@@ -33,14 +34,15 @@ export default {
         return this;
     },
     UseCustomComponents(Vue){
-        Vue.component('form-image', formImage)
-        Vue.component('form-product', formProduct)
-        Vue.component('form-modifier', formModifier)
-        Vue.component('form-category', formCategory)
-        Vue.component('form-datatable', formDatatable)
-        Vue.component('form-select', formSelect)
+        Vue.component('form-image', formImage);
+        Vue.component('form-product', formProduct);
+        Vue.component('form-modifier', formModifier);
+        Vue.component('form-category', formCategory);
+        Vue.component('form-datatable', formDatatable);
+        Vue.component('form-select', formSelect);
         Vue.component('form-discount', formDiscount);
-        Vue.component('item-configure', itemConfigure)
+        Vue.component('item-configure', itemConfigure);
+        Vue.component('order-configure', orderConfigure);
         return this;
     },
     UseThirdPartyComponents (Vue){

@@ -11,7 +11,13 @@ const MAIN_SET_COUNTER = 'MAIN_SET_COUNTER'
 // STATE
 const state = {
   counter: 1,
-  orderItemList: []
+  orderItemList: [],
+  discountOfOrder:
+  {
+    discountId: '',
+    customDiscountAmount: '',
+    disscountType: 'none',
+  }
 }
 
 // MUTATIONS
@@ -28,6 +34,11 @@ const mutations = {
     } else {
       orderItem.quantity += 1;
     }
+  },
+  setOrderConfiguration(state, payload){
+    state.discountOfOrder.discountId           =  payload.disscountType == "system" ? payload.discountId : null;
+    state.discountOfOrder.customDiscountAmount =  payload.disscountType == "custom" ? payload.customDiscountAmount : null;
+    state.discountOfOrder.disscountType        =  payload.disscountType;
   },
   setOrderItemConfiguration (state, payload){
     var orderItem = MerchantHelper.findOrderItemById(state, payload.id);

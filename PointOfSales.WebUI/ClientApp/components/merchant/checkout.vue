@@ -75,11 +75,16 @@
     },
     methods: {
       callPay(){
+         let discountOfOrder = this.$store.state.discountOfOrder;
+
          var vm  = this;
          vm.isAjax = true;
          let formData = {
            PaymentOrders : this.payments,
-           OrderDetails: this.$store.state.orderItemList
+           OrderDetails: this.$store.state.orderItemList,
+           discountId: discountOfOrder.discountId,
+           customDiscountAmount: discountOfOrder.customDiscountAmount,
+           disscountType: discountOfOrder.disscountType,
            //TODO set discount
            //TODO set orderId
          }
