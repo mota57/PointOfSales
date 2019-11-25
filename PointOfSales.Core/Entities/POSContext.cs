@@ -1,6 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using PointOfSales.Core.Infraestructure.TriggerHelper;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace PointOfSales.Core.Entities
 {
@@ -52,6 +58,32 @@ namespace PointOfSales.Core.Entities
             #endregion
 
             base.OnModelCreating(modelBuilder);
+        }
+
+        DbContextTriggerHelper helper = new DbContextTriggerHelper();
+
+        public override int SaveChanges()
+        {
+            helper.BeforeCreate(this);
+            return base.SaveChanges();
+        }
+
+        public override int SaveChanges(bool acceptAllChangesOnSuccess)
+        {
+            helper.BeforeCreate(this);
+            return base.SaveChanges(acceptAllChangesOnSuccess);
+        }
+
+        public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            await helper.BeforeCreateAsync(this);
+            return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+        }
+
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
+        {
+            await helper.BeforeCreateAsync(this);
+            return await base.SaveChangesAsync(cancellationToken);
         }
 
     }

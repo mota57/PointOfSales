@@ -1,4 +1,3 @@
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
@@ -7,37 +6,11 @@ using PointOfSales.WebUI.Controllers;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System;
 using PointOfSales.Core.Service;
 using PointOfSales.Core.Infraestructure;
 
 namespace TestApp
 {
-    public class TestHandler {
-        public static void Handle(Action<DbContextOptions<POSContext>> action)
-        {
-            var connection = new SqliteConnection("DataSource=:memory:");
-            connection.Open();
-            
-            var options = new DbContextOptionsBuilder<POSContext>()
-                .UseSqlite(connection)
-                .Options;
-            
-            try
-            {
-                using (var context = new POSContext(options))
-                {
-                    //create database
-                    context.Database.EnsureCreated();
-                }
-                action(options);
-            
-            } finally
-            {
-                connection.Close();
-            }
-        }
-    }
 
 
     [TestClass]

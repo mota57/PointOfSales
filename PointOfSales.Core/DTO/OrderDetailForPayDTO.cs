@@ -24,17 +24,33 @@ namespace PointOfSales.Core.DTO
         public decimal Amount {get ;set;}
         public PaymentType  PaymentType {get;set;}
     }
+
     public enum DiscountTypeDTO {
         none,
         custom,
         system
     }
+
     public class OrderDetailForPayDTO
     {   
         public int ProductId {get;set;}
 
         public int Quantity {get;set;}
-        public int DiscountId { get; set; }
+
+        private int? _discountid = null;
+
+        public int? DiscountId {
+            get {
+                if(DiscountType != DiscountTypeDTO.system)
+                {
+                    _discountid = null;
+                }
+                return _discountid;
+            }
+            set {
+                _discountid = value;
+            }
+        }
 
         public DateTime? StartDate {get;set;}
         public DateTime? EndDate {get;set;}

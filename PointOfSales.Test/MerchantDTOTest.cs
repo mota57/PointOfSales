@@ -14,8 +14,9 @@ using Newtonsoft.Json;
 namespace TestApp
 {
     [TestClass]
-    public class MerchantDTOTest
+    public class MerchanTest
     {
+        
         [TestMethod]
         public void TestCanMapDTOToEntities() {
 

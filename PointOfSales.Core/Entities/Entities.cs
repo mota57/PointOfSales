@@ -1,10 +1,14 @@
-﻿using PointOfSales.Core.Generator;
+﻿using Microsoft.EntityFrameworkCore;
+using PointOfSales.Core.Generator;
 using PointOfSales.Core.Infraestructure;
+using PointOfSales.Core.Infraestructure.Specification;
+using PointOfSales.Core.Infraestructure.TriggerHelper;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 
 namespace PointOfSales.Core.Entities
 {
@@ -154,9 +158,10 @@ namespace PointOfSales.Core.Entities
         CLOSE,
         LOCK
     }
+    
     //1-1
     //
-    public class Order
+    public class Order : IValidatableObject, IBeforeCreate
     {
         public Order()
         {
@@ -173,16 +178,68 @@ namespace PointOfSales.Core.Entities
 
         public ICollection<PaymentOrder> PaymentOrders {get;set;} 
 
+        public DiscountType DiscountType { get; set; }
+
         public int? DiscountId { get; set; }
         public Discount Discount { get; set; }
 
-        public decimal? CustomDiscountAmount { get; set; }
+        private decimal? _customDiscountAmount = null;
+
+        public decimal? CustomDiscountAmount {
+            get {
+                return _customDiscountAmount;
+            }
+            set {
+                if(value < 0)
+                {
+                    _customDiscountAmount = null;
+                }
+                _customDiscountAmount = value;
+            }
+        }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+
+            var ctx = (POSContext) validationContext.GetService(typeof(POSContext));
+            var orderRentRule = new OrderDetailRentProductsDatesAreRequired(ctx);
+            var orderValidValues = new OrderValidValues(ctx);
+            var handler = new SpecificationHandler<Order>(orderRentRule, orderValidValues);
+            handler.RunSpecifications(candidate: this);
+            return handler.GetMessageErrors();
+        }
+
+        public void BeforeCreate(DbContext context)
+        {
+            RecalculateChange(this);
+        }
+
+
+        private void RecalculateChange(Order order)
+        {
+
+            var payments = order.PaymentOrders.Where(p => p.PaymentType == PaymentType.CASH);
+            foreach (var payment in payments)
+            {
+                if (payment.Amount > payment.Due)
+                {
+                    payment.Change = payment.Amount - payment.Due;
+                }
+            }
+        }
 
     }
 
-    
 
-    public class OrderDetail 
+    public enum DiscountType
+    {
+        None,
+        Custom,
+        System
+    }
+
+
+    public class OrderDetail  
     {   
         public OrderDetail(){
             
@@ -196,17 +253,47 @@ namespace PointOfSales.Core.Entities
         public int ProductId { get; set; }
         public Product Product { get; set; }
 
-        public int Quantity { get; set; }
+        public int _quantity = 1;
+        public int Quantity {
+            get { return _quantity;  }
+            set
+            {
+                if(value < 0)
+                {
+                    _quantity = 1;
+                }
+                _quantity = value;
+
+            }
+        }
 
         public int? DiscountId { get; set; }
         public Discount Discount { get; set; }
 
-        public decimal? CustomDiscountAmount { get; set; }
+        private decimal? customDiscountAmount = null;
+
+        public decimal? CustomDiscountAmount
+        {
+            get
+            {
+                return customDiscountAmount;
+            }
+            set
+            {
+                if (value < 0)
+                {
+                   customDiscountAmount = null;
+                }
+                customDiscountAmount = value;
+            }
+        }
 
         public DateTime? StartDate {get;set;}
 
         public DateTime? EndDate {get;set;}
 
+
+       
     }
     
     public class PaymentOrder 
