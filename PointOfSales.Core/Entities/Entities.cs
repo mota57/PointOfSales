@@ -8,7 +8,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
 
 namespace PointOfSales.Core.Entities
 {
@@ -204,6 +203,7 @@ namespace PointOfSales.Core.Entities
             var ctx = (POSContext) validationContext.GetService(typeof(POSContext));
             var orderRentRule = new OrderDetailRentProductsDatesAreRequired(ctx);
             var orderValidValues = new OrderValidValues(ctx);
+
             var handler = new SpecificationHandler<Order>(orderRentRule, orderValidValues);
             handler.RunSpecifications(candidate: this);
             return handler.GetMessageErrors();
@@ -211,23 +211,8 @@ namespace PointOfSales.Core.Entities
 
         public void BeforeCreate(DbContext context)
         {
-            RecalculateChange(this);
+            OrderService.RecalculateChange(this);
         }
-
-
-        private void RecalculateChange(Order order)
-        {
-
-            var payments = order.PaymentOrders.Where(p => p.PaymentType == PaymentType.CASH);
-            foreach (var payment in payments)
-            {
-                if (payment.Amount > payment.Due)
-                {
-                    payment.Change = payment.Amount - payment.Due;
-                }
-            }
-        }
-
     }
 
 

@@ -1,11 +1,12 @@
-﻿using PointOfSales.Core.Infraestructure.Specification;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace PointOfSales.Core.Infraestructure.Specification
 {
     public class SpecificationHandler<T>
     {
+        protected Dictionary<string, List<string>> ErrorList = new Dictionary<string, List<string>>();
+
         private readonly CompositeSpecification<T>[] specifications;
         private List<ValidationResult> contexts = new List<ValidationResult>();
 
@@ -17,8 +18,25 @@ namespace PointOfSales.Core.Infraestructure.Specification
         {
             foreach(var spec in specifications)
             {
-                spec.IsSatisfiedBy(candidate);
-                contexts.AddRange(spec.GetMessageErrors());
+                spec.Run(candidate);
+                if (!spec.IsValid())
+                {
+                    CombineErrors(spec);
+                }
+            }
+        }
+
+
+        private void CombineErrors(CompositeSpecification<T> spec)
+        {
+            foreach(var err in spec.ErrorList)
+            {
+                if (!ErrorList.ContainsKey(err.Key))
+                {
+                    ErrorList.Add(err.Key, new List<string>());
+                }
+
+                ErrorList[err.Key].AddRange(err.Value);
             }
         }
 
