@@ -3,12 +3,12 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
-namespace PointOfSales.Core.Infraestructure.Specification
+namespace PointOfSales.Core.Infraestructure.Rule
 {
     /// <summary>
     /// rule1: if any of the orderDetail contains a product where product.isProductRent = true and startDate or endate equal null do not allow to continue forward
     /// </summary>
-    public class OrderDetailRentProductsDatesAreRequired : CompositeSpecification<Order>
+    public class OrderDetailRentProductsDatesAreRequired : SpecificationRule<Order>
     {
         private POSContext ctx; 
 

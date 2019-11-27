@@ -2,10 +2,14 @@
 
 namespace PointOfSales.Core.Infraestructure.TriggerHelper
 {
-    public interface IBeforeUpdate
+    //public interface IBeforeUpdate
+    //{
+    //    void BeforeUpdate(DbContext context);
+    //}
+
+
+    public interface IBeforeUpdate<TEntity>
     {
-        void BeforeUpdate(DbContext context);
+        void BeforeUpdate(DbContext context, TEntity entity);
     }
-
-
 }

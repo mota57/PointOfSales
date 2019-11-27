@@ -1,8 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using PointOfSales.Core.Generator;
+﻿using PointOfSales.Core.Generator;
 using PointOfSales.Core.Infraestructure;
-using PointOfSales.Core.Infraestructure.Specification;
-using PointOfSales.Core.Infraestructure.TriggerHelper;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -151,134 +148,12 @@ namespace PointOfSales.Core.Entities
         public ICollection<Product> Products { get; set; }
     }
 
-    public enum StatusOrder
-    {
-        OPEN, 
-        CLOSE,
-        LOCK
-    }
-    
-    //1-1
-    //
-    public class Order : IValidatableObject, IBeforeCreate
-    {
-        public Order()
-        {
-            OrderDetails = new HashSet<OrderDetail>();
-            PaymentOrders = new HashSet<PaymentOrder>();
-            StatusOrder = StatusOrder.OPEN;
-        }
-
-        public StatusOrder StatusOrder { get; set; }
-     
-
-        public int OrderId { get; set; }
-        public ICollection<OrderDetail> OrderDetails { get; set; }
-
-        public ICollection<PaymentOrder> PaymentOrders {get;set;} 
-
-        public DiscountType DiscountType { get; set; }
-
-        public int? DiscountId { get; set; }
-        public Discount Discount { get; set; }
-
-        private decimal? _customDiscountAmount = null;
-
-        public decimal? CustomDiscountAmount {
-            get {
-                return _customDiscountAmount;
-            }
-            set {
-                if(value < 0)
-                {
-                    _customDiscountAmount = null;
-                }
-                _customDiscountAmount = value;
-            }
-        }
-
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-        {
-
-            var ctx = (POSContext) validationContext.GetService(typeof(POSContext));
-            var orderRentRule = new OrderDetailRentProductsDatesAreRequired(ctx);
-            var orderValidValues = new OrderValidValues(ctx);
-
-            var handler = new SpecificationHandler<Order>(orderRentRule, orderValidValues);
-            handler.RunSpecifications(candidate: this);
-            return handler.GetMessageErrors();
-        }
-
-        public void BeforeCreate(DbContext context)
-        {
-            OrderService.RecalculateChange(this);
-        }
-    }
-
 
     public enum DiscountType
     {
         None,
         Custom,
         System
-    }
-
-
-    public class OrderDetail  
-    {   
-        public OrderDetail(){
-            
-        }
-        
-        public int OrderDetailId { get; set; }
-
-        public int OrderId { get; set; }
-        public Order Order { get; set; } 
-
-        public int ProductId { get; set; }
-        public Product Product { get; set; }
-
-        public int _quantity = 1;
-        public int Quantity {
-            get { return _quantity;  }
-            set
-            {
-                if(value < 0)
-                {
-                    _quantity = 1;
-                }
-                _quantity = value;
-
-            }
-        }
-
-        public int? DiscountId { get; set; }
-        public Discount Discount { get; set; }
-
-        private decimal? customDiscountAmount = null;
-
-        public decimal? CustomDiscountAmount
-        {
-            get
-            {
-                return customDiscountAmount;
-            }
-            set
-            {
-                if (value < 0)
-                {
-                   customDiscountAmount = null;
-                }
-                customDiscountAmount = value;
-            }
-        }
-
-        public DateTime? StartDate {get;set;}
-
-        public DateTime? EndDate {get;set;}
-
-
-       
     }
     
     public class PaymentOrder 

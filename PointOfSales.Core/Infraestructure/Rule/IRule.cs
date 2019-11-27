@@ -3,9 +3,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 
-namespace PointOfSales.Core.Infraestructure.Specification
+namespace PointOfSales.Core.Infraestructure.Rule
 {
-    public interface ISpecification<T>
+    public interface IRule<T>
     {
         void Run(T candidate);
     }
