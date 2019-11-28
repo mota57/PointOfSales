@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Data.Sqlite;
 
 namespace PointOfSales.Test
 {
@@ -29,14 +30,16 @@ namespace PointOfSales.Test
 
     public class DummyContext : DbContext
     {
-        public DbSet<Person> People { get; set; }
+        public DbSet<Person> Person { get; set; }
 
         public DummyContext(DbContextOptions<DummyContext> options)
             : base(options)
-        { }
+        {
+            helper = new DbContextTriggerHelper(typeof(PersonTrigger).Assembly);
+        }
 
 
-        DbContextTriggerHelper helper = new DbContextTriggerHelper();
+        DbContextTriggerHelper helper { get; set; }
 
         public override int SaveChanges()
         {
@@ -69,23 +72,57 @@ namespace PointOfSales.Test
     [TestClass]
     public class DbContextTriggerHelperTest
     {
+        //[TestMethod]
+        //public void TestCanGetConcreteTypes()
+        //{
+
+
+
+        //    DbContextTriggerHelper helper = new DbContextTriggerHelper();
+        //    var assembly = typeof(PointOfSales.Test.PersonTrigger).Assembly;
+        //    var types = helper.GetTypesWithInferfaceOfType(
+        //       assembly, typeof(IBeforeCreate<>));
+        //    Assert.IsTrue(types.Any(p => p == typeof(PersonTrigger)));
+        //}
+
+
         [TestMethod]
-        public void TestCanGetConcreteTypes()
+        public void TestCanExecuteTrigger()
         {
 
             DbContextTriggerHelper helper = new DbContextTriggerHelper();
 
-            //var options = new DbContextOptionsBuilder<DummyContext>()
-            //   .UseSqlite("DataSource=:memory:")
-            //   .Options;
-            //var context = new DummyContext(options);
-            //helper.ExecuteTriggerMethod(context, )
-            var assembly = typeof(PointOfSales.Test.PersonTrigger).Assembly;
-            var types = helper.GetTypesWithInferfaceOfType(
-               assembly, typeof(IBeforeCreate<>));
-            Assert.IsTrue(types.Any(p => p == typeof(PersonTrigger)));
+            var connection = new SqliteConnection("DataSource=:memory:");
+            connection.Open();
+
+            var options = new DbContextOptionsBuilder<DummyContext>()
+               .UseSqlite(connection)
+               .Options;
+
+            using (var context = new DummyContext(options))
+            {
+                context.Database.EnsureCreated();
+            }
+
+            using (var context = new DummyContext(options))
+            {
+                var p = new Person();
+                context.Add(p);
+                context.SaveChanges();
+                Assert.AreEqual(p.Name, "TEST");
+                Assert.AreEqual(p.CreatedDate.Value.Year, DateTime.Now.Year);
+            }
+            using (var context = new DummyContext(options))
+            {
+                var p = context.Person.First();
+                Assert.AreEqual("TEST", p.Name);
+                Assert.AreEqual(DateTime.Now.Year, p.CreatedDate.Value.Year);
+            }
+
         }
-        [TestMethod]
-        public void TestCan
+        
+
+
+
     }
 }

@@ -37,6 +37,7 @@ namespace PointOfSales.Core.Infraestructure.EFTriggerHelper
             this.assembly = assembly;
         }
 
+
         public void BeforeCreate(DbContext context)
         {
             //var addedEntries = GetEntries<IBeforeCreate>(context, EntityState.Added);
@@ -48,58 +49,78 @@ namespace PointOfSales.Core.Infraestructure.EFTriggerHelper
             {
                 var typeList = GetTypesWithInferfaceOfType(assembly, typeof(IBeforeCreate<>));
                 var methodName = nameof(BeforeCreate);
-                ExecuteTriggerMethod(context, typeList, methodName);
+                ExecuteTriggerMethod(context, typeList, methodName, EntityState.Added);
             }
         }
 
-        public void ExecuteTriggerMethod(DbContext context, IEnumerable<Type> typeList, string methodName)
+        public void ExecuteTriggerMethod(DbContext context, IEnumerable<MetaGenericType> typeList, string methodName, EntityState entityState)
         {
-            foreach (var type in typeList)
+            foreach (var typeMeta in typeList)
             {
-                var typeArg = type.GetGenericArguments().First();
-                var entries = context.ChangeTracker.Entries().Where(entry => entry.GetType() == typeArg);
+                var type = typeMeta.Implementor;
+                var entries = GetEntries(context, typeMeta.EntityTypeArg, entityState);
 
-                object instance = assembly.CreateInstance(type.Name, false,
+                object instance = assembly.CreateInstance(type.FullName, false,
                      BindingFlags.ExactBinding,
                      null, new object[] { }, null, null);
 
                 MethodInfo info = assembly.GetType(type.FullName).GetMethod(methodName);
 
                 foreach (var entry in entries)
-                    info.Invoke(instance, new object[] { context, entry });
+                    info.Invoke(instance, new object[] { context, entry.Entity });
             }
         }
 
-        public IEnumerable<Type> GetTypesWithInferfaceOfType(Assembly assembly, Type typeInterface)
+        public class MetaGenericType
         {
-            return assembly.GetTypes()
-              .Where(type =>
-                type.GetInterfaces().Any(intf => intf.GetGenericTypeDefinition() == typeInterface)
-                && !TriggerHelper.IsTriggerInByPassList(type.Name) 
-              );
+            public Type Implementor { get; set; }
+            public Type EntityTypeArg { get; set; }
+        }
+
+        public IEnumerable<MetaGenericType> GetTypesWithInferfaceOfType(Assembly assembly, Type typeInterface)
+        {
+            List<MetaGenericType> typeMatch = new List<MetaGenericType>();
+            var types  = assembly.GetTypes();
+            
+            foreach(var t in types)
+            {
+                foreach(var intf in t.GetInterfaces())
+                {
+                    if(intf.IsGenericType && intf.GetGenericTypeDefinition() == typeInterface)
+                    {
+                        typeMatch.Add(new MetaGenericType()
+                        {
+                            EntityTypeArg = intf.GetGenericArguments().First(),
+                            Implementor = t
+                        });
+                    }
+                }
+            }
+            
+              //var result = types.Where(type =>
+              //  type.GetInterfaces().Any(intf => intf.GetGenericTypeDefinition() == typeInterface)
+              //  //&& !TriggerHelper.IsTriggerInByPassList(type.Name) 
+              //);
+            return typeMatch;
         }
 
       
+        public IEnumerable<EntityEntry> GetEntries(DbContext context, Type type, EntityState entityState)
+        {
+            return context.ChangeTracker.Entries()
+               .Where(p => p.Entity.GetType() == type
+                && p.State == entityState);
+        }
+
+
         //public async Task BeforeCreateAsync(DbContext context)
         //{
-            //var addedEntries = GetEntries<IBeforeCreateAsync>(context, EntityState.Added);
-            //foreach (var entry in addedEntries)
-            //{
-            //    await (entry.Entity as IBeforeCreateAsync).BeforeCreateAsync(context);
-            //}
+        //var addedEntries = GetEntries<IBeforeCreateAsync>(context, EntityState.Added);
+        //foreach (var entry in addedEntries)
+        //{
+        //    await (entry.Entity as IBeforeCreateAsync).BeforeCreateAsync(context);
         //}
-
-
-        public IEnumerable<EntityEntry> GetEntries(Type type, DbContext context, EntityState entityState)
-        {
-            IEnumerable<EntityEntry> addedEntries = Enumerable.Empty<EntityEntry>();
-            var entries = context.ChangeTracker.Entries()
-               .Where(p => p.Entity.GetType() == type);
-            if (entries != null)
-                addedEntries = entries.Where(p => p.State == entityState);
-            return addedEntries;
-
-        }
+        //}
     }
 
 
