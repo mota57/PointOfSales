@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace PointOfSales.Core.Infraestructure.TriggerHelper
+namespace PointOfSales.Core.Infraestructure.EFTriggerHelper
 {
     //public interface IBeforeUpdate
     //{

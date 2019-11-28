@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using PointOfSales.Core.Infraestructure.TriggerHelper;
+using PointOfSales.Core.Infraestructure.EFTriggerHelper;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -74,17 +74,17 @@ namespace PointOfSales.Core.Entities
             return base.SaveChanges(acceptAllChangesOnSuccess);
         }
 
-        public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default(CancellationToken))
-        {
-            await helper.BeforeCreateAsync(this);
-            return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
-        }
+        //public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default(CancellationToken))
+        //{
+        //    await helper.BeforeCreateAsync(this);
+        //    return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+        //}
 
-        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
-        {
-            await helper.BeforeCreateAsync(this);
-            return await base.SaveChangesAsync(cancellationToken);
-        }
+        //public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
+        //{
+        //    await helper.BeforeCreateAsync(this);
+        //    return await base.SaveChangesAsync(cancellationToken);
+        //}
 
     }
 

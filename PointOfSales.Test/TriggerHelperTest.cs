@@ -15,42 +15,42 @@
 //    [TestClass]
 //    public class TriggerHelperTest
 //    {
-//        public class DummyContext : DbContext
-//        {
-//            public DbSet<Person> People { get; set; }
+//public class DummyContext : DbContext
+//{
+//    public DbSet<Person> People { get; set; }
 
-//            public DummyContext(DbContextOptions<DummyContext> options)
-//                : base(options)
-//            { }
+//    public DummyContext(DbContextOptions<DummyContext> options)
+//        : base(options)
+//    { }
 
 
-//            DbContextTriggerHelper helper = new DbContextTriggerHelper();
+//    DbContextTriggerHelper helper = new DbContextTriggerHelper();
 
-//            public override int SaveChanges()
-//            {
-//                helper.BeforeCreate(this);
-//                return base.SaveChanges();
-//            }
+//    public override int SaveChanges()
+//    {
+//        helper.BeforeCreate(this);
+//        return base.SaveChanges();
+//    }
 
-//            public override int SaveChanges(bool acceptAllChangesOnSuccess)
-//            {
-//                helper.BeforeCreate(this);
-//                return base.SaveChanges(acceptAllChangesOnSuccess);
-//            }
+//    public override int SaveChanges(bool acceptAllChangesOnSuccess)
+//    {
+//        helper.BeforeCreate(this);
+//        return base.SaveChanges(acceptAllChangesOnSuccess);
+//    }
 
-//            public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default(CancellationToken))
-//            {
-//                await helper.BeforeCreateAsync(this);
-//                return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
-//            }
+//    public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default(CancellationToken))
+//    {
+//        await helper.BeforeCreateAsync(this);
+//        return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+//    }
 
-//            public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
-//            {
-//                await helper.BeforeCreateAsync(this);
-//                return await base.SaveChangesAsync(cancellationToken);
-//            }
+//    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
+//    {
+//        await helper.BeforeCreateAsync(this);
+//        return await base.SaveChangesAsync(cancellationToken);
+//    }
 
-//        }
+//}
 
 //        public class Person : IBeforeCreate
 //        {

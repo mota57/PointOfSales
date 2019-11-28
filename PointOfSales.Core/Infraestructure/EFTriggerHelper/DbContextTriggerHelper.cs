@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace PointOfSales.Core.Infraestructure.TriggerHelper
+namespace PointOfSales.Core.Infraestructure.EFTriggerHelper
 {
-    public static class StoreTriggerHelper
+    public static class TriggerHelper
     {
         private static List<Type> TypeImplementationOfBeforeCreate = new List<Type>();
         private static HashSet<string> triggerToByPass = new HashSet<string>();
@@ -52,7 +52,7 @@ namespace PointOfSales.Core.Infraestructure.TriggerHelper
             }
         }
 
-        private void ExecuteTriggerMethod(DbContext context, IEnumerable<Type> typeList, string methodName)
+        public void ExecuteTriggerMethod(DbContext context, IEnumerable<Type> typeList, string methodName)
         {
             foreach (var type in typeList)
             {
@@ -70,12 +70,12 @@ namespace PointOfSales.Core.Infraestructure.TriggerHelper
             }
         }
 
-        private IEnumerable<Type> GetTypesWithInferfaceOfType(Assembly assembly, Type typeInterface)
+        public IEnumerable<Type> GetTypesWithInferfaceOfType(Assembly assembly, Type typeInterface)
         {
             return assembly.GetTypes()
               .Where(type =>
-                type.GetInterfaces().Any(intf => intf == typeInterface)
-                && !StoreTriggerHelper.IsTriggerInByPassList(type.Name) 
+                type.GetInterfaces().Any(intf => intf.GetGenericTypeDefinition() == typeInterface)
+                && !TriggerHelper.IsTriggerInByPassList(type.Name) 
               );
         }
 
@@ -89,14 +89,6 @@ namespace PointOfSales.Core.Infraestructure.TriggerHelper
             //}
         //}
 
-        public IEnumerable<EntityEntry> GetEntries<IInterface>(DbContext context, EntityState entityState)
-        {
-            var entries = context.ChangeTracker.Entries()
-               .Where(p => p.Entity is IInterface  &&
-                           p.State == entityState);
-            return entries;
-
-        }
 
         public IEnumerable<EntityEntry> GetEntries(Type type, DbContext context, EntityState entityState)
         {

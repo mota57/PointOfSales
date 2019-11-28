@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PointOfSales.Core.Infraestructure.EFTriggerHelper;
 using PointOfSales.Core.Infraestructure.Rule;
-using PointOfSales.Core.Infraestructure.TriggerHelper;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;

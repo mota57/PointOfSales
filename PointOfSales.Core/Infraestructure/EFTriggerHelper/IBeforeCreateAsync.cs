@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
-namespace PointOfSales.Core.Infraestructure.TriggerHelper
+namespace PointOfSales.Core.Infraestructure.EFTriggerHelper
 {
     //public interface IBeforeCreateAsync
     //{

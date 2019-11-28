@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace PointOfSales.Core.Infraestructure.TriggerHelper
+namespace PointOfSales.Core.Infraestructure.EFTriggerHelper
 {
     //public interface IBeforeCreate
     //{
@@ -10,7 +10,6 @@ namespace PointOfSales.Core.Infraestructure.TriggerHelper
 
     public interface IBeforeCreate<TEntity> 
     {
-
         void BeforeCreate(DbContext context, TEntity entity);
     }
 
