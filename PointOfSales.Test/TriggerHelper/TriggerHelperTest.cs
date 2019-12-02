@@ -10,7 +10,7 @@
 //using System.Linq;
 //using PointOfSales.Core.Extensions;
 
-//namespace PointOfSales.Test
+//namespace PointOfSales.Test.TriggerHelper
 //{
 //    [TestClass]
 //    public class TriggerHelperTest

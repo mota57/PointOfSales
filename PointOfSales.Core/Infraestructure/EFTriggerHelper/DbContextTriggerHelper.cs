@@ -7,32 +7,30 @@ using System.Reflection;
 
 namespace PointOfSales.Core.Infraestructure.EFTriggerHelper
 {
-    public static class TriggerHelper
-    {
-        private static List<Type> TypeImplementationOfBeforeCreate = new List<Type>();
-        private static HashSet<string> triggerToByPass = new HashSet<string>();
-        public static void ByPass(string name)
-        {
-            triggerToByPass.Add(name);
-        }
-
-        public static bool IsTriggerInByPassList(string name) => triggerToByPass.Remove(name);
-
-    }
-
-    //public static class StoreTriggerInit
+    //public static class TriggerGlobals
     //{
-    //    public static void FindImplementations()
-    //    {
+    //    private static List<Type> TypeImplementationOfBeforeCreate = new List<Type>();
+    //    //private static HashSet<string> triggerToByPass = new HashSet<string>();
+    //    //public static void ByPass(string name)
+    //    //{
+    //    //    triggerToByPass.Add(name);
+    //    //}
+    //    //public static bool IsTriggerInByPassList(string name) => triggerToByPass.Remove(name);
 
-    //    }
     //}
+
+
+    public class MetaGenericType
+    {
+        public Type Implementor { get; set; }
+        public Type EntityTypeArg { get; set; }
+    }
 
     public class DbContextTriggerHelper
     {
-        private Assembly assembly = null;
+        private Assembly assembly;
 
-        public DbContextTriggerHelper(Assembly assembly = null)
+        public DbContextTriggerHelper(Assembly assembly)
         {
             this.assembly = assembly;
         }
@@ -40,17 +38,25 @@ namespace PointOfSales.Core.Infraestructure.EFTriggerHelper
 
         public void BeforeCreate(DbContext context)
         {
-            //var addedEntries = GetEntries<IBeforeCreate>(context, EntityState.Added);
-            //foreach (var entry in addedEntries)
-            //{
-            //    (entry.Entity as IBeforeCreate).BeforeCreate(context);
-            //}
-            if (assembly != null)
-            {
-                var typeList = GetTypesWithInferfaceOfType(assembly, typeof(IBeforeCreate<>));
-                var methodName = nameof(BeforeCreate);
-                ExecuteTriggerMethod(context, typeList, methodName, EntityState.Added);
-            }
+            var typeList = GetTypesWithInferfaceOfType(typeof(IBeforeCreate<>));
+            var methodName = nameof(BeforeCreate);
+            ExecuteTriggerMethod(context, typeList, methodName, EntityState.Added);
+        }
+
+
+
+        public void AfterCreate(DbContext context)
+        {
+            //var typeList = GetTypesWithInferfaceOfType(typeof(IAfterCreate<>));
+            //var methodName = nameof(AfterCreate);
+            //ExecuteTriggerMethod(context, typeList, methodName, EntityState.);
+        }
+
+        public void BeforeUpdate(DbContext context)
+        {
+            var typeList = GetTypesWithInferfaceOfType(typeof(IBeforeUpdate<>));
+            var methodName = nameof(BeforeUpdate);
+            ExecuteTriggerMethod(context, typeList, methodName, EntityState.Modified);
         }
 
         public void ExecuteTriggerMethod(DbContext context, IEnumerable<MetaGenericType> typeList, string methodName, EntityState entityState)
@@ -59,6 +65,7 @@ namespace PointOfSales.Core.Infraestructure.EFTriggerHelper
             {
                 var type = typeMeta.Implementor;
                 var entries = GetEntries(context, typeMeta.EntityTypeArg, entityState);
+                if (entries.Count() == 0) continue;
 
                 object instance = assembly.CreateInstance(type.FullName, false,
                      BindingFlags.ExactBinding,
@@ -71,37 +78,30 @@ namespace PointOfSales.Core.Infraestructure.EFTriggerHelper
             }
         }
 
-        public class MetaGenericType
-        {
-            public Type Implementor { get; set; }
-            public Type EntityTypeArg { get; set; }
-        }
+        
 
-        public IEnumerable<MetaGenericType> GetTypesWithInferfaceOfType(Assembly assembly, Type typeInterface)
+        public IEnumerable<MetaGenericType> GetTypesWithInferfaceOfType(Type typeInterface)
         {
-            List<MetaGenericType> typeMatch = new List<MetaGenericType>();
+            List<MetaGenericType> typeListMatch = new List<MetaGenericType>();
             var types  = assembly.GetTypes();
             
-            foreach(var t in types)
+            foreach(var type in types)
             {
-                foreach(var intf in t.GetInterfaces())
+                foreach(var intf in type.GetInterfaces())
                 {
                     if(intf.IsGenericType && intf.GetGenericTypeDefinition() == typeInterface)
                     {
-                        typeMatch.Add(new MetaGenericType()
+
+                        typeListMatch.Add(new MetaGenericType()
                         {
                             EntityTypeArg = intf.GetGenericArguments().First(),
-                            Implementor = t
+                            Implementor = type
                         });
                     }
                 }
             }
             
-              //var result = types.Where(type =>
-              //  type.GetInterfaces().Any(intf => intf.GetGenericTypeDefinition() == typeInterface)
-              //  //&& !TriggerHelper.IsTriggerInByPassList(type.Name) 
-              //);
-            return typeMatch;
+            return typeListMatch;
         }
 
       
@@ -111,16 +111,6 @@ namespace PointOfSales.Core.Infraestructure.EFTriggerHelper
                .Where(p => p.Entity.GetType() == type
                 && p.State == entityState);
         }
-
-
-        //public async Task BeforeCreateAsync(DbContext context)
-        //{
-        //var addedEntries = GetEntries<IBeforeCreateAsync>(context, EntityState.Added);
-        //foreach (var entry in addedEntries)
-        //{
-        //    await (entry.Entity as IBeforeCreateAsync).BeforeCreateAsync(context);
-        //}
-        //}
     }
 
 

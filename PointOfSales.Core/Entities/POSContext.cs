@@ -60,17 +60,17 @@ namespace PointOfSales.Core.Entities
             base.OnModelCreating(modelBuilder);
         }
 
-        DbContextTriggerHelper helper = new DbContextTriggerHelper();
+        //DbContextTriggerHelper helper = new DbContextTriggerHelper((typeof().Assembly);
 
         public override int SaveChanges()
         {
-            helper.BeforeCreate(this);
+            //helper.BeforeCreate(this);
             return base.SaveChanges();
         }
 
         public override int SaveChanges(bool acceptAllChangesOnSuccess)
         {
-            helper.BeforeCreate(this);
+            //helper.BeforeCreate(this);
             return base.SaveChanges(acceptAllChangesOnSuccess);
         }
 
