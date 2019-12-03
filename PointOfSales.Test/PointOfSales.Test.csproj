@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EFTriggerHelper\EFTriggerHelper.csproj" />
     <ProjectReference Include="..\PointOfSales.Core\PointOfSales.Core.csproj" />
     <ProjectReference Include="..\PointOfSales.WebUI\PointOfSales.WebUI.csproj" />
   </ItemGroup>
