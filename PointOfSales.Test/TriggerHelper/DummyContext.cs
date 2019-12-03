@@ -1,8 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
-using PointOfSales.Core.Infraestructure.EFTriggerHelper;
+﻿using EFTriggerHelper;
+using EFTriggerHelper.Extensions;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Threading.Tasks;
 
 namespace PointOfSales.Test.TriggerHelper
 {
+    
     public class DummyContext : DbContext
     {
         public DbSet<PersonTbl> Person { get; set; }
@@ -15,20 +19,18 @@ namespace PointOfSales.Test.TriggerHelper
         }
 
 
-        DbContextTriggerHelper helper { get; set; }
+        private DbContextTriggerHelper helper { get; set; }
 
         public override int SaveChanges()
         {
-            helper.BeforeCreate(this);
-            helper.BeforeUpdate(this);
-            return base.SaveChanges();
+            Func<int> handler = ()  => base.SaveChanges();
+            return this.SaveChangesHandler(handler,  helper);
         }
 
         public override int SaveChanges(bool acceptAllChangesOnSuccess)
         {
-            helper.BeforeCreate(this);
-            helper.BeforeUpdate(this);
-            return base.SaveChanges(acceptAllChangesOnSuccess);
+            Func<int> handler = () => base.SaveChanges(acceptAllChangesOnSuccess);
+            return this.SaveChangesHandler(handler, helper);
         }
 
         //public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default(CancellationToken))

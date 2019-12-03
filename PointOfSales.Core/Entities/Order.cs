@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using PointOfSales.Core.Infraestructure.EFTriggerHelper;
+﻿using EFTriggerHelper;
+using Microsoft.EntityFrameworkCore;
 using PointOfSales.Core.Infraestructure.Rule;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -59,12 +59,12 @@ namespace PointOfSales.Core.Entities
 
     public class OrderTrigger : IBeforeCreate<Order>, IBeforeUpdate<Order>
     {
-        public void BeforeCreate(DbContext context, Order newEntity)
+        public void BeforeCreate(DbContext context, IEnumerable<Order> entities)
         {
-            OrderTriggerHelper.RecalculateChange(newEntity);
+            OrderTriggerHelper.RecalculateChange(entities.First());
         }
 
-        public void BeforeUpdate(DbContext context, Order entity)
+        public void BeforeUpdate(DbContext context, IEnumerable<Order> entities)
         {
             throw new System.NotImplementedException();
         }

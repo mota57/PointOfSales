@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28922.388
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PointOfSales.Core", "PointOfSales.Core\PointOfSales.Core.csproj", "{ED57A0CD-A50F-4A16-82D8-9BF8680E91E9}"
 EndProject
@@ -10,6 +10,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PointOfSales.Test", "PointOfSales.Test\PointOfSales.Test.csproj", "{F58F3B43-4E12-45E6-8F25-3EC81F3462F6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PointOfSales.AppConsole", "PointOfSales.AppConsole\PointOfSales.AppConsole.csproj", "{4D9A4E23-4172-4612-86EA-8003965FF2D7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EFTriggerHelper", "EFTriggerHelper\EFTriggerHelper.csproj", "{1760A478-7D9E-41D4-8A92-FC111EDD66FB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{4D9A4E23-4172-4612-86EA-8003965FF2D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D9A4E23-4172-4612-86EA-8003965FF2D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4D9A4E23-4172-4612-86EA-8003965FF2D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1760A478-7D9E-41D4-8A92-FC111EDD66FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1760A478-7D9E-41D4-8A92-FC111EDD66FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1760A478-7D9E-41D4-8A92-FC111EDD66FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1760A478-7D9E-41D4-8A92-FC111EDD66FB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
