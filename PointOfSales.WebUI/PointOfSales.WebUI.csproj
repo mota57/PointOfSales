@@ -18,6 +18,7 @@
     <None Remove="ClientApp\**" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\EFTriggerHelper\EFTriggerHelper\EFTriggerHelper.csproj" />
     <ProjectReference Include="..\PointOfSales.Core\PointOfSales.Core.csproj" />
   </ItemGroup>
   <ItemGroup>

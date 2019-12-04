@@ -1,6 +1,7 @@
 ﻿using EFTriggerHelper;
 using Microsoft.EntityFrameworkCore;
 using PointOfSales.Core.Infraestructure.Rule;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -28,6 +29,9 @@ namespace PointOfSales.Core.Entities
 
         public int? DiscountId { get; set; }
         public Discount Discount { get; set; }
+
+        public DateTime CreatedDate { get; set; } 
+        public DateTime? ModifiedDate { get; set; } 
 
         private decimal? _customDiscountAmount = null;
 
@@ -57,21 +61,38 @@ namespace PointOfSales.Core.Entities
         }
     }
 
-    public class OrderTrigger : IBeforeCreate<Order>, IBeforeUpdate<Order>
+   
+
+    public class OrderTrigger : IBeforeCreate<Order>, IBeforeUpdate<Order> 
     {
+        private DateTime Now = DateTime.Now;
+
+        public OrderTrigger()
+        {
+
+        }
         public void BeforeCreate(DbContext context, IEnumerable<Order> entities)
         {
-            OrderTriggerHelper.RecalculateChange(entities.First());
+            foreach(var order in entities)
+            {
+                order.CreatedDate = Now;
+                OrderTriggerHelper.RecalculateChange(order);
+            }
         }
 
         public void BeforeUpdate(DbContext context, IEnumerable<Order> entities)
         {
-            throw new System.NotImplementedException();
+            foreach(var order in entities)
+            {
+                order.ModifiedDate = Now;
+                OrderTriggerHelper.RecalculateChange(order);
+            }
         }
     }
 
     public class OrderTriggerHelper
     {
+
         public static void RecalculateChange(Order order)
         {
             var payments = order.PaymentOrders.Where(p => p.PaymentType == PaymentType.CASH);

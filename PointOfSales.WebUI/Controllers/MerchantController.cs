@@ -10,10 +10,6 @@ using System.Linq;
 namespace PointOfSales.WebUI.Controllers
 {
 
-
-
-
-
     [Route("api/[controller]")]
     [ApiController]
     public class MerchantController : Controller
@@ -32,9 +28,6 @@ namespace PointOfSales.WebUI.Controllers
             this._context = context;
         }
 
-
-
-
         // POST: api/Categories
         [HttpPost("[action]")]
         [IgnoreAntiforgeryToken]
@@ -43,11 +36,9 @@ namespace PointOfSales.WebUI.Controllers
             //save to order, orderDetail, paymentOrder
             var order = _mapper.Map<Order>(vm);
 
-
             //check that products are for rent
             if (TryValidateModel(order))
             {
-
                 order.StatusOrder = StatusOrder.CLOSE;
 
                 _context.Add(order);

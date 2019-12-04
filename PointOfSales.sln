@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PointOfSales.Test", "PointO
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PointOfSales.AppConsole", "PointOfSales.AppConsole\PointOfSales.AppConsole.csproj", "{4D9A4E23-4172-4612-86EA-8003965FF2D7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EFTriggerHelper", "EFTriggerHelper\EFTriggerHelper.csproj", "{1760A478-7D9E-41D4-8A92-FC111EDD66FB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFTriggerHelper", "..\EFTriggerHelper\EFTriggerHelper\EFTriggerHelper.csproj", "{99C56401-ABD6-41A6-A130-7C1A3F449D36}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,10 +35,10 @@ Global
 		{4D9A4E23-4172-4612-86EA-8003965FF2D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D9A4E23-4172-4612-86EA-8003965FF2D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4D9A4E23-4172-4612-86EA-8003965FF2D7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1760A478-7D9E-41D4-8A92-FC111EDD66FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1760A478-7D9E-41D4-8A92-FC111EDD66FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1760A478-7D9E-41D4-8A92-FC111EDD66FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1760A478-7D9E-41D4-8A92-FC111EDD66FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{99C56401-ABD6-41A6-A130-7C1A3F449D36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99C56401-ABD6-41A6-A130-7C1A3F449D36}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99C56401-ABD6-41A6-A130-7C1A3F449D36}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99C56401-ABD6-41A6-A130-7C1A3F449D36}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
