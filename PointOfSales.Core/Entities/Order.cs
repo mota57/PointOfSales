@@ -1,6 +1,4 @@
-﻿using EFTriggerHelper;
-using Microsoft.EntityFrameworkCore;
-using PointOfSales.Core.Infraestructure.Rule;
+﻿using PointOfSales.Core.Infraestructure.Rule;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -18,20 +16,20 @@ namespace PointOfSales.Core.Entities
         }
 
         public StatusOrder StatusOrder { get; set; }
-     
+
 
         public int OrderId { get; set; }
         public ICollection<OrderDetail> OrderDetails { get; set; }
 
-        public ICollection<PaymentOrder> PaymentOrders {get;set;} 
+        public ICollection<PaymentOrder> PaymentOrders { get; set; }
 
         public DiscountType DiscountType { get; set; }
 
         public int? DiscountId { get; set; }
         public Discount Discount { get; set; }
 
-        public DateTime CreatedDate { get; set; } 
-        public DateTime? ModifiedDate { get; set; } 
+        public DateTime CreatedDate { get; set; }
+        public DateTime? ModifiedDate { get; set; }
 
         private decimal? _customDiscountAmount = null;
 
@@ -40,7 +38,7 @@ namespace PointOfSales.Core.Entities
                 return _customDiscountAmount;
             }
             set {
-                if(value < 0)
+                if (value < 0)
                 {
                     _customDiscountAmount = null;
                 }
@@ -51,7 +49,7 @@ namespace PointOfSales.Core.Entities
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
 
-            var ctx = (POSContext) validationContext.GetService(typeof(POSContext));
+            var ctx = (POSContext)validationContext.GetService(typeof(POSContext));
             var orderRentRule = new OrderDetailRentProductsDatesAreRequired(ctx);
             var orderValidValues = new OrderValidValues(ctx);
 
@@ -59,50 +57,22 @@ namespace PointOfSales.Core.Entities
             handler.RunSpecifications(candidate: this);
             return handler.GetErrosForMvc();
         }
+
+        public void EnforceCorrectValuesOnDiscount()
+        {
+            if (DiscountType == DiscountType.None)
+            {
+                this.DiscountId = null;
+                this.CustomDiscountAmount = null;
+            }
+
+            if (DiscountType == DiscountType.Custom)
+                this.DiscountId = null;
+
+            if (DiscountType == DiscountType.System)
+                this.CustomDiscountAmount = null;
+        }
     }
 
    
-
-    public class OrderTrigger : IBeforeCreate<Order>, IBeforeUpdate<Order> 
-    {
-        private DateTime Now = DateTime.Now;
-
-        public OrderTrigger()
-        {
-
-        }
-        public void BeforeCreate(DbContext context, IEnumerable<Order> entities)
-        {
-            foreach(var order in entities)
-            {
-                order.CreatedDate = Now;
-                OrderTriggerHelper.RecalculateChange(order);
-            }
-        }
-
-        public void BeforeUpdate(DbContext context, IEnumerable<Order> entities)
-        {
-            foreach(var order in entities)
-            {
-                order.ModifiedDate = Now;
-                OrderTriggerHelper.RecalculateChange(order);
-            }
-        }
-    }
-
-    public class OrderTriggerHelper
-    {
-
-        public static void RecalculateChange(Order order)
-        {
-            var payments = order.PaymentOrders.Where(p => p.PaymentType == PaymentType.CASH);
-            foreach (var payment in payments)
-            {
-                if (payment.Amount > payment.Due)
-                {
-                    payment.Change = payment.Amount - payment.Due;
-                }
-            }
-        }
-    }
 }

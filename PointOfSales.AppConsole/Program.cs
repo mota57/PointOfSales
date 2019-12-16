@@ -18,22 +18,22 @@ namespace ConsoleApp1
         {
 
             //example_log_modelFactory(); //log modelform example
-            ProgramGenerator.example_render_model(); //render app
+            //ProgramGenerator.example_render_model(); //render app
 
             Console.ReadLine();
         }
 
-        public static void example_run_example_json()
-        {
+        //public static void example_run_example_json()
+        //{
 
-            var obj = new
-            {
-                username = "andrey",
-                log = new JRaw("'function() { return function(arg1) { console.log(arg1) }'")
-            };
-            Log(JsonConvert.SerializeObject(obj));
+        //    var obj = new
+        //    {
+        //        username = "andrey",
+        //        log = new JRaw("'function() { return function(arg1) { console.log(arg1) }'")
+        //    };
+        //    Log(JsonConvert.SerializeObject(obj));
 
-        }
+        //}
 
         public static void RunVueReader()
         {
@@ -45,10 +45,15 @@ namespace ConsoleApp1
             var q = db.Query("Modifier")
                            .Select("Modifier.Id", "Modifier.Name")
                            .SelectRaw("(Select (COUNT(Name) || 'Modifiers') from ItemModifier WHERE  ItemModifier.ModifierId = Modifier.Id) as ModifierCount");
-                            
-               var result = q.Get();
+
+            var result = q.Get();
 
             Console.WriteLine(JsonConvert.SerializeObject(result));
+
+        }
+
+        public static void Example_Pagination()
+        {
 
         }
     }

@@ -126,22 +126,31 @@
     },
     created() {
       
-      for (let i = 0; i < 10; i++) {
-        let imgSrc = faker.image.avatar();
+      this.$http.get(this.urls..getById(row.Id))
+          .then((res) => {
+            let data = res.data
+            Object.assign(vm.form, res.data)
+          })
+          .then((err) => { if (err) { console.log(err); } })
+          .then(() => { vm.isAjax = false; })
 
-        this.products.push({
-          id: i + 1,
-          title: faker.name.firstName(),
-          imgSrc: imgSrc,
-          body: faker.lorem.sentence(),
-          price: faker.random.number({ min: 5, max: 20000 }),
-          isProductForRent: true,
-          startDate: '',
-          endDate: '',
-          disscountType: 'none',
-          discountId: -1,
-        })
-      }
+      },
+      // for (let i = 0; i < 10; i++) {
+      //   let imgSrc = faker.image.avatar();
+
+      //   this.products.push({
+      //     id: i + 1,
+      //     title: faker.name.firstName(),
+      //     imgSrc: imgSrc,
+      //     body: faker.lorem.sentence(),
+      //     price: faker.random.number({ min: 5, max: 20000 }),
+      //     isProductForRent: true,
+      //     startDate: '',
+      //     endDate: '',
+      //     disscountType: 'none',
+      //     discountId: -1,
+      //   })
+      // }
     }
   };
 </script>

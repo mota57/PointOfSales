@@ -87,8 +87,12 @@ class modifier extends BASE_URL {
 
 const merchant = function(){
   let _merchantUrl = new BASE_URL('/Merchant');
+
   return  {
-    pay: _merchantUrl.getURL('/pay')
+    pay: _merchantUrl.getURL('/pay'),
+    productPosList(category) {
+      return _merchantUrl.getURL(`/productPosList/${category}`);
+    }
   }
 }
 

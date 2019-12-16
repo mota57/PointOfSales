@@ -98,7 +98,14 @@ namespace PointOfSales.Core.Entities
 
         public int? UnitId { get; set; }
         public Unit Unit { get; set; }
+
+        public int? DiscountId { get; set; }
+        public Discount Discount { get; set; }
+
+        public decimal? DiscountAmount { get; set; }
+        public DiscountType DiscountType { get;  set; } = DiscountType.None;
     }
+
 
     public class Unit : BaseEntity
     {

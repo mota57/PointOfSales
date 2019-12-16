@@ -31,7 +31,7 @@ namespace PointOfSales.Core.Infraestructure.Rule
                 var product = products.First(p => p.Id == orderD.ProductId);
                 if (product.IsProductForRent && (orderD.StartDate == null || orderD.EndDate == null))
                 {
-                    AddError("Start date and end date are required for product {product.Id}-{product.Name}");
+                    AddError($"Start date and end date are required for product {product.Id}-{product.Name}");
                 }
             }
 
