@@ -6,8 +6,6 @@ using SqlKata;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using PointOfSales.Core.Entities;
-using System.Diagnostics.Contracts;
-using System;
 
 namespace PointOfSales.Core.Infraestructure.VueTable
 {
@@ -39,7 +37,8 @@ namespace PointOfSales.Core.Infraestructure.VueTable
             }
 
 
-            var count = await db.Query(tableName).CountAsync<int>();
+            //var count = await db.Query(tableName).CountAsync<int>();
+            var count = await db.FromQuery(queryBuilder).CountAsync<int>();
 
             if (!string.IsNullOrEmpty(parameters.Query))
             {

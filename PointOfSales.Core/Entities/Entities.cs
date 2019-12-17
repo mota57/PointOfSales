@@ -81,7 +81,7 @@ namespace PointOfSales.Core.Entities
         public decimal Price { get; set; }
 
         [DataType(DataType.Upload), Multiple()]
-        public byte[] MainImage { get; set; }
+        public string MainImage { get; set; }
 
         public int? CategoryId { get; set; }
         public Category Category { get; set; } 

@@ -4,8 +4,8 @@ using Microsoft.Extensions.Logging;
 using PointOfSales.Core.DTO;
 using PointOfSales.Core.Entities;
 using System.Threading.Tasks;
-using System.Linq;
-using PointOfSales.Core.Extensions;
+using PointOfSales.Core.Infraestructure;
+using System;
 
 namespace PointOfSales.WebUI.Controllers
 {
@@ -28,28 +28,36 @@ namespace PointOfSales.WebUI.Controllers
             this._context = context;
         }
 
-        [HttpGet("[action]/{category:string?}")]
-        public async Task<ActionResult> ProductPosList([FromRoute] string category)
+        [HttpPost("[action]/")]
+        public async Task<ActionResult> ProductPosList([FromBody] RequestTableParameter parameter)
         {
-            var products = _context.Product
-                 .Where(p => p.Category.Name.EqualIgnoreCase(category))
-                 .Select(p =>
-                 new
-                 {
+            try
+            {
 
-                     p.Id,
-                     p.Name,
-                     p.Note,
-                     p.Price,
-                     p.IsProductForRent,
-                     StartDate = "",
-                     EndDate = "",
-                     p.DiscountType,
-                     p.DiscountId
-                 });
+                var productConfig = new CustomQueryConfig("v_product_merchant",
+                        new QueryField(nameof(Product.Id), display:false),
+                        new QueryField(nameof(Product.Name)),
+                        new QueryField(nameof(Product.Price)),
+                        new QueryField(nameof(Product.Note), sort:false),
+                        new QueryField("CategoryName"),
+                        new QueryField(nameof(Product.MainImage), filter:false, sort:false),
+                        new QueryField(nameof(Product.IsProductForRent))
+                  );
 
-            return Ok(products);
-            
+                productConfig.ConnectionString = GlobalVariables.Connection;
+                productConfig.Provider = GlobalVariables.DatabaseProvider;
+
+                
+                var paginator = new CustomQueryWithPagination();
+                var products = await paginator.GetAsync(productConfig, parameter);
+                return Ok(products);
+
+            } catch (Exception ex)
+            {
+                return BadRequest(new ErrorResponse(ex));
+            }
+
+            //return Ok(products);
             //     id: i + 1,
             //     title: faker.name.firstName(),
             //     imgSrc: imgSrc,
@@ -63,11 +71,10 @@ namespace PointOfSales.WebUI.Controllers
 
         }
 
-        [HttpGet("[action]/{category:int?}")]
-        public async Task<ActionResult> ProductPosList([FromRoute] int category)
-        {
-
-        }
+        //[HttpGet("[action]/{category:int?}")]
+        //public async Task<ActionResult> ProductPosList([FromRoute] int category)
+        //{
+        //}
 
         // POST: api/Categories
         [HttpPost("[action]")]

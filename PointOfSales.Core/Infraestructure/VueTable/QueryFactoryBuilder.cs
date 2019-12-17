@@ -9,9 +9,14 @@ namespace PointOfSales.Core.Infraestructure.VueTable
 {
 
 
-    public static class  QueryFactoryBuilder 
+    public static class QueryFactoryBuilder
     {
-        public static QueryFactory BuildQueryFactory(DatabaseProvider provider = DatabaseProvider.SQLite)
+        public static QueryFactory BuildQueryFactory(CustomQueryConfig queryConfig)
+        {
+            return BuildQueryFactory(queryConfig.Provider, queryConfig.ConnectionString);
+        }
+
+        public static QueryFactory BuildQueryFactory(DatabaseProvider provider = DatabaseProvider.SQLite, string connectionString = null)
         {
             System.Data.IDbConnection connection = null;
             Compiler compiler = null;
@@ -21,11 +26,11 @@ namespace PointOfSales.Core.Infraestructure.VueTable
                 case DatabaseProvider.SQLite:
                 
                     compiler = new SqliteCompiler();
-                    connection = new SqliteConnection(GlobalVariables.Connection);
+                    connection = new SqliteConnection(connectionString ?? GlobalVariables.Connection);
                 break;
                 case DatabaseProvider.SQLServer:   
                     compiler = new SqlServerCompiler();
-                    connection = new SqlConnection(GlobalVariables.Connection);
+                    connection = new SqlConnection(connectionString ?? GlobalVariables.Connection);
                 break;
             }
             var db = new QueryFactory(connection, compiler);

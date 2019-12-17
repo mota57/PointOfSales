@@ -73,7 +73,7 @@ namespace PointOfSales.WebUI.Controllers
         [HttpGet("GetDatatable")]
         public async Task<Dictionary<string, object>> GetDataTable([FromQuery] VueTableParameters parameters)
         {
-            VueTableReader reader = new VueTableReader();
+            IVueTablesInterface reader = new VueTableReader();
             var result = await reader.GetAsync(TableConfig, parameters);
             return result;
         }
