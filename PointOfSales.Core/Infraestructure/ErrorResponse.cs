@@ -21,40 +21,4 @@ namespace PointOfSales.Core.Infraestructure
             => "Sorry an error occurred, please contant the developer";
         public string Error { get; set; }
     }
-
-    public class OperationResponse
-    {
-        private ErrorResponse _errorResponse;
-
-        public OperationResponse()
-        {
-
-        }
-
-        public OperationResponse(string message)
-        {
-            Message = message;
-        }
-
-        public OperationResponse(Exception ex)
-        {
-            ErrorResponse = new ErrorResponse(ex);
-            Message = ErrorResponse.ToString();
-            IsValid = false;
-        }
-
-        public bool IsValid { get; set; } = true;
-
-        public string Message { get; set; }
-
-        private ErrorResponse ErrorResponse
-        {
-            get => _errorResponse;
-            set
-            {
-                _errorResponse = value;
-                IsValid = false;
-            }
-        }
-    }
 }

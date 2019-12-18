@@ -96,7 +96,7 @@ namespace PointOfSales.WebUI.Controllers
             return NoContent();
         }
 
-        private static async Task HandleFile(ProductFormDTO dto, FileContentManager fileContentManager, Product product)
+        private static async Task HandleFile(ProductFormDTO dto, FileContentManager fileContentManager, Product product )
         {
             if (dto.ImageDeleted)
             {
@@ -107,8 +107,8 @@ namespace PointOfSales.WebUI.Controllers
             else if (dto.MainImageForm != null)
             {
                 //save to disk
-                var fileNames = await fileContentManager.SaveFileToDisk(new IFormFile[] { dto.MainImageForm });
-                dto.MainImage = fileNames[0];
+                var fileNames = await fileContentManager.SaveImages(new IFormFile[] { dto.MainImageForm });
+                product.MainImage = fileNames[0];
             }
         }
 
@@ -116,12 +116,14 @@ namespace PointOfSales.WebUI.Controllers
         [HttpPost]
         //[ValidateAntiForgeryToken]
         [IgnoreAntiforgeryToken]
-        public async Task<ActionResult<Product>> PostProduct([FromForm] ProductFormDTO dto)
+        public async Task<ActionResult<Product>> PostProduct([FromForm] ProductFormDTO dto, [FromServices] IHostingEnvironment webHost)
         {
+            FileContentManager fileContentManager = new FileContentManager(webHost, "product");
 
             if (ModelState.IsValid)
             {
                 Product product = _mapper.Map<Product>(dto);
+                await HandleFile(dto, fileContentManager, product);
 
                 _context.Product.Add(product);
 

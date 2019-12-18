@@ -30,7 +30,12 @@ Vue.mixin({
   data: function () {
     return {
       ...AppUrl,
-      eventBus: eventBus
+      eventBus: eventBus,
+      URLIMAGEFOR(folder, imageId) {
+        //validate if image exists
+        return `/images/${folder}/${imageId}`;
+
+      }
     }
   }
 })

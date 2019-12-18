@@ -75,7 +75,7 @@
               </template>
             </div>
 
-            <form-image  ref="formImage1" :imagebytes="form.mainImage" v-model="form.mainImageForm">
+            <form-image  ref="formImage1" :source="URLIMAGEFOR('product', form.mainImage)" v-model="form.mainImageForm">
               <template v-if="errList && errList.MainImage">
                 <p class="text-danger" v-bind:key="$index" v-for="(err, $index) in errList.MainImage"> {{err}} </p>
               </template>
@@ -237,6 +237,7 @@ const nameComponent = 'form-product'
           .then((res) => {
             let data = res.data
             Object.assign(vm.form, data);
+            console.log(this);
           })
           .catch((err) => { if (err) { console.error(err); } })
           .then(() => { vm.isAjax = false; })

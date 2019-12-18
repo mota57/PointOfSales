@@ -11,19 +11,58 @@ using System.Threading.Tasks;
 
 namespace PointOfSales.Core.Infraestructure
 {
-    public class RequestTableParameter
+    public class RequestTableParameter : IRequestTableParameter
     {
+        public string Query { get; set; }
+        public int Page { get; set; } = 1;
+        public PropertyOrder[] OrderBy { get; set; }
+        public bool IsFilterByColumn { get; set; } = true;
+    }
+
+    public class RequestVueParameterAdapter  : IRequestTableParameter
+    {
+        public RequestVueParameterAdapter(VueTableParameters parameter)
+        {
+            _parameter = parameter;
+        }
+
         public string Query
         {
-            get;
-            set;
+            get
+            {
+                throw new NotImplementedException();
+            }
+            set
+            {
+                throw new NotImplementedException();
+            }
         }
-        public int Page
-        {
-            get;
-            set;
-        } = 1;
-        public PropertyOrder[] OrderBy { get; set; }  
+
+        public int Page  {
+            get {
+                throw new NotImplementedException();
+            }
+            set
+            {
+
+                throw new NotImplementedException();
+            }
+        }
+
+        public PropertyOrder[] OrderBy  {
+            get
+            {
+                throw new NotImplementedException();
+            }
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public bool IsFilterByColumn { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        private VueTableParameters _parameter { get; }
     }
 
     public enum OrderType { ASC, DESC }
@@ -50,7 +89,7 @@ namespace PointOfSales.Core.Infraestructure
         public CustomQueryConfig(string tableName, params QueryField[] fields)
         {
             if (tableName.IsBlank()) throw new ArgumentNullException();
-            if (fields.Length == 0) throw new ArgumentException("fields must contain at least one value");
+            if (fields == null || fields.Length == 0) throw new ArgumentException("fields must contain at least one value");
             TableName = tableName;
             Fields = fields;
            
@@ -71,7 +110,7 @@ namespace PointOfSales.Core.Infraestructure
             }
         } 
         public string ConnectionString { get; set; }
-        public Entities.DatabaseProvider Provider { get; set; }
+        public DatabaseProvider Provider { get; set; }
     }
 
 
@@ -117,14 +156,14 @@ namespace PointOfSales.Core.Infraestructure
         }
 
 
-        public async Task<object> GetAsync(CustomQueryConfig queryConfig, RequestTableParameter parameter)
+        public async Task<object> GetAsync(CustomQueryConfig queryConfig, IRequestTableParameter parameter)
         {
             Query query = queryConfig.Query.Clone();
 
             QueryFactory db = QueryFactoryBuilder.BuildQueryFactory(queryConfig);
 
-            FilterByColumn(query, queryConfig, parameter.Query);
-            OrderBy(query, parameter.OrderBy);
+            Filter(query, queryConfig, parameter);
+            OrderBy(query, queryConfig, parameter.OrderBy);
             Paginate(query, parameter.Page);
 
             var count = await db.FromQuery(query).CountAsync<int>();
@@ -137,26 +176,41 @@ namespace PointOfSales.Core.Infraestructure
             };
         }
 
-        private void OrderBy(Query query, PropertyOrder[] propertiesOrder)
+        private void OrderBy(Query query, CustomQueryConfig queryConfig, PropertyOrder[] propertiesOrder)
         {
             if (propertiesOrder == null) return;
 
             foreach(var item in propertiesOrder)
             {
+                var isNotSorteable = !queryConfig.Fields.Any(p => p.IsSort && p.Name.EqualIgnoreCase(item.ProperyName));
+
+                if (isNotSorteable) continue;
+
                 if (item.OrderType == OrderType.ASC)
                     query = query.OrderBy(item.ProperyName);
                 else
                     query = query.OrderByDesc(item.ProperyName);
+
             }
         }
+
 
         private void Paginate(Query queryBuilder, int page)
               => queryBuilder = queryBuilder.ForPage(page, PerPage);
 
-
-        private void FilterByColumn(Query query, CustomQueryConfig queryConfig, string queryString)
+        private void Filter(Query query, CustomQueryConfig queryConfig, IRequestTableParameter parameter)
         {
-            if (queryString.IsBlank()) return;
+            if (parameter.IsFilterByColumn)
+                FilterByColumn(query, queryConfig, parameter);
+            else
+                FilterByAllFields(query, queryConfig, parameter);
+
+        }
+
+        private void FilterByColumn(Query query, CustomQueryConfig queryConfig, IRequestTableParameter parameter)
+        {
+            var queryString = parameter.Query;
+            if (parameter.IsFilterByColumn == false || queryString.IsBlank()) return;
 
             JObject obj = JsonConvert.DeserializeObject<JObject>(queryString);
             foreach (JProperty prop in obj.Properties())
@@ -168,8 +222,18 @@ namespace PointOfSales.Core.Infraestructure
                 var value = prop.Value.ToString();
                 query = query.OrWhereLike(name, $"%{value}%");
             }
-
         }
+
+        private void FilterByAllFields(Query query, CustomQueryConfig queryConfig, IRequestTableParameter parameter)
+        {
+            var value = parameter.Query;
+            var fields = queryConfig.Fields.Where(p => p.IsFilter);
+            foreach (QueryField field in fields)
+            {
+                query = query.OrWhereLike(field.Name, $"%{value}%");
+            }
+        }
+
 
         private void CheckValidProperty(string prop, CustomQueryConfig config)
         {

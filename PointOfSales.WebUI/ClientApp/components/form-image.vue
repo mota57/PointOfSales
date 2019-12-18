@@ -1,7 +1,7 @@
 
 <template>
   <div>
-    <img :src="ImagePicture" :width="width || 200" :height="height || 200"  /><br />
+    <img :src="source" :width="width || 200" :height="height || 200"  /><br />
     <input type="button" @click="removeImage" value="Remove" >
     <input :name="name" type="file" @change="onFileChange" placeholder="Enter image" @input="$emit('input', $event.target.files[0])">
     <slot></slot>
@@ -12,19 +12,18 @@
 <script>
   export default {
     name:'cmp-image',
-    props: ['value', 'name', 'imagebytes',  'single', 'width', 'height'],
+    props: ['value', 'name', 'source',  'single', 'width', 'height'],
     created() {
       // set the value from props.value to display the image
-      this.ImagePicture = 'data:image/png;base64, ' + this.imagebytes;
+      //this.ImagePicture = 'data:image/png;base64, ' + this.source;
     },
     data() {
       return {
-        ImagePicture: '',
       }
     },
     methods: {
       isImageDeleted() {
-        return this.ImagePicture ===  '' 
+        return this.source ===  '' 
       },
       onFileChange(e) {
         var files = e.target.files || e.dataTransfer.files;
@@ -41,13 +40,13 @@
 
         reader.onload = (e) => {
           //console.log(e.target.result)
-          vm.ImagePicture = e.target.result;
+          vm.source = e.target.result;
         };
 
         reader.readAsDataURL(file);
       },
       removeImage: function (e) {
-        this.ImagePicture = ''
+        this.source = ''
       },
     }
   }

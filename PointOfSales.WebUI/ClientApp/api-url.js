@@ -90,9 +90,7 @@ const merchant = function(){
 
   return  {
     pay: _merchantUrl.getURL('/pay'),
-    productPosList(category) {
-      return _merchantUrl.getURL(`/productPosList/${category}`);
-    }
+    ProductPosList: _merchantUrl.getURL(`/ProductPosList/`)
   }
 }
 

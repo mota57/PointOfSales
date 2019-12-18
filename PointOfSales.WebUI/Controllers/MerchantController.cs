@@ -6,6 +6,8 @@ using PointOfSales.Core.Entities;
 using System.Threading.Tasks;
 using PointOfSales.Core.Infraestructure;
 using System;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace PointOfSales.WebUI.Controllers
 {
@@ -33,7 +35,6 @@ namespace PointOfSales.WebUI.Controllers
         {
             try
             {
-
                 var productConfig = new CustomQueryConfig("v_product_merchant",
                         new QueryField(nameof(Product.Id), display:false),
                         new QueryField(nameof(Product.Name)),
@@ -50,7 +51,15 @@ namespace PointOfSales.WebUI.Controllers
                 
                 var paginator = new CustomQueryWithPagination();
                 var products = await paginator.GetAsync(productConfig, parameter);
-                return Ok(products);
+
+                return Ok(JsonConvert.SerializeObject(products,  new JsonSerializerSettings
+                {
+                    ContractResolver =  new DefaultContractResolver
+                    {
+                        NamingStrategy = new CamelCaseNamingStrategy()
+                    },
+                    Formatting = Formatting.Indented
+                }));
 
             } catch (Exception ex)
             {

@@ -45,7 +45,7 @@
                             </div>
                         {{end}}
                         {{if field.Type == 'Upload'}}
-                            <form-image ref="formImage{{ field.Name }}" :imagebytes="form.{{ field.Name + 'Bytes'}}" v-model="form.{{ lowerinit field.Name}}">
+                            <form-image ref="formImage{{ field.Name }}" :source="URLIMAGEFOR('ERROR SET FOLDER TO SAVE', form.{{ field.Name + 'Bytes'}}" v-model="form.{{ lowerinit field.Name}}">
                                 <template v-if="errList && errList.{{ field.Name }}">
                                     <p class="text-danger" v-for="err in errList.{{ field.Name }}"> {{err}} </p>
                                 </template>

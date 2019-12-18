@@ -29,7 +29,7 @@
                  
                         
                         
-                            <form-image ref="formImageMainImage" :imagebytes="form.MainImageBytes" v-model="form.mainImage">
+                            <form-image ref="formImageMainImage" :source="form.MainImageBytes" v-model="form.mainImage">
                                 <template v-if="errList && errList.MainImage">
                                     <p class="text-danger" v-for="err in errList.MainImage">  </p>
                                 </template>

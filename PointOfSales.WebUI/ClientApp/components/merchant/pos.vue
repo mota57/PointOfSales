@@ -22,7 +22,7 @@
 
                   <div class="row">
                     <div class="col-2">
-                      <b-img height="30" :src="orderItem.imgSrc"></b-img>
+                      <b-img height="30" :src="orderItem.mainImage"></b-img>
                     </div>
                     <div class="col-9">
                       {{orderItem.name}}
@@ -64,18 +64,23 @@
             <input text="search" class="form-control ml-2 mb-2" placeholder="search..." />
             <template v-for="(item, index) in products">
               <b-card :key="index"
-                      :img-src="item.imgSrc"
+                      :img-src="item.mainImage"
                       img-alt="Image"
                       img-top
                       tag="article"
                       style="width: 120px;"
                       class="mb-2 ml-2" @click="pushOrderItem(item)">
                 <b-card-text>
-                  {{item.title}}<br />
+                  {{item.name}}<br />
                   <span class="badge badge-secondary">${{item.price}}</span>
                 </b-card-text>
               </b-card>
             </template>
+            <b-pagination v-model="currentPage"
+                          :total-rows="rows"
+                          :per-page="perPage"
+                          aria-controls="my-table"></b-pagination>
+
             <!-- products -->
           </div>
         </div>
@@ -108,11 +113,31 @@
         products: [],
         orderItemToConfig: null,
         imgCategory: faker.image.avatar(),
+        perPage: 15,
+        currentPage: 1,
       };
     },
     methods: {
       moveTo() {
         this.$router.push({ name: 'checkout' }).catch((err) => { })
+      },
+      loadData() {
+        let vm = this;
+        this.$http.post(this.urls.merchant.ProductPosList, {
+          OrderBy: [],
+          Page: 1,
+          Query: '',
+          IsFilterByColumn: false
+        }).then(function (response) {
+          vm.products = response.data
+        }).catch(function (err) {
+          console.error(err);
+          vm.$toasted.error('Sorry an error occured contact the developers', {
+            position: 'top-center',
+            duration: 3000,
+            fullWidth: true
+          })
+        });
       },
       ...mapMutations({ clearItem: 'clearOrderItemList', pushOrderItem: 'setOrderItemList' })
     },
@@ -122,35 +147,38 @@
       ]),
       ...mapGetters([
         'totalOrderItemCharge'
-      ])
+      ]),
+      rows() {
+        return this.products.length
+      }
     },
     created() {
-      
-      this.$http.get(this.urls..getById(row.Id))
-          .then((res) => {
-            let data = res.data
-            Object.assign(vm.form, res.data)
-          })
-          .then((err) => { if (err) { console.log(err); } })
-          .then(() => { vm.isAjax = false; })
+      this.loadData();
+      //this.$http.get(this.urls..getById(row.Id))
+      //    .then((res) => {
+      //      let data = res.data
+      //      Object.assign(vm.form, res.data)
+      //    })
+      //    .then((err) => { if (err) { console.log(err); } })
+      //    .then(() => { vm.isAjax = false; })
 
-      },
-      // for (let i = 0; i < 10; i++) {
-      //   let imgSrc = faker.image.avatar();
+      //},
+       for (let i = 0; i < 10; i++) {
+         let imgSrc = faker.image.avatar();
 
-      //   this.products.push({
-      //     id: i + 1,
-      //     title: faker.name.firstName(),
-      //     imgSrc: imgSrc,
-      //     body: faker.lorem.sentence(),
-      //     price: faker.random.number({ min: 5, max: 20000 }),
-      //     isProductForRent: true,
-      //     startDate: '',
-      //     endDate: '',
-      //     disscountType: 'none',
-      //     discountId: -1,
-      //   })
-      // }
+         this.products.push({
+           id: i + 1,
+           title: faker.name.firstName(),
+           mainImage: imgSrc,
+           body: faker.lorem.sentence(),
+           price: faker.random.number({ min: 5, max: 20000 }),
+           isProductForRent: true,
+           startDate: '',
+           endDate: '',
+           disscountType: 'none',
+           discountId: -1,
+         })
+       }
     }
   };
 </script>
