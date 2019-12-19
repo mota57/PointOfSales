@@ -18,6 +18,7 @@ namespace PointOfSales.WebUI.Controllers
         public ILogger<ErrorController> Logger { get; }
 
         [Route("/error")]
+        [HttpGet("[action]")]
         public ActionResult Error(
             [FromServices] IHostingEnvironment webHostEnvironment)
         {

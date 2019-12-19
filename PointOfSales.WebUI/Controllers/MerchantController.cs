@@ -6,15 +6,13 @@ using PointOfSales.Core.Entities;
 using System.Threading.Tasks;
 using PointOfSales.Core.Infraestructure;
 using System;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 
 namespace PointOfSales.WebUI.Controllers
 {
 
     [Route("api/[controller]")]
     [ApiController]
-    public class MerchantController : Controller
+    public class MerchantController  : ControllerBase
     {
         private readonly POSContext _context;
         private readonly ILogger<MerchantController> _logger;
@@ -52,14 +50,7 @@ namespace PointOfSales.WebUI.Controllers
                 var paginator = new CustomQueryWithPagination();
                 var products = await paginator.GetAsync(productConfig, parameter);
 
-                return Ok(JsonConvert.SerializeObject(products,  new JsonSerializerSettings
-                {
-                    ContractResolver =  new DefaultContractResolver
-                    {
-                        NamingStrategy = new CamelCaseNamingStrategy()
-                    },
-                    Formatting = Formatting.Indented
-                }));
+                return Ok(products);
 
             } catch (Exception ex)
             {
