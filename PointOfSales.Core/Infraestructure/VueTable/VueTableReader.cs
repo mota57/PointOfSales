@@ -6,9 +6,47 @@ using SqlKata;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using PointOfSales.Core.Entities;
+using SqlKata.Compilers;
+using Microsoft.Data.Sqlite;
+using System;
+using System.Data.SqlClient;
 
 namespace PointOfSales.Core.Infraestructure.VueTable
 {
+
+    public static class QueryFactoryBuilder
+    {
+       
+        public static QueryFactory BuildQueryFactory() =>
+             BuildQueryFactory(GlobalVariables.DatabaseProvider, GlobalVariables.Connection);
+
+        public static QueryFactory BuildQueryFactory(DatabaseProvider provider, string connectionString)
+        {
+            System.Data.IDbConnection connection = null;
+            Compiler compiler = null;
+
+            switch (provider)
+            {
+                case DatabaseProvider.SQLite:
+
+                    compiler = new SqliteCompiler();
+                    connection = new SqliteConnection(connectionString);
+                    break;
+                case DatabaseProvider.SQLServer:
+                    compiler = new SqlServerCompiler();
+                    connection = new SqlConnection(connectionString);
+                    break;
+            }
+            var db = new QueryFactory(connection, compiler);
+            db.Logger = compiled => {
+                Console.WriteLine(compiled.RawSql);
+                System.Diagnostics.Debug.WriteLine(compiled.ToString());
+            };
+            return db;
+
+        }
+
+    }
     public class VueTableReader : IVueTablesInterface
     {
         private Dictionary<string, string> MapFieldSql;
@@ -21,7 +59,7 @@ namespace PointOfSales.Core.Infraestructure.VueTable
             var fields = config.Fields;
             var fieldNames = fields.Select(_ => _.Name).ToArray();
 
-            QueryFactory db = QueryFactoryBuilder.BuildQueryFactory(GlobalVariables.DatabaseProvider);
+            QueryFactory db = QueryFactoryBuilder.BuildQueryFactory();
 
             Query queryBuilder = null;
             if(config.QueryBuilder == null)

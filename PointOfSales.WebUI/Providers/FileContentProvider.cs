@@ -10,13 +10,13 @@ using PointOfSales.Core.Extensions;
 
 namespace PointOfSales.WebUI.Controllers
 {
-    public class FileContentManager
+    public class FileContentProvider
     {
         private readonly IHostingEnvironment webhost;
         private string fullFolderPath;
         private const string rootFolder = "images";
 
-        public FileContentManager(IHostingEnvironment webhost, string folderName)
+        public FileContentProvider(IHostingEnvironment webhost, string folderName)
         {
             if (folderName.IsBlank()) throw new ArgumentNullException("folderName");
 

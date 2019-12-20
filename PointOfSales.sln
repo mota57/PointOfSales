@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PointOfSales.AppConsole", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFTriggerHelper", "..\EFTriggerHelper\EFTriggerHelper\EFTriggerHelper.csproj", "{99C56401-ABD6-41A6-A130-7C1A3F449D36}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TablePlugin", "TablePlugin\TablePlugin.csproj", "{E0C8B9B3-9BDE-4EAA-83C3-E3B86FD5A119}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{99C56401-ABD6-41A6-A130-7C1A3F449D36}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{99C56401-ABD6-41A6-A130-7C1A3F449D36}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{99C56401-ABD6-41A6-A130-7C1A3F449D36}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E0C8B9B3-9BDE-4EAA-83C3-E3B86FD5A119}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0C8B9B3-9BDE-4EAA-83C3-E3B86FD5A119}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0C8B9B3-9BDE-4EAA-83C3-E3B86FD5A119}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0C8B9B3-9BDE-4EAA-83C3-E3B86FD5A119}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

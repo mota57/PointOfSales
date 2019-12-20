@@ -19,6 +19,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using PointOfSales.WebUI.Extensions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Routing;
+using System.Text.RegularExpressions;
+using TablePlugin;
 
 namespace PointOfSales.WebUI
 {
@@ -77,9 +79,18 @@ namespace PointOfSales.WebUI
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
+            //app.Use(async (context, next) =>
+            //{
+            //    if(Regex.Match(context.Request.Path.Value, "^/datatableconfig").Success)
+            //    {
+            //        await context.Response.WriteAsync("Foo");
+            //    }
+            //    await next.Invoke();
+            //});
+          
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
+            app.UseTablePlugin();
 
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
             // specifying the Swagger JSON endpoint.

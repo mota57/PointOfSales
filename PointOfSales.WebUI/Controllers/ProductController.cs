@@ -57,7 +57,7 @@ namespace PointOfSales.WebUI.Controllers
         public async Task<IActionResult> PutProduct(int id, [FromForm] ProductFormDTO dto,
               [FromServices] IHostingEnvironment webHost)
         {
-            FileContentManager fileContentManager = new FileContentManager(webHost, "product");
+            FileContentProvider fileContentManager = new FileContentProvider(webHost, "product");
 
             if (id != dto.Id || !ModelState.IsValid)
             {
@@ -96,7 +96,7 @@ namespace PointOfSales.WebUI.Controllers
             return NoContent();
         }
 
-        private static async Task HandleFile(ProductFormDTO dto, FileContentManager fileContentManager, Product product )
+        private static async Task HandleFile(ProductFormDTO dto, FileContentProvider fileContentManager, Product product )
         {
             if (dto.ImageDeleted)
             {
@@ -118,7 +118,7 @@ namespace PointOfSales.WebUI.Controllers
         [IgnoreAntiforgeryToken]
         public async Task<ActionResult<Product>> PostProduct([FromForm] ProductFormDTO dto, [FromServices] IHostingEnvironment webHost)
         {
-            FileContentManager fileContentManager = new FileContentManager(webHost, "product");
+            FileContentProvider fileContentManager = new FileContentProvider(webHost, "product");
 
             if (ModelState.IsValid)
             {

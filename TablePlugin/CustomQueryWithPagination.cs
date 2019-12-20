@@ -1,16 +1,28 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using PointOfSales.Core.Entities;
-using PointOfSales.Core.Extensions;
-using PointOfSales.Core.Infraestructure.VueTable;
 using SqlKata;
 using SqlKata.Execution;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace PointOfSales.Core.Infraestructure
+namespace TablePlugin
 {
+
+    public enum DatabaseProvider
+    {
+        SQLServer,
+        SQLite
+    }
+
+    public static class StringExtension
+    {
+        public static bool IsBlank(this string stringContent) => string.IsNullOrEmpty(stringContent) || string.IsNullOrWhiteSpace(stringContent);
+
+        public static bool EqualIgnoreCase(this string stringContent, string compare) => stringContent.Equals(compare, StringComparison.OrdinalIgnoreCase);
+
+    }
     public class RequestTableParameter : IRequestTableParameter
     {
         public string Query { get; set; }
@@ -19,51 +31,13 @@ namespace PointOfSales.Core.Infraestructure
         public bool IsFilterByColumn { get; set; } = true;
     }
 
-    public class RequestVueParameterAdapter  : IRequestTableParameter
-    {
-        public RequestVueParameterAdapter(VueTableParameters parameter)
-        {
-            _parameter = parameter;
-        }
-
-        public string Query
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-            set
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public int Page  {
-            get {
-                throw new NotImplementedException();
-            }
-            set
-            {
-
-                throw new NotImplementedException();
-            }
-        }
-
-        public PropertyOrder[] OrderBy  {
-            get
-            {
-                throw new NotImplementedException();
-            }
-            set
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public bool IsFilterByColumn { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        private VueTableParameters _parameter { get; }
-    }
+    //public class RequestVueParameterAdapter  : IRequestTableParameter
+    //{
+    //    public RequestVueParameterAdapter(VueTableParameters parameter)
+    //    {
+    //        _parameter = parameter;
+    //    }
+    //}
 
     public enum OrderType { ASC, DESC }
 
@@ -113,10 +87,19 @@ namespace PointOfSales.Core.Infraestructure
         public DatabaseProvider Provider { get; set; }
     }
 
-
-
-    public class QueryField
+    public class QueryTarget : System.Attribute
     {
+        public string Name { get; private set; }
+
+        public QueryTarget(string name)
+        {
+            if (name.IsBlank()) throw new ArgumentNullException("name");
+            Name = name;
+        }
+    }
+
+
+    public class QueryField  {
         public QueryField(string name, bool filter = true, bool sort = true, bool display = true)
         {
             if (name.IsBlank()) throw new ArgumentNullException();
@@ -127,10 +110,19 @@ namespace PointOfSales.Core.Infraestructure
         }
 
         public string Name { get; }
+        public string FriendlyName { get; set; }
         public bool IsFilter { get; }
         public bool IsSort { get; }
         public bool Display { get; }
+        public string Type { get; set; }
     }
+
+    public class DataResponse<T>
+    {
+        public int Count { get; set; }
+        public IEnumerable<T> Data { get; set; }
+    }
+
 
     public class CustomQueryWithPagination 
     {
@@ -139,7 +131,6 @@ namespace PointOfSales.Core.Infraestructure
         {
 
         }
-
 
         private const int DEFAULT_PER_PAGE = 15;
         private int _perPage = DEFAULT_PER_PAGE;
@@ -156,7 +147,13 @@ namespace PointOfSales.Core.Infraestructure
         }
 
 
-        public async Task<object> GetAsync(CustomQueryConfig queryConfig, IRequestTableParameter parameter)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="queryConfig"></param>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
+        public async Task<dynamic> GetAsync(CustomQueryConfig queryConfig, IRequestTableParameter parameter)
         {
             Query query = queryConfig.Query.Clone();
 
@@ -167,7 +164,7 @@ namespace PointOfSales.Core.Infraestructure
             Paginate(query, parameter.Page);
 
             var count = await db.FromQuery(query).CountAsync<int>();
-            var data = await db.FromQuery(query).GetAsync<object>();
+            var data = await db.FromQuery(query).GetAsync<dynamic>();
 
             return new 
             {
@@ -175,6 +172,27 @@ namespace PointOfSales.Core.Infraestructure
                 count 
             };
         }
+
+        public async Task<DataResponse<TData>> GetAsync<TData>(CustomQueryConfig queryConfig, IRequestTableParameter parameter)
+        {
+            Query query = queryConfig.Query.Clone();
+
+            QueryFactory db = QueryFactoryBuilder.BuildQueryFactory(queryConfig);
+
+            Filter(query, queryConfig, parameter);
+            OrderBy(query, queryConfig, parameter.OrderBy);
+            Paginate(query, parameter.Page);
+
+            var count = await db.FromQuery(query).CountAsync<int>();
+            var data = await db.FromQuery(query).GetAsync<TData>();
+
+            return new DataResponse<TData>
+            {
+                Data = data,
+                Count = count 
+            };
+        }
+
 
         private void OrderBy(Query query, CustomQueryConfig queryConfig, PropertyOrder[] propertiesOrder)
         {

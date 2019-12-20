@@ -6,13 +6,15 @@ using PointOfSales.Core.Entities;
 using System.Threading.Tasks;
 using PointOfSales.Core.Infraestructure;
 using System;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using TablePlugin;
 
 namespace PointOfSales.WebUI.Controllers
 {
 
     [Route("api/[controller]")]
-    [ApiController]
-    public class MerchantController  : ControllerBase
+    public class MerchantController  : Controller 
     {
         private readonly POSContext _context;
         private readonly ILogger<MerchantController> _logger;
@@ -27,6 +29,17 @@ namespace PointOfSales.WebUI.Controllers
             this._mapper = mapper;
             this._context = context;
         }
+
+        public class ProductView 
+        {
+            public int Id { get; set; }
+            public string Name { get; set; }
+            public decimal Price { get; set; }
+            public string Note { get; set; }
+            public string CategoryName { get; set; }
+            public string MainImage { get; set; }
+            public bool IsProductRent { get; set; }
+        } 
 
         [HttpPost("[action]/")]
         public async Task<ActionResult> ProductPosList([FromBody] RequestTableParameter parameter)
@@ -44,13 +57,24 @@ namespace PointOfSales.WebUI.Controllers
                   );
 
                 productConfig.ConnectionString = GlobalVariables.Connection;
-                productConfig.Provider = GlobalVariables.DatabaseProvider;
+                productConfig.Provider = TablePlugin.DatabaseProvider.SQLite;
 
                 
                 var paginator = new CustomQueryWithPagination();
-                var products = await paginator.GetAsync(productConfig, parameter);
+                var products = await paginator.GetAsync<ProductView>(productConfig, parameter);
+               
+                DefaultContractResolver contractResolver = new DefaultContractResolver
+                {
+                    NamingStrategy = new CamelCaseNamingStrategy()
+                };
 
-                return Ok(products);
+                string result = JsonConvert.SerializeObject(products, new JsonSerializerSettings
+                {
+                    ContractResolver = contractResolver,
+                    Formatting = Formatting.Indented
+                });
+
+                return Ok(result);
 
             } catch (Exception ex)
             {

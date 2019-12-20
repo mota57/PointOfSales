@@ -163,22 +163,22 @@
       //    .then(() => { vm.isAjax = false; })
 
       //},
-       for (let i = 0; i < 10; i++) {
-         let imgSrc = faker.image.avatar();
+       //for (let i = 0; i < 10; i++) {
+       //  let imgSrc = faker.image.avatar();
 
-         this.products.push({
-           id: i + 1,
-           title: faker.name.firstName(),
-           mainImage: imgSrc,
-           body: faker.lorem.sentence(),
-           price: faker.random.number({ min: 5, max: 20000 }),
-           isProductForRent: true,
-           startDate: '',
-           endDate: '',
-           disscountType: 'none',
-           discountId: -1,
-         })
-       }
+       //  this.products.push({
+       //    id: i + 1,
+       //    title: faker.name.firstName(),
+       //    mainImage: imgSrc,
+       //    body: faker.lorem.sentence(),
+       //    price: faker.random.number({ min: 5, max: 20000 }),
+       //    isProductForRent: true,
+       //    startDate: '',
+       //    endDate: '',
+       //    disscountType: 'none',
+       //    discountId: -1,
+       //  })
+       //}
     }
   };
 </script>

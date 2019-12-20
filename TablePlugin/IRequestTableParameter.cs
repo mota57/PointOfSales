@@ -1,5 +1,4 @@
-﻿namespace PointOfSales.Core.Infraestructure
-{
+﻿namespace TablePlugin {
     public interface IRequestTableParameter
     {
         PropertyOrder[] OrderBy { get; set; }

@@ -7,7 +7,6 @@ using PointOfSales.WebUI.Providers;
 
 namespace PointOfSales.WebUI.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     public class WeatherController : Controller
     {
