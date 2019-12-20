@@ -17,19 +17,12 @@ namespace PointOfSales.Core.Infraestructure.Rule
 
         public void AddError(string message,  string key = "")
         {
-            if (string.IsNullOrEmpty(message))
-            {
-                throw new ArgumentException(nameof(message));
-            }
+            if (string.IsNullOrEmpty(message)) throw new ArgumentException(nameof(message));
 
             if (ErrorList.ContainsKey(key))
-            {
                 ErrorList[key].Add(message);
-            }
             else
-            {
                 ErrorList.Add(key, new List<string>() { message });
-            }
         }
 
 
