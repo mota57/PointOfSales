@@ -46,31 +46,38 @@ namespace PointOfSales.WebUI.Controllers
         {
             try
             {
-                var productConfig = new CustomQueryConfig("v_product_merchant",
-                        new QueryField(nameof(Product.Id), display:false),
-                        new QueryField(nameof(Product.Name)),
-                        new QueryField(nameof(Product.Price)),
-                        new QueryField(nameof(Product.Note), sort:false),
-                        new QueryField("CategoryName"),
-                        new QueryField(nameof(Product.MainImage), filter:false, sort:false),
-                        new QueryField(nameof(Product.IsProductForRent))
-                  );
 
+                //var productConfig = new CustomQueryConfig("v_product_merchant",
+                //        new QueryField(nameof(Product.Id), display:false),
+                //        new QueryField(nameof(Product.Name)),
+                //        new QueryField(nameof(Product.Price)),
+                //        new QueryField(nameof(Product.Note), sort:false),
+                //        new QueryField("CategoryName"),
+                //        new QueryField(nameof(Product.MainImage), filter:false, sort:false),
+                //        new QueryField(nameof(Product.IsProductForRent))
+                //  );
+
+                /*
+                 */
+
+
+                var productConfig = DataTableRepository.GetByConfig("v_product_merchant1");
                 productConfig.ConnectionString = GlobalVariables.Connection;
                 productConfig.Provider = TablePlugin.DatabaseProvider.SQLite;
 
-                
                 var paginator = new CustomQueryWithPagination();
                 var products = await paginator.GetAsync<ProductView>(productConfig, parameter);
-               
-                DefaultContractResolver contractResolver = new DefaultContractResolver
-                {
-                    NamingStrategy = new CamelCaseNamingStrategy()
-                };
+
+
+
+
 
                 string result = JsonConvert.SerializeObject(products, new JsonSerializerSettings
                 {
-                    ContractResolver = contractResolver,
+                    ContractResolver = new DefaultContractResolver
+                    {
+                        NamingStrategy = new CamelCaseNamingStrategy()
+                    },
                     Formatting = Formatting.Indented
                 });
 

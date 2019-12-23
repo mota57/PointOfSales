@@ -76,13 +76,15 @@
                 </b-card-text>
               </b-card>
             </template>
-            <b-pagination v-model="currentPage"
+            
+            <!-- products -->
+          </div>
+          
+        <b-pagination v-model="currentPage"
                           :total-rows="rows"
                           :per-page="perPage"
                           aria-controls="my-table"></b-pagination>
 
-            <!-- products -->
-          </div>
         </div>
 
       </div>
@@ -115,6 +117,7 @@
         imgCategory: faker.image.avatar(),
         perPage: 15,
         currentPage: 1,
+        totalElements:0
       };
     },
     methods: {
@@ -129,7 +132,8 @@
           Query: '',
           IsFilterByColumn: false
         }).then(function (response) {
-          vm.products = response.data
+          vm.products = response.data.data;
+          vm.totalElements = response.data.count;
         }).catch(function (err) {
           console.error(err);
           vm.$toasted.error('Sorry an error occured contact the developers', {
@@ -149,7 +153,7 @@
         'totalOrderItemCharge'
       ]),
       rows() {
-        return this.products.length
+        return this.totalElements
       }
     },
     created() {

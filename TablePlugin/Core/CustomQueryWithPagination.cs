@@ -1,28 +1,18 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Data.Sqlite;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SqlKata;
+using SqlKata.Compilers;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace TablePlugin
+namespace TablePlugin.Core
 {
 
-    public enum DatabaseProvider
-    {
-        SQLServer,
-        SQLite
-    }
-
-    public static class StringExtension
-    {
-        public static bool IsBlank(this string stringContent) => string.IsNullOrEmpty(stringContent) || string.IsNullOrWhiteSpace(stringContent);
-
-        public static bool EqualIgnoreCase(this string stringContent, string compare) => stringContent.Equals(compare, StringComparison.OrdinalIgnoreCase);
-
-    }
     public class RequestTableParameter : IRequestTableParameter
     {
         public string Query { get; set; }
@@ -55,8 +45,9 @@ namespace TablePlugin
 
         }
         public string ProperyName { get; set; }
-        public  OrderType OrderType { get;set; }
+        public OrderType OrderType { get; set; }
     }
+
 
     public class CustomQueryConfig
     {
@@ -66,7 +57,7 @@ namespace TablePlugin
             if (fields == null || fields.Length == 0) throw new ArgumentException("fields must contain at least one value");
             TableName = tableName;
             Fields = fields;
-           
+
         }
 
         public string TableName { get; }
@@ -76,46 +67,19 @@ namespace TablePlugin
         {
             get
             {
-                if(query == null)
+                if (query == null)
                 {
                     query = new Query(TableName).Select(Fields.Select(p => p.Name).ToArray());
                 }
                 return query;
             }
-        } 
+        }
         public string ConnectionString { get; set; }
         public DatabaseProvider Provider { get; set; }
     }
 
-    public class QueryTarget : System.Attribute
-    {
-        public string Name { get; private set; }
 
-        public QueryTarget(string name)
-        {
-            if (name.IsBlank()) throw new ArgumentNullException("name");
-            Name = name;
-        }
-    }
-
-
-    public class QueryField  {
-        public QueryField(string name, bool filter = true, bool sort = true, bool display = true)
-        {
-            if (name.IsBlank()) throw new ArgumentNullException();
-            Name = name;
-            IsFilter = filter;
-            IsSort = sort;
-            Display = display;
-        }
-
-        public string Name { get; }
-        public string FriendlyName { get; set; }
-        public bool IsFilter { get; }
-        public bool IsSort { get; }
-        public bool Display { get; }
-        public string Type { get; set; }
-    }
+  
 
     public class DataResponse<T>
     {
@@ -124,7 +88,7 @@ namespace TablePlugin
     }
 
 
-    public class CustomQueryWithPagination 
+    public class CustomQueryWithPagination
     {
 
         public CustomQueryWithPagination()
@@ -136,12 +100,14 @@ namespace TablePlugin
         private int _perPage = DEFAULT_PER_PAGE;
 
 
-        public int PerPage {
+        public int PerPage
+        {
             get { return _perPage; }
-            set {
-                if(value < 0)
+            set
+            {
+                if (value < 0)
                     _perPage = DEFAULT_PER_PAGE;
-                 else
+                else
                     _perPage = value;
             }
         }
@@ -157,19 +123,17 @@ namespace TablePlugin
         {
             Query query = queryConfig.Query.Clone();
 
-            QueryFactory db = QueryFactoryBuilder.BuildQueryFactory(queryConfig);
+            QueryFactory db = QueryFactoryBuilder.Build(queryConfig);
 
-            Filter(query, queryConfig, parameter);
-            OrderBy(query, queryConfig, parameter.OrderBy);
-            Paginate(query, parameter.Page);
+            ProcessQuery(query, queryConfig, parameter);
 
             var count = await db.FromQuery(query).CountAsync<int>();
             var data = await db.FromQuery(query).GetAsync<dynamic>();
 
-            return new 
+            return new
             {
                 data,
-                count 
+                count
             };
         }
 
@@ -177,11 +141,9 @@ namespace TablePlugin
         {
             Query query = queryConfig.Query.Clone();
 
-            QueryFactory db = QueryFactoryBuilder.BuildQueryFactory(queryConfig);
+            QueryFactory db = QueryFactoryBuilder.Build(queryConfig);
 
-            Filter(query, queryConfig, parameter);
-            OrderBy(query, queryConfig, parameter.OrderBy);
-            Paginate(query, parameter.Page);
+            ProcessQuery(query, queryConfig, parameter);
 
             var count = await db.FromQuery(query).CountAsync<int>();
             var data = await db.FromQuery(query).GetAsync<TData>();
@@ -189,8 +151,14 @@ namespace TablePlugin
             return new DataResponse<TData>
             {
                 Data = data,
-                Count = count 
+                Count = count
             };
+        }
+        private void ProcessQuery(Query query, CustomQueryConfig queryConfig, IRequestTableParameter parameter)
+        {
+            Filter(query, queryConfig, parameter);
+            OrderBy(query, queryConfig, parameter.OrderBy);
+            Paginate(query, parameter.Page);
         }
 
 
@@ -198,7 +166,7 @@ namespace TablePlugin
         {
             if (propertiesOrder == null) return;
 
-            foreach(var item in propertiesOrder)
+            foreach (var item in propertiesOrder)
             {
                 var isNotSorteable = !queryConfig.Fields.Any(p => p.IsSort && p.Name.EqualIgnoreCase(item.ProperyName));
 
@@ -257,6 +225,42 @@ namespace TablePlugin
         {
             if (!config.Fields.Where(f => f.IsFilter).Any(p => p.Name.EqualIgnoreCase(prop)))
                 throw new ArgumentException($"field name {prop} doesn't exists");
+        }
+
+
+        protected internal static class QueryFactoryBuilder
+        {
+            public static QueryFactory Build(CustomQueryConfig queryConfig)
+            {
+                return Build(queryConfig.Provider, queryConfig.ConnectionString);
+            }
+
+            public static QueryFactory Build(DatabaseProvider provider = DatabaseProvider.SQLite, string connectionString = null)
+            {
+                System.Data.IDbConnection connection = null;
+                Compiler compiler = null;
+
+                switch (provider)
+                {
+                    case DatabaseProvider.SQLite:
+
+                        compiler = new SqliteCompiler();
+                        connection = new SqliteConnection(connectionString);
+                        break;
+                    case DatabaseProvider.SQLServer:
+                        compiler = new SqlServerCompiler();
+                        connection = new SqlConnection(connectionString);
+                        break;
+                }
+                var db = new QueryFactory(connection, compiler);
+                db.Logger = compiled => {
+                    Console.WriteLine(compiled.RawSql);
+                    System.Diagnostics.Debug.WriteLine(compiled.ToString());
+                };
+                return db;
+
+            }
+
         }
     }
 }

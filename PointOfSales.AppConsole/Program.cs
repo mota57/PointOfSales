@@ -5,14 +5,11 @@ using Newtonsoft.Json;
 using PointOfSales.Core.Infraestructure.VueTable;
 using SqlKata.Execution;
 
-using PointOfSales.Core.Generator;
-using PointOfSales.Core.Infraestructure;
-using System.Dynamic;
 using PointOfSales.Core.Extensions;
 using System.Threading.Tasks;
-using SqlKata;
 using System.Collections.Generic;
 using System.Linq;
+using TablePlugin;
 
 namespace ConsoleApp1
 {
@@ -55,7 +52,7 @@ namespace ConsoleApp1
         {
 
             VueTableReader reader = new VueTableReader();
-            var db = QueryFactoryBuilder.BuildQueryFactory();
+            var db = PointOfSales.Core.Infraestructure.VueTable.QueryFactoryBuilder.BuildQueryFactory();
 
 
             var q = db.Query("Modifier")
@@ -70,21 +67,21 @@ namespace ConsoleApp1
 
         public static void Example_Pagination()
         {
-            var queryConfig = new CustomQueryConfig("v_tracks", 
-                    new QueryField("TrackId"), 
-                    new QueryField("Name"), 
-                    new QueryField("album"), 
-                    new QueryField("media"), 
+            var queryConfig = new CustomQueryConfig("v_tracks",
+                    new QueryField("TrackId"),
+                    new QueryField("Name"),
+                    new QueryField("album"),
+                    new QueryField("media"),
                     new QueryField("geners"));
 
             queryConfig.ConnectionString = @"Data Source=C:\Users\hmota\Documents\RESOURCES\Projects\PointOfSales\PointOfSales.AppConsole\chinook.db";
 
-            queryConfig.Provider = PointOfSales.Core.Entities.DatabaseProvider.SQLite;
+            queryConfig.Provider = TablePlugin.DatabaseProvider.SQLite;
 
             var queryParameter = new RequestTableParameter() { Page = 1, Query = null };
 
-            Func<string,string> ToJObjectString = (string input) => {
-                if (!input.IsBlank())
+            Func<string, string> ToJObjectString = (string input) => {
+                if (! string.IsNullOrEmpty(input))
                 {
                     JObject obj = new JObject();
                     foreach (var item in input.Split(";"))
@@ -94,16 +91,16 @@ namespace ConsoleApp1
                     }
                     string result = JsonConvert.SerializeObject(obj);
                     Console.WriteLine(JsonConvert.SerializeObject(obj, Formatting.Indented));
-                    return result; 
+                    return result;
                 }
                 return null;
             };
 
-           Func<string, PropertyOrder[]> ToPropertyOrder = (string input) =>
-           {
+            Func<string, PropertyOrder[]> ToPropertyOrder = (string input) =>
+            {
 
-               ICollection<PropertyOrder> propertyOrders = new List<PropertyOrder>();
-               if (!input.IsBlank())
+                ICollection<PropertyOrder> propertyOrders = new List<PropertyOrder>();
+            if (!string.IsNullOrEmpty(input))
                {
                    JObject jobj =  JsonConvert.DeserializeObject<JObject>(input);
                    foreach(var jprop in jobj.Properties())

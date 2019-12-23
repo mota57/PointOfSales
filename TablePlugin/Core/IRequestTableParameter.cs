@@ -1,4 +1,4 @@
-﻿namespace TablePlugin {
+﻿namespace TablePlugin.Core {
     public interface IRequestTableParameter
     {
         PropertyOrder[] OrderBy { get; set; }
