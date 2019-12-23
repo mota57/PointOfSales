@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
+using TablePlugin.Data;
 
-namespace TablePlugin.Data
+namespace TablePlugin.Core
 {
-    public interface IQueryRecordDocumentRepository
+    public interface IQueryRepository
     {
         string ConnectionName { get; set; }
-
         void Delete(int id);
         IEnumerable<QueryRecordDocument> GetAll();
-        CustomQueryConfig GetByConfig(string configName);
+        QueryConfig GetByConfig(string configName);
         QueryRecordDocument LoadRecordById(int id);
         void Upsert(QueryRecordDocument record);
     }

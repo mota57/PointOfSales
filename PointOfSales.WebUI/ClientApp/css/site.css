@@ -1,7 +1,8 @@
-/* This file should be reviewed. It's not optimal, but it works for now. */
+
+/*
 .navbar {
     display: list-item;
-    background: #1e0e40;
+    background: black;
 }
 
 .dark { color: #1e0e40; }
@@ -28,7 +29,7 @@ a:hover {
     color: #1e0e40;
 }
 
-/* Highlighting rules for nav menu items */
+
 li.nav-item {
     margin: 1rem 0 0 0;
 }
@@ -39,7 +40,7 @@ li.nav-item {
 .nav-item a.active,
 .nav-item a.active:hover,
 .nav-item a.active:focus {
-    background-color: #e91e63;
+    background-color: black;
     color: white;
     text-decoration: underline;
 }
@@ -50,7 +51,7 @@ li.nav-item {
     color: white;
 }
 
-/* Keep the nav menu independent of scrolling and on top of other items */
+
 .main-nav {
     position: fixed;
     top: 0;
@@ -73,14 +74,14 @@ li.nav-item {
 }
 
 @media (max-width: 767px) {
-    /* On small screens, the nav menu spans the full width of the screen. Leave a space for it. */
+   
     body {
         padding-top: 50px;
     }
 }
 
 @media (min-width: 768px) {
-    /* On small screens, convert the nav menu to a vertical sidebar */
+
     .main-nav {
         height: 100%;
         width: calc(25% - 20px);
@@ -116,14 +117,14 @@ li.nav-item {
 
     .navbar a {
 
-        /* If a menu item's text is too long, truncate it */
-        width: 95%; /* Bug to fix here. Width 100% overflow. */
+    
+        width: 95%; 
         white-space: nowrap;
-        /* overflow: hidden; */
         text-overflow: ellipsis;
     }
 }
-
+*/
 @import '~vue2-daterange-picker/dist/vue2-daterange-picker.css';
 @import '~vue-select/dist/vue-select.css';
 @import '~bootstrap-vue/dist/bootstrap-vue.css';
+@import '~vue-sidebar-menu/dist/vue-sidebar-menu.css'

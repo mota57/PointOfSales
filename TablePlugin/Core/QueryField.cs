@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TablePlugin
+namespace TablePlugin.Core
 {
     public class QueryField
     {

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
+using System;
 using TablePlugin.Core;
 
 namespace TablePlugin.Client
@@ -8,6 +9,11 @@ namespace TablePlugin.Client
     {
         public static bool IsActive = false;
 
+        //public static IApplicationBuilder UseTablePlugin(this IApplicationBuilder app, Action<PluginOptions> action )
+        //{
+        //    action(new PluginOptions());
+        //    return app;
+        //});
 
         public static IApplicationBuilder UseTablePlugin(this IApplicationBuilder app)
         {

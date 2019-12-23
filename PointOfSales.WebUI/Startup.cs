@@ -2,25 +2,13 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.Webpack;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PointOfSales.Core.Entities;
-using PointOfSales.WebUI.Providers;
-using Microsoft.OpenApi.Models;
-using AutoMapper;
-using PointOfSales.Core.Infraestructure;
-using PointOfSales.Core.Service;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
-using System;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using PointOfSales.WebUI.Extensions;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Routing;
-using System.Text.RegularExpressions;
-using TablePlugin;
+using TablePlugin.Client;
+using TablePlugin.Core;
 
 namespace PointOfSales.WebUI
 {
@@ -90,7 +78,15 @@ namespace PointOfSales.WebUI
           
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
+
+            //TODO this
+            //app.UseTablePlugin((options) => {
+            //    options.SQLConnectionName = GlobalVariables.Connection;
+            //    options.DatabaseProvider = TablePlugin.Core.DatabaseProvider.SQLite;
+            //});
             app.UseTablePlugin();
+            TablePluginOptions.SQLConnectionName = GlobalVariables.Connection;
+            TablePluginOptions.DatabaseProvider = TablePlugin.Core.DatabaseProvider.SQLite;
 
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
             // specifying the Swagger JSON endpoint.

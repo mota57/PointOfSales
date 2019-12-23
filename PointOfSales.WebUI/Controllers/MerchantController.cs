@@ -9,6 +9,7 @@ using System;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using TablePlugin;
+using TablePlugin.Core;
 
 namespace PointOfSales.WebUI.Controllers
 {
@@ -30,23 +31,22 @@ namespace PointOfSales.WebUI.Controllers
             this._context = context;
         }
 
-        public class ProductView 
-        {
-            public int Id { get; set; }
-            public string Name { get; set; }
-            public decimal Price { get; set; }
-            public string Note { get; set; }
-            public string CategoryName { get; set; }
-            public string MainImage { get; set; }
-            public bool IsProductRent { get; set; }
-        } 
+        //public class ProductView 
+        //{
+        //    public int Id { get; set; }
+        //    public string Name { get; set; }
+        //    public decimal Price { get; set; }
+        //    public string Note { get; set; }
+        //    public string CategoryName { get; set; }
+        //    public string MainImage { get; set; }
+        //    public bool IsProductRent { get; set; }
+        //} 
 
         [HttpPost("[action]/")]
         public async Task<ActionResult> ProductPosList([FromBody] RequestTableParameter parameter)
         {
             try
             {
-
                 //var productConfig = new CustomQueryConfig("v_product_merchant",
                 //        new QueryField(nameof(Product.Id), display:false),
                 //        new QueryField(nameof(Product.Name)),
@@ -59,28 +59,25 @@ namespace PointOfSales.WebUI.Controllers
 
                 /*
                  */
+                //var productConfig =  new QueryRepository().GetByConfig("v_product_merchant1");
+                //productConfig.ConnectionString = GlobalVariables.Connection;
+                //productConfig.Provider = TablePlugin.Core.DatabaseProvider.SQLite;
 
-
-                var productConfig = DataTableRepository.GetByConfig("v_product_merchant1");
-                productConfig.ConnectionString = GlobalVariables.Connection;
-                productConfig.Provider = TablePlugin.DatabaseProvider.SQLite;
-
-                var paginator = new CustomQueryWithPagination();
-                var products = await paginator.GetAsync<ProductView>(productConfig, parameter);
-
+                //var paginator = new CustomQueryWithPagination();
+                //var products = await paginator.GetAsync<ProductView>(productConfig, parameter);
 
 
 
+                //string result = JsonConvert.SerializeObject(products, new JsonSerializerSettings
+                //{
+                //    ContractResolver = new DefaultContractResolver
+                //    {
+                //        NamingStrategy = new CamelCaseNamingStrategy()
+                //    },
+                //    Formatting = Formatting.Indented
+                //});
 
-                string result = JsonConvert.SerializeObject(products, new JsonSerializerSettings
-                {
-                    ContractResolver = new DefaultContractResolver
-                    {
-                        NamingStrategy = new CamelCaseNamingStrategy()
-                    },
-                    Formatting = Formatting.Indented
-                });
-
+                var result = await TablePluginQueryPaginator.Build("v_product_merchant1", parameter);
                 return Ok(result);
 
             } catch (Exception ex)

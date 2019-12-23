@@ -4,12 +4,12 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using PointOfSales.Core.Infraestructure.VueTable;
 using SqlKata.Execution;
-
-using PointOfSales.Core.Extensions;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
 using TablePlugin;
+using TablePlugin.Core;
+using TablePlugin.Data;
 
 namespace ConsoleApp1
 {
@@ -67,7 +67,7 @@ namespace ConsoleApp1
 
         public static void Example_Pagination()
         {
-            var queryConfig = new CustomQueryConfig("v_tracks",
+            var queryConfig = new QueryConfig("v_tracks",
                     new QueryField("TrackId"),
                     new QueryField("Name"),
                     new QueryField("album"),
@@ -76,7 +76,7 @@ namespace ConsoleApp1
 
             queryConfig.ConnectionString = @"Data Source=C:\Users\hmota\Documents\RESOURCES\Projects\PointOfSales\PointOfSales.AppConsole\chinook.db";
 
-            queryConfig.Provider = TablePlugin.DatabaseProvider.SQLite;
+            queryConfig.Provider = DatabaseProvider.SQLite;
 
             var queryParameter = new RequestTableParameter() { Page = 1, Query = null };
 

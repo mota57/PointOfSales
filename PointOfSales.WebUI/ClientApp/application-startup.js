@@ -27,6 +27,8 @@ import formDiscount from 'components/discount/form-discount'
 import itemConfigure from 'components/merchant/item-configure'
 import orderConfigure from 'components/merchant/order-configure'
 
+import VueSidebarMenu from 'vue-sidebar-menu'
+
 
 export default {
     UseAxiousConfiguration(axios){
@@ -54,7 +56,7 @@ export default {
         Vue.component('date-range-picker',DateRangePicker)
         Vue.component('icon', FontAwesomeIcon)
         Vue.component('v-select', vSelect);
-
+        Vue.use(VueSidebarMenu);
  
     
      

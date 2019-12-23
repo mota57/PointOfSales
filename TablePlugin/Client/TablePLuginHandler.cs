@@ -10,13 +10,11 @@ namespace TablePlugin.Client
 {
     public class TablePLuginHandler
     {
-  
-
         MainRequestHandler Handler;
 
-        IQueryRecordDocumentRepository QueryRepository;
+        IQueryRepository QueryRepository;
 
-        public TablePLuginHandler(MainRequestHandler handler, IQueryRecordDocumentRepository queryRepository)
+        public TablePLuginHandler(MainRequestHandler handler, IQueryRepository queryRepository)
         {
             Handler = handler;
             QueryRepository = queryRepository;
@@ -43,33 +41,19 @@ namespace TablePlugin.Client
         public async Task LoadRecordById()
         {
             var id = Handler.Request.Query.Get<int>("id");
-            using (var db = new LiteDatabase(TablePluginOptions.LiteDbConnectionName))
-            {
-                var col = db.GetCollection<QueryRecordDocument>()
-                            .FindById(id);
-                await Handler.Ok(col);
-            }
+            await Handler.Ok(QueryRepository.LoadRecordById(id));
         }
 
         public async Task Upsert()
         {
-
             var record = Handler.ParseBody<QueryRecordDocument>();
-
-            using (var db = new LiteRepository(TablePluginOptions.LiteDbConnectionName))
-            {
-                db.Upsert(record);
-            }
+            QueryRepository.Upsert(record);
             await Handler.Ok();
         }
         public async Task Delete()
         {
             var id = this.Handler.Request.Query.Get<int>("id");
-            
-            using (var db = new LiteRepository(TablePluginOptions.LiteDbConnectionName))
-            {
-                db.Delete<QueryRecordDocument>(id);
-            }
+            QueryRepository.Delete(id);
             await Handler.Ok();
         }
 

@@ -1,14 +1,18 @@
 ﻿using LiteDB;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using TablePlugin.Data;
 
 namespace TablePlugin.Core
 {
 
-    public class QueryRecordDocumentRepository : IQueryRecordDocumentRepository
+    public class QueryRepository : IQueryRepository
     {
+
+        private static ConcurrentDictionary<string, QueryConfig> ConfigCache = 
+            new ConcurrentDictionary<string, QueryConfig>();
+
         private string _connectionName = null;
         public string ConnectionName
         {
@@ -26,7 +30,7 @@ namespace TablePlugin.Core
             }
         }
 
-        public QueryRecordDocumentRepository(string connectionName = null)
+        public QueryRepository(string connectionName = null)
         {
             ConnectionName = connectionName;
         }
@@ -47,6 +51,7 @@ namespace TablePlugin.Core
             using (var db = new LiteRepository(ConnectionName))
             {
                 db.Upsert(record);
+                ConfigCache.Clear();
             }
         }
         public void Delete(int id)
@@ -55,6 +60,7 @@ namespace TablePlugin.Core
             using (var db = new LiteRepository(ConnectionName))
             {
                 db.Delete<QueryRecordDocument>(id);
+                ConfigCache.Clear();
             }
         }
         public IEnumerable<QueryRecordDocument> GetAll()
@@ -67,22 +73,33 @@ namespace TablePlugin.Core
             }
         }
 
-        public CustomQueryConfig GetByConfig(string configName)
+        public QueryConfig GetByConfig(string configName)
         {
+            if (ConfigCache.ContainsKey(configName))
+                return ConfigCache[configName];
+
             using (var db = new LiteDatabase(ConnectionName))
             {
                 var result = db.GetCollection<QueryRecordDocument>()
                              .FindOne(Query.EQ("ConfigName", configName));
 
-                var queryFields = result.QueryFieldDocuments
-               .Select(q => new QueryField(q.Name, q.IsFilter, q.IsSort, q.Display, q.FriendlyName, q.Type))
-               .ToArray();
+                var queryConfig = MapToQueryConfig(result);
 
-                return new CustomQueryConfig(result.TableName, queryFields);
+                if (!ConfigCache.TryAdd(configName, queryConfig))
+                    throw new System.Exception("could not add the new configuration at ");
             }
+            return ConfigCache[configName];
         }
 
-      
+        private QueryConfig MapToQueryConfig(QueryRecordDocument queryRecord)
+        {
+            var queryFields = queryRecord.QueryFieldDocuments
+           .Select(q => new QueryField(q.Name, q.IsFilter, q.IsSort, q.Display, q.FriendlyName, q.Type))
+           .ToArray();
+
+            var config = new QueryConfig(queryRecord.TableName, queryFields);
+            return config;
+        }
     }
 
 }

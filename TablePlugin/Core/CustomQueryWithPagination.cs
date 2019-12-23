@@ -5,7 +5,6 @@ using SqlKata;
 using SqlKata.Compilers;
 using SqlKata.Execution;
 using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,53 +12,6 @@ using TablePlugin.Data;
 
 namespace TablePlugin.Core
 {
-
-    public class RequestTableParameter : IRequestTableParameter
-    {
-        public string Query { get; set; }
-        public int Page { get; set; } = 1;
-        public PropertyOrder[] OrderBy { get; set; }
-        public bool IsFilterByColumn { get; set; } = true;
-    }
-
-   
-
-    public class CustomQueryConfig
-    {
-        public CustomQueryConfig(string tableName, params QueryField[] fields)
-        {
-            if (tableName.IsBlank()) throw new ArgumentNullException();
-            if (fields == null || fields.Length == 0) throw new ArgumentException("fields must contain at least one value");
-            TableName = tableName;
-            Fields = fields;
-
-        }
-
-        public string TableName { get; }
-        public QueryField[] Fields { get; set; }
-        private Query query = null;
-        protected internal Query Query
-        {
-            get
-            {
-                if (query == null)
-                {
-                    query = new Query(TableName).Select(Fields.Select(p => p.Name).ToArray());
-                }
-                return query;
-            }
-        }
-        public string ConnectionString { get; set; }
-        public DatabaseProvider Provider { get; set; }
-    }
-
-
-    public class DataResponse<T>
-    {
-        public int Count { get; set; }
-        public IEnumerable<T> Data { get; set; }
-    }
-
 
     public class CustomQueryWithPagination
     {
@@ -69,7 +21,7 @@ namespace TablePlugin.Core
 
         }
 
-        private const int DEFAULT_PER_PAGE = 15;
+        private const int DEFAULT_PER_PAGE = 10;
         private int _perPage = DEFAULT_PER_PAGE;
 
 
@@ -92,7 +44,7 @@ namespace TablePlugin.Core
         /// <param name="queryConfig"></param>
         /// <param name="parameter"></param>
         /// <returns></returns>
-        public async Task<dynamic> GetAsync(CustomQueryConfig queryConfig, IRequestTableParameter parameter)
+        public async Task<object> GetAsync(QueryConfig queryConfig, IRequestTableParameter parameter)
         {
             Query query = queryConfig.Query.Clone();
 
@@ -101,7 +53,7 @@ namespace TablePlugin.Core
             ProcessQuery(query, queryConfig, parameter);
 
             var count = await db.FromQuery(query).CountAsync<int>();
-            var data = await db.FromQuery(query).GetAsync<dynamic>();
+            var data = await db.FromQuery(query).GetAsync<object>();
 
             return new
             {
@@ -110,7 +62,7 @@ namespace TablePlugin.Core
             };
         }
 
-        public async Task<DataResponse<TData>> GetAsync<TData>(CustomQueryConfig queryConfig, IRequestTableParameter parameter)
+        public async Task<DataResponse<TData>> GetAsync<TData>(QueryConfig queryConfig, IRequestTableParameter parameter)
         {
             Query query = queryConfig.Query.Clone();
 
@@ -127,15 +79,18 @@ namespace TablePlugin.Core
                 Count = count
             };
         }
-        private void ProcessQuery(Query query, CustomQueryConfig queryConfig, IRequestTableParameter parameter)
+        private void ProcessQuery(Query query, QueryConfig queryConfig, IRequestTableParameter parameter)
         {
+
+            PerPage = parameter.PerPage;
+
             Filter(query, queryConfig, parameter);
             OrderBy(query, queryConfig, parameter.OrderBy);
             Paginate(query, parameter.Page);
         }
 
 
-        private void OrderBy(Query query, CustomQueryConfig queryConfig, PropertyOrder[] propertiesOrder)
+        private void OrderBy(Query query, QueryConfig queryConfig, PropertyOrder[] propertiesOrder)
         {
             if (propertiesOrder == null) return;
 
@@ -157,7 +112,7 @@ namespace TablePlugin.Core
         private void Paginate(Query queryBuilder, int page)
               => queryBuilder = queryBuilder.ForPage(page, PerPage);
 
-        private void Filter(Query query, CustomQueryConfig queryConfig, IRequestTableParameter parameter)
+        private void Filter(Query query, QueryConfig queryConfig, IRequestTableParameter parameter)
         {
             if (parameter.IsFilterByColumn)
                 FilterByColumn(query, queryConfig, parameter);
@@ -166,7 +121,7 @@ namespace TablePlugin.Core
 
         }
 
-        private void FilterByColumn(Query query, CustomQueryConfig queryConfig, IRequestTableParameter parameter)
+        private void FilterByColumn(Query query, QueryConfig queryConfig, IRequestTableParameter parameter)
         {
             var queryString = parameter.Query;
             if (parameter.IsFilterByColumn == false || queryString.IsBlank()) return;
@@ -183,7 +138,7 @@ namespace TablePlugin.Core
             }
         }
 
-        private void FilterByAllFields(Query query, CustomQueryConfig queryConfig, IRequestTableParameter parameter)
+        private void FilterByAllFields(Query query, QueryConfig queryConfig, IRequestTableParameter parameter)
         {
             var value = parameter.Query;
             var fields = queryConfig.Fields.Where(p => p.IsFilter);
@@ -194,7 +149,7 @@ namespace TablePlugin.Core
         }
 
 
-        private void CheckValidProperty(string prop, CustomQueryConfig config)
+        private void CheckValidProperty(string prop, QueryConfig config)
         {
             if (!config.Fields.Where(f => f.IsFilter).Any(p => p.Name.EqualIgnoreCase(prop)))
                 throw new ArgumentException($"field name {prop} doesn't exists");
@@ -203,7 +158,7 @@ namespace TablePlugin.Core
 
         protected internal static class QueryFactoryBuilder
         {
-            public static QueryFactory Build(CustomQueryConfig queryConfig)
+            public static QueryFactory Build(QueryConfig queryConfig)
             {
                 return Build(queryConfig.Provider, queryConfig.ConnectionString);
             }

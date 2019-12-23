@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\EFTriggerHelper\EFTriggerHelper\EFTriggerHelper.csproj" />
     <ProjectReference Include="..\PointOfSales.Core\PointOfSales.Core.csproj" />
     <ProjectReference Include="..\TablePlugin\TablePlugin.csproj" />
   </ItemGroup>

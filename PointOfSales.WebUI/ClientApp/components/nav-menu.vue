@@ -1,5 +1,9 @@
 <template>
-    <div class="main-nav" style="margin-top: 5rem;">
+<div style="margin-top: 5rem;">
+    <sidebar-menu :menu="menu" />
+
+</div>
+    <!-- <div class="main-nav" style="margin-top: 5rem;">
         <nav class="navbar navbar-expand-md navbar-dark">
             <button class="navbar-toggler" type="button" @click="toggleCollapsed">
                 <span class="navbar-toggler-icon"></span>
@@ -8,7 +12,7 @@
                 <span class="icon-bar"></span>
             </button>
 
-            <router-link class="navbar-brand" to="/"><icon :icon="['fab', 'microsoft']"/> ASP.NET Core & Vue.js</router-link>
+            <router-link class="navbar-brand" to="/"><icon :icon="['fab', 'microsoft']"/> </router-link>
 
             <transition name="slide">
                 <div :class="'collapse navbar-collapse' + (!collapsed ? ' show':'')" v-show="!collapsed">
@@ -22,17 +26,38 @@
                 </div>
             </transition>
         </nav>
-    </div>
+    </div> -->
 </template>
 
 <script>
     import { routes } from '../router/routes'
 
+    function toSideBarMenuModel(el){
+        return {
+            href: el.path,
+            title: el.display,
+            icon: 'fa fa-'+el.icon
+        }
+    }
+
     export default {
       data () {
         return {
           routes,
-          collapsed: true
+          collapsed: true,
+           menu: [
+                    {
+                        header: true,
+                        title: 'POS APP',
+                        hiddenOnCollapse: true
+                    },
+                    {
+                        href: '/',
+                        title: 'Home',
+                        icon: 'fa fa-user',
+                        child: routes.filter(e=> e.hidden == false && e.name != 'home').map(el => toSideBarMenuModel(el))
+                    },
+                ]
         }
       },
       methods: {

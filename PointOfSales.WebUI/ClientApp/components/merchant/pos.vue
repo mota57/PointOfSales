@@ -2,7 +2,7 @@
   <transition>
     <div class="">
       <div class="row">
-        <div class="col-3">
+        <div class="col-2">
           <b-card no-body
                   style="max-width: 20rem;"
                   img-alt="Image"
@@ -51,7 +51,7 @@
           </b-card>
         </div>
 
-        <div class="col-9">
+        <div class="col-10">
           <!--categories -->
           <b-nav pills>
             <b-nav-item v-for="(cat,index) in categories" :key="index">
@@ -59,31 +59,50 @@
             </b-nav-item>
           </b-nav>
           <!--/categories -->
+
+             <input text="search" class="form-control ml-2 mb-2" placeholder="search..." />
+             <select v-model="perPage">
+              <option>5</option>
+              <option>10</option>
+              <option>15</option>
+             </select>
+             
+          <b-pagination v-model="currentPage"
+                          :total-rows="rows"
+                          :per-page="perPage"
+                          aria-controls="my-table" ></b-pagination>
           <!-- products -->
           <div class="row">
-            <input text="search" class="form-control ml-2 mb-2" placeholder="search..." />
+         
+            
             <template v-for="(item, index) in products">
               <b-card :key="index"
                       :img-src="item.mainImage"
                       img-alt="Image"
                       img-top
                       tag="article"
-                      style="width: 120px;"
+                      footer="Card Footer"
+                      style="width: 220px;"
                       class="mb-2 ml-2" @click="pushOrderItem(item)">
-                <b-card-text>
-                  {{item.name}}<br />
-                  <span class="badge badge-secondary">${{item.price}}</span>
-                </b-card-text>
+                <b-card-body>
+
+                <b-card-text>{{item.name}}</b-card-text>
+                </b-card-body>
+               
+                   <template v-slot:footer>
+                      <span class="badge badge-secondary">${{item.price}}</span>
+                  </template> 
+               
               </b-card>
             </template>
             
             <!-- products -->
           </div>
-          
+          {{currentPage}}
         <b-pagination v-model="currentPage"
                           :total-rows="rows"
                           :per-page="perPage"
-                          aria-controls="my-table"></b-pagination>
+                          aria-controls="my-table" ></b-pagination>
 
         </div>
 
@@ -124,14 +143,9 @@
       moveTo() {
         this.$router.push({ name: 'checkout' }).catch((err) => { })
       },
-      loadData() {
+      loadData(data) {
         let vm = this;
-        this.$http.post(this.urls.merchant.ProductPosList, {
-          OrderBy: [],
-          Page: 1,
-          Query: '',
-          IsFilterByColumn: false
-        }).then(function (response) {
+        this.$http.post(this.urls.merchant.ProductPosList, data).then(function (response) {
           vm.products = response.data.data;
           vm.totalElements = response.data.count;
         }).catch(function (err) {
@@ -156,8 +170,26 @@
         return this.totalElements
       }
     },
+    watch: {
+      // whenever question changes, this function will run
+      currentPage: function (newVal, oldVal) {
+         this.loadData({
+          PerPage: this.perPage,
+          OrderBy: [],
+          Page: newVal,
+          Query: '',
+          IsFilterByColumn: false
+        });
+      }
+    },
     created() {
-      this.loadData();
+      this.loadData({
+          PerPage:this.perPage,
+          OrderBy: [],
+          Page: 1,
+          Query: '',
+          IsFilterByColumn: false
+        });
       //this.$http.get(this.urls..getById(row.Id))
       //    .then((res) => {
       //      let data = res.data

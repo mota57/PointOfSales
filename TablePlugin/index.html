@@ -94,7 +94,7 @@
                             <div class="card-body">
 
 
-                                <button @click="removeField(form, index)">Remove Field</button>
+                                <button class="btn-danger" @click="removeField(form, index)">Delete</button>
                                 <div class="form-group row">
                                     <label class="col-sm-2 col-form-label">Field Name</label>
                                     <div class="col-sm-10"><input class="form-control w-50" v-model="field.Name" /></div>
@@ -110,10 +110,11 @@
                                     <div class="col-sm-10">
                                         <select v-model="field.Type" class="form-control w-50">
                                             <option disabled value="">Please select one</option>
-                                            <option>integer</option>
+                                            <option>int</option>
                                             <option>decimal</option>
                                             <option>string</option>
                                             <option>DateTime</option>
+                                            <option>bool</option>
                                         </select>
                                     </div>
                                 </div>
