@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace TablePlugin.Core
+namespace TablePlugin.Data
 {
     public interface IQueryRecordDocumentRepository
     {

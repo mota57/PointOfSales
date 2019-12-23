@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TablePlugin.Data;
 
 namespace TablePlugin.Core
 {
@@ -80,6 +81,8 @@ namespace TablePlugin.Core
                 return new CustomQueryConfig(result.TableName, queryFields);
             }
         }
+
+      
     }
 
 }

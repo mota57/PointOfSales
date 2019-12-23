@@ -1,6 +1,6 @@
 ﻿using LiteDB;
 
-namespace TablePlugin
+namespace TablePlugin.Data
 {
     public class QueryFieldDocument
     {

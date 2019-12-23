@@ -1,7 +1,7 @@
 ﻿using LiteDB;
 using System.Collections.Generic;
 
-namespace TablePlugin
+namespace TablePlugin.Data
 {
     public class QueryRecordDocument
     {

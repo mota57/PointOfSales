@@ -11,7 +11,7 @@ namespace TablePlugin.Client
             RouteData routeData)
         {
             var mainRequestHandler = new MainRequestHandler(request, response, routeData);
-            return  new TablePLuginHandler(mainRequestHandler);
+            return  new TablePLuginHandler(mainRequestHandler, TablePluginOptions.QueryDocumnetInstance);
         }
 
     }

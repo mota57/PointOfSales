@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using LiteDB;
 using TablePlugin.Core;
+using TablePlugin.Data;
 
 namespace TablePlugin.Client
 {
@@ -13,12 +14,12 @@ namespace TablePlugin.Client
 
         MainRequestHandler Handler;
 
-        QueryRecordDocumentRepository QueryRepository;
+        IQueryRecordDocumentRepository QueryRepository;
 
-        public TablePLuginHandler(MainRequestHandler handler)
+        public TablePLuginHandler(MainRequestHandler handler, IQueryRecordDocumentRepository queryRepository)
         {
             Handler = handler;
-            QueryRepository = new QueryRecordDocumentRepository();
+            QueryRepository = queryRepository;
         }
 
         public async Task IndexPage()

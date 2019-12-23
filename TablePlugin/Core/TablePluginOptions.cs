@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using TablePlugin.Data;
 
 namespace TablePlugin.Core
 {
@@ -10,6 +11,8 @@ namespace TablePlugin.Core
         public static string LiteDbConnectionName { get; set; } = "MyData.db";
 
         public static string RoutePath { get; set; } = "tableplugin";
+        public static IQueryRecordDocumentRepository QueryDocumnetInstance { get;  set; }
+
         protected static internal Stream IndexStream()
         {
             return System.IO.File.OpenRead(@"C:\Users\hpnotebook\Documents\Visual Studio 2017\Projects\PointOfSales\TablePlugin\index.html");

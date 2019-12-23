@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using TablePlugin.Data;
 
 namespace TablePlugin.Core
 {
@@ -21,33 +22,7 @@ namespace TablePlugin.Core
         public bool IsFilterByColumn { get; set; } = true;
     }
 
-    //public class RequestVueParameterAdapter  : IRequestTableParameter
-    //{
-    //    public RequestVueParameterAdapter(VueTableParameters parameter)
-    //    {
-    //        _parameter = parameter;
-    //    }
-    //}
-
-    public enum OrderType { ASC, DESC }
-
-    public class PropertyOrder
-    {
-        public PropertyOrder()
-        {
-
-        }
-
-        public PropertyOrder(string propertyName, OrderType order)
-        {
-            ProperyName = propertyName;
-            OrderType = order;
-
-        }
-        public string ProperyName { get; set; }
-        public OrderType OrderType { get; set; }
-    }
-
+   
 
     public class CustomQueryConfig
     {
@@ -78,8 +53,6 @@ namespace TablePlugin.Core
         public DatabaseProvider Provider { get; set; }
     }
 
-
-  
 
     public class DataResponse<T>
     {
