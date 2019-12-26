@@ -12,7 +12,7 @@ namespace TablePlugin
             config.ConnectionString = TablePluginOptions.SQLConnectionName;
             config.Provider = TablePluginOptions.DatabaseProvider;
 
-            var paginator = new CustomQueryWithPagination();
+            var paginator = new QueryPaginator();
             var result = await paginator.GetAsync(config, parameter);
             return result;
         }
@@ -23,7 +23,7 @@ namespace TablePlugin
             config.ConnectionString = TablePluginOptions.SQLConnectionName;
             config.Provider = TablePluginOptions.DatabaseProvider;
 
-            var paginator = new CustomQueryWithPagination();
+            var paginator = new QueryPaginator();
             var result = await paginator.GetAsync<T>(config, parameter);
             return result;
         }

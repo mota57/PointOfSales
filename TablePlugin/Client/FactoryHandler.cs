@@ -6,12 +6,12 @@ namespace TablePlugin.Client
 {
     public static class FactoryHandler
     {
-        public static TablePLuginHandler BuildTablePluginHanlder(HttpRequest request, 
+        public static TablePLuginController BuildTablePluginHanlder(HttpRequest request, 
             HttpResponse response, 
             RouteData routeData)
         {
-            var mainRequestHandler = new MainRequestHandler(request, response, routeData);
-            return  new TablePLuginHandler(mainRequestHandler, TablePluginOptions.QueryRepositoryInstance);
+            var MainCtrl = new MainRequestController(request, response, routeData);
+            return  new TablePLuginController(MainCtrl, TablePluginOptions.QueryRepositoryInstance);
         }
 
     }

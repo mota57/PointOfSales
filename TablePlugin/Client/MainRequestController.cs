@@ -8,14 +8,14 @@ using Microsoft.AspNetCore.Routing;
 using Newtonsoft.Json;
 using System.Linq;
 
-namespace TablePlugin
+namespace TablePlugin.Client
 {
-    public class MainRequestHandler 
+    public class MainRequestController 
     {
         public string AppBaseUrl() => $"{Request.Scheme}://{Request.Host}{Request.PathBase}/tableplugin";
 
 
-        public MainRequestHandler(HttpRequest request, HttpResponse response, RouteData routeData)
+        public MainRequestController(HttpRequest request, HttpResponse response, RouteData routeData)
         {
             Request = request;
             Response = response;

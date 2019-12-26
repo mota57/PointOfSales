@@ -8,13 +8,13 @@ using TablePlugin.Data;
 
 namespace TablePlugin.Client
 {
-    public class TablePLuginHandler
+    public class TablePLuginController
     {
-        MainRequestHandler Handler;
+        MainRequestController Handler;
 
         IQueryRepository QueryRepository;
 
-        public TablePLuginHandler(MainRequestHandler handler, IQueryRepository queryRepository)
+        public TablePLuginController(MainRequestController handler, IQueryRepository queryRepository)
         {
             Handler = handler;
             QueryRepository = queryRepository;

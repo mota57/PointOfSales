@@ -127,7 +127,7 @@ namespace ConsoleApp1
 
                 Task.Run(async () =>
                 {
-                    CustomQueryWithPagination reader = new CustomQueryWithPagination();
+                    QueryPaginator reader = new QueryPaginator();
                     var records = await reader.GetAsync(queryConfig, queryParameter);
                     Console.WriteLine(JsonConvert.SerializeObject(records, Formatting.Indented));
                     Console.WriteLine("=======================================================================\n\n");

@@ -13,10 +13,10 @@ using TablePlugin.Data;
 namespace TablePlugin.Core
 {
 
-    public class CustomQueryWithPagination
+    public class QueryPaginator
     {
 
-        public CustomQueryWithPagination()
+        public QueryPaginator()
         {
 
         }
@@ -115,11 +115,70 @@ namespace TablePlugin.Core
         private void Filter(Query query, QueryConfig queryConfig, IRequestTableParameter parameter)
         {
             if (parameter.IsFilterByColumn)
-                FilterByColumn(query, queryConfig, parameter);
+                FilterByColumn2(query, queryConfig, parameter);
             else
                 FilterByAllFields(query, queryConfig, parameter);
 
         }
+
+        private void FilterByColumn2(Query query, QueryConfig queryConfig, IRequestTableParameter parameter)
+        {
+            var queryString = parameter.Query;
+            if (parameter.IsFilterByColumn == false || queryString.IsBlank()) return;
+
+            QueryFilter[] obj = JsonConvert.DeserializeObject<QueryFilter[]>(queryString);
+            foreach (QueryFilter prop in obj)
+            {
+                if (prop.Value == null) continue;
+                var name = prop.Name;
+                var value = prop.Value;
+
+                switch (prop.Operator)
+                {
+                    case OperatorType.Contains:
+                        query = query.OrWhereContains(name, value.ToString());
+                    break;
+
+                    case OperatorType.EndWith:
+                        query = query.OrWhereEnds(name, value.ToString());
+                    break;
+
+                    case OperatorType.StartWith:
+                        query = query.OrWhereStarts(name, value.ToString());
+                    break;
+
+
+                    case OperatorType.Equals:
+                        query = query.OrWhere(name, "=", value);
+                    break;
+                    
+                    case OperatorType.NotEquals:
+                        query = query.OrWhere(name, "!=", value);
+                    break;
+
+                    case OperatorType.LessThan:
+                        query = query.OrWhere(name, "<", value);
+                    break;
+
+                    
+                    case OperatorType.LessOrEqual:
+                        query = query.OrWhere(name, "<=", value);
+                    break;
+
+                       
+                    case OperatorType.GreaterThan:
+                        query = query.OrWhere(name, ">", value);
+                    break;
+
+                           
+                    case OperatorType.GreaterOrEqual:
+                        query = query.OrWhere(name, ">=", value);
+                    break;
+                }
+            }
+        }
+
+
 
         private void FilterByColumn(Query query, QueryConfig queryConfig, IRequestTableParameter parameter)
         {
@@ -129,12 +188,45 @@ namespace TablePlugin.Core
             JObject obj = JsonConvert.DeserializeObject<JObject>(queryString);
             foreach (JProperty prop in obj.Properties())
             {
-                CheckValidProperty(prop.Name, queryConfig);
-
                 if (!prop.HasValues) continue;
                 var name = prop.Name;
                 var value = prop.Value.ToString();
                 query = query.OrWhereLike(name, $"%{value}%");
+            }
+        }
+
+        //inheritance, association, abstraction
+        public interface IFilterByColumnMethod {
+            void FilterByColumn();
+        }
+        public class FilterByColumnMethod1 : IFilterByColumnMethod
+        {
+            private Query query {get;   set; }
+            private QueryConfig queryConfig {get; }
+
+            private IRequestTableParameter parameter {get; }
+
+            public void FilterByColumn()
+            {
+                var queryString = parameter.Query;
+                if (parameter.IsFilterByColumn == false || queryString.IsBlank()) return;
+
+                JObject obj = JsonConvert.DeserializeObject<JObject>(queryString);
+                foreach (JProperty prop in obj.Properties())
+                {
+                    CheckValidProperty(prop.Name);
+
+                    if (!prop.HasValues) continue;
+                    var name = prop.Name;
+                    var value = prop.Value.ToString();
+                    query = query.OrWhereLike(name, $"%{value}%");
+                }
+            }
+
+            private void CheckValidProperty(string prop)
+            {
+                if (!queryConfig.Fields.Where(f => f.IsFilter).Any(p => p.Name.EqualIgnoreCase(prop)))
+                throw new ArgumentException($"field name {prop} doesn't exists");
             }
         }
 

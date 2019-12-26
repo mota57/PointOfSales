@@ -3,6 +3,7 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="EFTriggerHelper" Version="1.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0-rc2" />
@@ -18,7 +19,7 @@
     <None Remove="ClientApp\**" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\EFTriggerHelper\EFTriggerHelper\EFTriggerHelper.csproj" />
+
     <ProjectReference Include="..\PointOfSales.Core\PointOfSales.Core.csproj" />
     <ProjectReference Include="..\TablePlugin\TablePlugin.csproj" />
   </ItemGroup>

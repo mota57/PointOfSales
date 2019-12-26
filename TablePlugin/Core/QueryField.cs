@@ -4,7 +4,7 @@ namespace TablePlugin.Core
 {
     public class QueryField
     {
-        public QueryField(string name, bool filter = true, bool sort = true, bool display = true, string friendlyName = null, string type = "")
+        public QueryField(string name, bool filter = true, bool sort = true, bool display = true, string friendlyName = null, string type = "string")
         {
             if (name.IsBlank()) throw new ArgumentNullException();
             Name = name;

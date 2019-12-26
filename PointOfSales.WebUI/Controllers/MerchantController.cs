@@ -45,6 +45,7 @@ namespace PointOfSales.WebUI.Controllers
         [HttpPost("[action]/")]
         public async Task<ActionResult> ProductPosList([FromBody] RequestTableParameter parameter)
         {
+            
             try
             {
                 //var productConfig = new CustomQueryConfig("v_product_merchant",
@@ -63,19 +64,8 @@ namespace PointOfSales.WebUI.Controllers
                 //productConfig.ConnectionString = GlobalVariables.Connection;
                 //productConfig.Provider = TablePlugin.Core.DatabaseProvider.SQLite;
 
-                //var paginator = new CustomQueryWithPagination();
+                //var paginator = new QueryPaginator();
                 //var products = await paginator.GetAsync<ProductView>(productConfig, parameter);
-
-
-
-                //string result = JsonConvert.SerializeObject(products, new JsonSerializerSettings
-                //{
-                //    ContractResolver = new DefaultContractResolver
-                //    {
-                //        NamingStrategy = new CamelCaseNamingStrategy()
-                //    },
-                //    Formatting = Formatting.Indented
-                //});
 
                 var result = await TablePluginQueryPaginator.Build("v_product_merchant1", parameter);
                 return Ok(result);
@@ -99,10 +89,6 @@ namespace PointOfSales.WebUI.Controllers
 
         }
 
-        //[HttpGet("[action]/{category:int?}")]
-        //public async Task<ActionResult> ProductPosList([FromRoute] int category)
-        //{
-        //}
 
         // POST: api/Categories
         [HttpPost("[action]")]
