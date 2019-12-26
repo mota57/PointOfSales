@@ -4,6 +4,8 @@ using TablePlugin.Data;
 
 namespace TablePlugin
 {
+
+    //rename to this to QueryPaginator
     public class TablePluginQueryPaginator 
     {
         public async static Task<object> Build(string configName, IRequestTableParameter parameter)
@@ -12,7 +14,7 @@ namespace TablePlugin
             config.ConnectionString = TablePluginOptions.SQLConnectionName;
             config.Provider = TablePluginOptions.DatabaseProvider;
 
-            var paginator = new QueryPaginator();
+            var paginator = new QueryPaginatorBasic();
             var result = await paginator.GetAsync(config, parameter);
             return result;
         }
@@ -23,7 +25,7 @@ namespace TablePlugin
             config.ConnectionString = TablePluginOptions.SQLConnectionName;
             config.Provider = TablePluginOptions.DatabaseProvider;
 
-            var paginator = new QueryPaginator();
+            var paginator = new QueryPaginatorBasic();
             var result = await paginator.GetAsync<T>(config, parameter);
             return result;
         }

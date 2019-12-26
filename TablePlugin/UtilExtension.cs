@@ -4,7 +4,7 @@ using System;
 
 namespace TablePlugin
 {
-    public static class UtilExtension
+    public static class UtilExtensions
     {
         public static T Get<T>(this IQueryCollection query, string key)
         {
@@ -14,7 +14,7 @@ namespace TablePlugin
                 StringValues result = query[key];
                 return (T)Convert.ChangeType(result.ToString(), typeof(T));
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return default(T);
             }
@@ -23,6 +23,5 @@ namespace TablePlugin
         public static bool IsBlank(this string stringContent) => string.IsNullOrEmpty(stringContent) || string.IsNullOrWhiteSpace(stringContent);
 
         public static bool EqualIgnoreCase(this string stringContent, string compare) => stringContent.Equals(compare, StringComparison.OrdinalIgnoreCase);
-
     }
 }

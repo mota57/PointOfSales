@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 
 namespace TablePlugin
 {
     public class QueryFieldAttribute : System.Attribute
     {
-        public QueryFieldAttribute(string name, bool filter = true, bool sort = true, bool display = true, string friendlyName = null, string type = "")
+        public QueryFieldAttribute([CallerMemberName]  string name = null, bool filter = true, bool sort = true, bool display = true, string friendlyName = null, string type = "")
         {
             if (name.IsBlank()) throw new ArgumentNullException();
             Name = name;

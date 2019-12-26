@@ -1,6 +1,5 @@
 ﻿using Microsoft.Data.Sqlite;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using SqlKata;
 using SqlKata.Compilers;
 using SqlKata.Execution;
@@ -12,13 +11,12 @@ using TablePlugin.Data;
 
 namespace TablePlugin.Core
 {
-
-    public class QueryPaginator
+    public class QueryPaginatorBasic
     {
 
-        public QueryPaginator()
+        public QueryPaginatorBasic()
         {
-
+            
         }
 
         private const int DEFAULT_PER_PAGE = 10;
@@ -46,6 +44,7 @@ namespace TablePlugin.Core
         /// <returns></returns>
         public async Task<object> GetAsync(QueryConfig queryConfig, IRequestTableParameter parameter)
         {
+
             Query query = queryConfig.Query.Clone();
 
             QueryFactory db = QueryFactoryBuilder.Build(queryConfig);
@@ -79,11 +78,13 @@ namespace TablePlugin.Core
                 Count = count
             };
         }
+
+
+
         private void ProcessQuery(Query query, QueryConfig queryConfig, IRequestTableParameter parameter)
         {
 
             PerPage = parameter.PerPage;
-
             Filter(query, queryConfig, parameter);
             OrderBy(query, queryConfig, parameter.OrderBy);
             Paginate(query, parameter.Page);
@@ -115,13 +116,13 @@ namespace TablePlugin.Core
         private void Filter(Query query, QueryConfig queryConfig, IRequestTableParameter parameter)
         {
             if (parameter.IsFilterByColumn)
-                FilterByColumn2(query, queryConfig, parameter);
+                FilterByColumn(query, queryConfig, parameter);
             else
                 FilterByAllFields(query, queryConfig, parameter);
 
         }
 
-        private void FilterByColumn2(Query query, QueryConfig queryConfig, IRequestTableParameter parameter)
+        private void FilterByColumn(Query query, QueryConfig queryConfig, IRequestTableParameter parameter)
         {
             var queryString = parameter.Query;
             if (parameter.IsFilterByColumn == false || queryString.IsBlank()) return;
@@ -136,99 +137,52 @@ namespace TablePlugin.Core
                 switch (prop.Operator)
                 {
                     case OperatorType.Contains:
-                        query = query.OrWhereContains(name, value.ToString());
-                    break;
+                        query.OrWhereContains(name, value.ToString());
+                        break;
 
                     case OperatorType.EndWith:
-                        query = query.OrWhereEnds(name, value.ToString());
-                    break;
+                        query.OrWhereEnds(name, value.ToString());
+                        break;
 
                     case OperatorType.StartWith:
-                        query = query.OrWhereStarts(name, value.ToString());
-                    break;
+                        query.OrWhereStarts(name, value.ToString());
+                        break;
 
 
                     case OperatorType.Equals:
-                        query = query.OrWhere(name, "=", value);
-                    break;
-                    
+                        query.OrWhere(name, "=", value);
+                        break;
+
                     case OperatorType.NotEquals:
-                        query = query.OrWhere(name, "!=", value);
-                    break;
+                        query.OrWhere(name, "!=", value);
+                        break;
 
                     case OperatorType.LessThan:
-                        query = query.OrWhere(name, "<", value);
-                    break;
+                        query.OrWhere(name, "<", value);
+                        break;
 
-                    
+
                     case OperatorType.LessOrEqual:
-                        query = query.OrWhere(name, "<=", value);
-                    break;
+                        query.OrWhere(name, "<=", value);
+                        break;
 
-                       
+
                     case OperatorType.GreaterThan:
-                        query = query.OrWhere(name, ">", value);
-                    break;
+                        query.OrWhere(name, ">", value);
+                        break;
 
-                           
+
                     case OperatorType.GreaterOrEqual:
-                        query = query.OrWhere(name, ">=", value);
+                        query.OrWhere(name, ">=", value);
+                        break;
+
+                    case OperatorType.DateWithoutTime:
+                        query.OrWhereDate(name, prop.DateLogicalOperator, value);
                     break;
                 }
             }
         }
 
-
-
-        private void FilterByColumn(Query query, QueryConfig queryConfig, IRequestTableParameter parameter)
-        {
-            var queryString = parameter.Query;
-            if (parameter.IsFilterByColumn == false || queryString.IsBlank()) return;
-
-            JObject obj = JsonConvert.DeserializeObject<JObject>(queryString);
-            foreach (JProperty prop in obj.Properties())
-            {
-                if (!prop.HasValues) continue;
-                var name = prop.Name;
-                var value = prop.Value.ToString();
-                query = query.OrWhereLike(name, $"%{value}%");
-            }
-        }
-
-        //inheritance, association, abstraction
-        public interface IFilterByColumnMethod {
-            void FilterByColumn();
-        }
-        public class FilterByColumnMethod1 : IFilterByColumnMethod
-        {
-            private Query query {get;   set; }
-            private QueryConfig queryConfig {get; }
-
-            private IRequestTableParameter parameter {get; }
-
-            public void FilterByColumn()
-            {
-                var queryString = parameter.Query;
-                if (parameter.IsFilterByColumn == false || queryString.IsBlank()) return;
-
-                JObject obj = JsonConvert.DeserializeObject<JObject>(queryString);
-                foreach (JProperty prop in obj.Properties())
-                {
-                    CheckValidProperty(prop.Name);
-
-                    if (!prop.HasValues) continue;
-                    var name = prop.Name;
-                    var value = prop.Value.ToString();
-                    query = query.OrWhereLike(name, $"%{value}%");
-                }
-            }
-
-            private void CheckValidProperty(string prop)
-            {
-                if (!queryConfig.Fields.Where(f => f.IsFilter).Any(p => p.Name.EqualIgnoreCase(prop)))
-                throw new ArgumentException($"field name {prop} doesn't exists");
-            }
-        }
 
         private void FilterByAllFields(Query query, QueryConfig queryConfig, IRequestTableParameter parameter)
         {
@@ -273,7 +227,9 @@ namespace TablePlugin.Core
                         break;
                 }
                 var db = new QueryFactory(connection, compiler);
-                db.Logger = compiled => {
+                db.Logger = compiled =>
+                {
+
                     Console.WriteLine(compiled.RawSql);
                     System.Diagnostics.Debug.WriteLine(compiled.ToString());
                 };

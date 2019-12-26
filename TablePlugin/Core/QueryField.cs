@@ -2,7 +2,7 @@
 
 namespace TablePlugin.Core
 {
-    public class QueryField
+    public class QueryField : IQueryField
     {
         public QueryField(string name, bool filter = true, bool sort = true, bool display = true, string friendlyName = null, string type = "string")
         {

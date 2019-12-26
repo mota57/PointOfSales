@@ -1,4 +1,7 @@
-﻿namespace TablePlugin.Data
+﻿using System.Collections.Generic;
+using System;
+
+namespace TablePlugin.Data
 {
     public interface IRequestTableParameter
     {
@@ -24,8 +27,12 @@
 
         public string Name {get;set;}
         public OperatorType Operator {get;set;} 
+       
+        public string DateLogicalOperator {get;set;}
         public object Value {get;set;}
     }
+
+
 
 
      public enum OperatorType 
@@ -41,7 +48,8 @@
         LessThan,
         LessOrEqual,
         GreaterThan,
-        GreaterOrEqual
+        GreaterOrEqual,
+        DateWithoutTime
     }
 
 

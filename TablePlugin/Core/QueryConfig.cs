@@ -7,7 +7,7 @@ namespace TablePlugin.Core
 {
     public class QueryConfig 
     {
-        public QueryConfig(string tableName, params QueryField[] fields)
+        public QueryConfig(string tableName, params IQueryField[] fields)
         {
             if (tableName.IsBlank()) throw new ArgumentNullException();
             if (fields == null || fields.Length == 0) throw new ArgumentException("fields must contain at least one value");
@@ -17,7 +17,7 @@ namespace TablePlugin.Core
         }
 
         public string TableName { get; }
-        public QueryField[] Fields { get; set; }
+        public IQueryField[] Fields { get; set; }
         private Query query = null;
         protected internal Query Query
         {
