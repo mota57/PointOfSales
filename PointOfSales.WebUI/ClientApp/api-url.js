@@ -7,7 +7,7 @@ class BASE_URL {
 
 
   getURL(resource) {
-    let result = `${window.APP_GLOBALS.URL}${this.name}${resource}`
+    let result = `${window.APP_GLOBALS.URL}${this.name}${!resource ? '' : resource}`
     return result;
   }
 

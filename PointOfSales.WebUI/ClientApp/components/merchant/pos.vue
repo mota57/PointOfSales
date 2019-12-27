@@ -54,9 +54,12 @@
         <div class="col-10">
           <!--categories -->
           <b-nav pills>
-            <b-nav-item v-for="(cat,index) in categories" :key="index">
+            <template  v-for="(cat,index) in categories" >
+            <b-nav-item :key="index" v-on:click="filterByCategory(cat)">
               {{cat.name}}
             </b-nav-item>
+            </template>
+              
           </b-nav>
           <!--/categories -->
 
@@ -126,20 +129,49 @@
   import faker from "faker";
   import { mapGetters, mapState, mapMutations } from 'vuex'
 
+  function buildRequest(vm)
+  {
+    
+    if(vm.query != null && typeof vm.query === "object"){
+      vm.query= JSON.stringify(vm.query);
+    }
+
+    return {
+        PerPage: vm.perPage,
+        OrderBy: vm.orderBy,
+        Page: vm.currentPage,
+        Query: vm.query,
+        ByColumn: 1
+    }
+  }
+  
   export default {
     name: "pos",
     data() {
       return {
-        categories: [{ name: 'category1' }, { name: 'category2' }, { name: 'foo' }],
+        categories: [],
         products: [],
         orderItemToConfig: null,
         imgCategory: faker.image.avatar(),
+
         perPage: 15,
+        orderBy:[],
         currentPage: 1,
-        totalElements:0
+        query:'',
+        totalElements:0,
+        ByColumn:1
       };
     },
     methods: {
+      filterByCategory(categoryObject){
+        this.query = [{ 
+            Name:"categoryName"
+          , Value: categoryObject.name
+          , Operator: "Contains"
+          , DateLogicalOperator :null 
+        }];
+        this.loadData(buildRequest(this));
+      },
       moveTo() {
         this.$router.push({ name: 'checkout' }).catch((err) => { })
       },
@@ -171,24 +203,28 @@
       }
     },
     watch: {
+      perPage: function(newVal, oldVal){
+          this.loadData(buildRequest(this));
+      },
       // whenever question changes, this function will run
       currentPage: function (newVal, oldVal) {
-         this.loadData({
-          PerPage: this.perPage,
-          OrderBy: [],
-          Page: newVal,
-          Query: '',
-          IsFilterByColumn: false
-        });
+         this.loadData(buildRequest(this));
       }
     },
     created() {
+      var vm = this;
+      this.$http
+      .get(this.urls.category.picklist())
+      .then(function(response){
+        vm.categories = response.data;
+      })
+
       this.loadData({
           PerPage:this.perPage,
           OrderBy: [],
           Page: 1,
           Query: '',
-          IsFilterByColumn: false
+          ByColumn: 1
         });
       //this.$http.get(this.urls..getById(row.Id))
       //    .then((res) => {
