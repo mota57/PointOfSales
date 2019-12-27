@@ -10,6 +10,7 @@ using System.Linq;
 using TablePlugin;
 using TablePlugin.Core;
 using TablePlugin.Data;
+using PointOfSales.Core.Infraestructure;
 
 namespace ConsoleApp1
 {
@@ -26,7 +27,8 @@ namespace ConsoleApp1
             try
             {
 
-                Example_Pagination();
+                // Example_Pagination();
+                RunConfiguration();
 
             } catch (Exception ex)
             {
@@ -47,6 +49,17 @@ namespace ConsoleApp1
         //    Log(JsonConvert.SerializeObject(obj));
 
         //}
+        public static void RunConfiguration(){
+            ConfigurationLoaderHelper loader = new ConfigurationLoaderHelper();
+      
+            while(true){
+                Console.WriteLine("hey made some changes on th .config ");
+                Console.ReadLine();
+                Console.WriteLine(loader.Config.GetSection("DatabaseConfig")["DBKEY"].ToString());
+            }
+
+        }
+
 
         public static void RunVueReader()
         {
@@ -127,7 +140,7 @@ namespace ConsoleApp1
 
                 Task.Run(async () =>
                 {
-                    QueryPaginator reader = new QueryPaginator();
+                    QueryPaginatorBasic reader = new QueryPaginatorBasic();
                     var records = await reader.GetAsync(queryConfig, queryParameter);
                     Console.WriteLine(JsonConvert.SerializeObject(records, Formatting.Indented));
                     Console.WriteLine("=======================================================================\n\n");

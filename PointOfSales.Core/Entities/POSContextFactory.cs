@@ -7,13 +7,17 @@ namespace PointOfSales.Core.Entities
     {
         public POSContext CreateDbContext(string[] args)
         {
+
+            var helper = new PointOfSales.Core.Infraestructure.ConfigurationLoaderHelper();
+
             var optionsBuilder = new DbContextOptionsBuilder<POSContext>();
-            optionsBuilder.UseSqlite(GlobalVariables.Connection);
+            optionsBuilder.UseSqlite(helper.Config["DBKEY"]);
 
             return new POSContext(optionsBuilder.Options);
         }
-    }
 
-    
+       
+      
+    }
 
 }
