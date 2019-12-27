@@ -9,13 +9,16 @@ using PointOfSales.WebUI.Extensions;
 using Microsoft.AspNetCore.Routing;
 using TablePlugin.Client;
 using TablePlugin.Core;
+using Microsoft.Extensions.Logging;
 
 namespace PointOfSales.WebUI
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public ILogger<Startup> Logger { get; set; }
+        public Startup(IConfiguration configuration, ILogger<Startup> logger)
         {
+            this.Logger = logger;
             Configuration = configuration;
         }
 
@@ -24,8 +27,9 @@ namespace PointOfSales.WebUI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-           var configSection = Configuration.GetSection("DatabaseConfig");
-           GlobalVariables.Connection = configSection[configSection["DBKEY"]];
+            var configSection = Configuration.GetSection("DatabaseConfig");
+            GlobalVariables.Connection = configSection[configSection["DBKEY"]];
+            this.Logger.LogDebug(GlobalVariables.Connection);
 
             services.AddIdentityFeature();
 
@@ -76,7 +80,7 @@ namespace PointOfSales.WebUI
             //    }
             //    await next.Invoke();
             //});
-          
+
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
 
