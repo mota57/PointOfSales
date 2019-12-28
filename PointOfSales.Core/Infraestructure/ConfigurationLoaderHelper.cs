@@ -9,10 +9,12 @@ namespace PointOfSales.Core.Infraestructure
         {
             Build();
         }
+        
 
         public IConfigurationRoot Config {get; private set;}
         private void Build()
         {
+            if(Config != null) return;
 
             var parentDirectory = Directory.GetParent (Directory.GetCurrentDirectory ()).FullName;
             var webDirectory = Path.Combine(parentDirectory, "PointOfSales.WebUI");

@@ -130,7 +130,7 @@ namespace TablePlugin.Core
             QueryFilter[] obj = JsonConvert.DeserializeObject<QueryFilter[]>(queryString);
             foreach (QueryFilter prop in obj)
             {
-                if (prop.Value == null) continue;
+                if (prop.Value == null || prop.Value.ToString().IsBlank()) continue;
                 var name = prop.Name;
                 var value = prop.Value;
 

@@ -23,5 +23,18 @@ namespace TablePlugin
         public static bool IsBlank(this string stringContent) => string.IsNullOrEmpty(stringContent) || string.IsNullOrWhiteSpace(stringContent);
 
         public static bool EqualIgnoreCase(this string stringContent, string compare) => stringContent.Equals(compare, StringComparison.OrdinalIgnoreCase);
+    
+        public static T As<T>(this object obj)
+        {
+            try
+            {
+                return (T)Convert.ChangeType(obj.ToString(), typeof(T));
+            }
+            catch (Exception)
+            {
+                return default(T);
+            }
+        }
+    
     }
 }
