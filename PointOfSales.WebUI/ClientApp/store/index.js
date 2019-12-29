@@ -28,8 +28,8 @@ const mutations = {
   setOrderItemList (state, item) {
     let orderItem = MerchantHelper.findOrderItemById(state, item.id);
     if (!orderItem) {
-      orderItem = { quantity: 1, ...item };
-      console.log("setOrderItemList::" + JSON.stringify(orderItem));
+      orderItem = { discountId:-1, quantity: 1, customDiscountAmount:0, disscountType: null, ...item };
+      //console.log("setOrderItemList::" + JSON.stringify(orderItem));
       state.orderItemList.push(orderItem);
     } else {
       orderItem.quantity += 1;
@@ -41,9 +41,8 @@ const mutations = {
     state.discountOfOrder.disscountType        =  payload.disscountType;
   },
   setOrderItemConfiguration (state, payload){
-    var orderItem = MerchantHelper.findOrderItemById(state, payload.id);
-    Object.assign(orderItem, payload);
-
+      var orderItem = MerchantHelper.findOrderItemById(state, payload.id);
+      Object.assign(orderItem, payload);
   },
   clearOrderItemList (state) {
     state.orderItemList = [];

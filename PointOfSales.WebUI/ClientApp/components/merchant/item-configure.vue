@@ -39,7 +39,7 @@
 
           <div class="form-group" v-if="disscountType == 'system'">
             <label for="Discount">System discount</label>
-            <form-select urlapi="discount" v-model="discountId"></form-select>
+            <form-select urlapi="discount" propkey="id" v-model="discountId" :selected="discountId" ></form-select>
 
             <!-- <template v-if="errList && errList.Disscount">
               <p
@@ -128,7 +128,7 @@ export default {
           "Custom amount must be greater than 0";
       }
 
-      if(this.dateAreInvalid){
+      if(this.dateAreInvalid && this.orderitem.isProductForRent){
          this.errList.dateErrMessage =
           "Dates are required";
       }
@@ -141,7 +141,7 @@ export default {
         let propsToUpdate = {
           quantity: Number.parseInt(this.quantity),
           id: this.orderitem.id,
-          discount: this.disscountType == "system" ? this.discountId : null,
+          discountId: this.disscountType == "system" ? this.discountId : null,
           customDiscountAmount: this.disscountType == "custom" ? this.customDiscountAmount : null,
           startDate: this.orderitem.isProductForRent ? this.dateRange.startDate : null,
           endDate: this.orderitem.isProductForRent ? this.dateRange.endDate : null,
@@ -150,6 +150,8 @@ export default {
 
         this.$store.commit("setOrderItemConfiguration", propsToUpdate);
         this.close();
+      } else {
+        console.log(this.errList);
       }
     },
     setDataValues() {

@@ -44,22 +44,21 @@
 
         <div class="col-9">
           <!--categories -->
-          <b-nav pills>
+          <b-nav pills class="nav-justified mb-2">
             <template v-for="(cat,index) in categories">
-              <b-nav-item :key="index" v-on:click="filterByCategory(cat)">{{cat.name}}</b-nav-item>
+              <b-nav-item :key="index" :active="tabIndex == index"  v-on:click="tabIndex=index;filterByCategory(cat)">{{cat.name}}</b-nav-item>
             </template>
+            <b-nav-item  class="ml-2" v-on:click="clearFilter" ><i class="fa fa-trash"></i></b-nav-item> 
           </b-nav>
           <!--/categories -->
-
-          <input type="text" @input="debounceOnSearch"  class="form-control ml-2 mb-2" placeholder="search..." />
-          
-
-           <select v-model="perPage">
+        <div>
+          <input type="text" :value="searchTextbox" @input="debounceOnSearch"  class="form-control ml-2 mb-2" placeholder="search..." />
+           <select class="form-control ml-2 mb-2" style="width:10%" v-model="perPage">
             <option>5</option>
             <option>10</option>
             <option>15</option>
           </select>
-
+        </div>
           <b-pagination
             v-model="currentPage"
             :total-rows="rows"
@@ -109,6 +108,9 @@
           <button type="button" class="btn btn-primary" @click="eventBus.$emit('item-configure::handler','upsert')">Save</button>
         </div>-->
       </b-modal>
+
+        <b-modal id="order-configure" size="lg" title="Product configure" ok-only hide-footer>
+        </b-modal>
       <!-- modals -->
     </div>
 
@@ -121,48 +123,73 @@ import faker from "faker";
 import { mapGetters, mapState, mapMutations } from "vuex";
 
 function buildRequest(vm) {
-  if (vm.query != null && typeof vm.query === "object") {
-    vm.query = JSON.stringify(vm.query);
-  }
+  let query = JSON.stringify(queryManager.values(), null, 1);
+  console.clear();
+  console.log(query);
 
   return {
     PerPage: vm.perPage,
     OrderBy: vm.orderBy,
     Page: vm.currentPage,
-    Query: vm.query,
+    Query: query,
     ByColumn: 1
   };
 }
+
+let queryManager = (function(){
+  let _queries = {};
+
+  return {
+    add: function(record) {
+      _queries[record.Name] = record;
+      //console.log('query::'+JSON.stringify(_queries,null, 1));
+    },
+    values: function(){
+      let result = [];
+      for(var index in _queries){
+        result.push(_queries[index]);
+      }
+      return result;
+    },
+    clear : function(){
+      _queries = [];
+    }
+  }
+})();
 
 export default {
   name: "pos",
   data() {
     return {
+      tabIndex:-1,
+
       categories: [],
       products: [],
       orderItemToConfig: null,
-      imgCategory: faker.image.avatar(),
       searchTextbox:'',
       debounce: null,
 
       perPage: 15,
       orderBy: [],
       currentPage: 1,
-      query: '',
       totalElements: 0,
       ByColumn: 1
     };
   },
   methods: {
+    clearFilter(){
+      this.searchTextbox = null;
+      this.tabIndex = -1;
+      queryManager.clear();
+    },
     filterByCategory(categoryObject) {
-      this.query = [
-        {
+      queryManager.add({
           Name: "categoryName",
           Value: categoryObject.name,
           Operator: "Contains",
           DateLogicalOperator: null
-        }
-      ];
+        })
+      
       this.loadData(buildRequest(this));
     },
     debounceOnSearch(event){
@@ -170,13 +197,13 @@ export default {
  
       clearTimeout(this.debounce);
       this.debounce = setTimeout(()=>{
-        let searchValue = event.target.value;
-        this.query = [{
+        vm.searchTextbox = event.target.value;
+        queryManager.add({
           Name: "name",
-          Value:  searchValue,
+          Value:  vm.searchTextbox,
           Operator: "Contains",
           DateLogicalOperator: null
-        }];
+        });
         vm.loadData(buildRequest(vm));
       },350)
     },
