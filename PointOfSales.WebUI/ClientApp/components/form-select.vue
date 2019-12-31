@@ -1,8 +1,8 @@
 <template>
   <div>
-    <v-select  :multiple="isMultiple" :label="labelprop" :options="optionlist" :reduce="buildReduce" v-model="selectedInternal" v-on:input="emitValue" @search="onSearch" />
-      prop {{selected}}<br/>
-      internal {{selectedInternal}}
+    <div v-if="wasFirstAjaxCalled">
+    <v-select  :multiple="isMultiple" :label="labelprop" :reduce="buildReduce"  :options="optionlist"  :value="selectedInternal"  v-on:input="emitValue" @search="onSearch" />
+    </div>
   </div>
 </template>
 
@@ -14,13 +14,14 @@ export default {
   data(){
     return {
       optionlist:[],
-      selectedInternal:''
-      
+      selectedInternal:null,
+      wasFirstAjaxCalled: false,
     }
   },
   props : {
     selected:{
-      type:Number,
+
+      required:false,
       default:0
     },
     isMultiple: {
@@ -52,36 +53,43 @@ export default {
  
   },
   created() {
-    console.log(this);
-    this.optionlist = this.$props.optionprop;
-    if (this.$props.initsearch) {
-      this.onSearch('', () => { })
-    }
-   
+    console.log('url api::'+this.urlapi);
+    console.log('wasFirstAjaxCalled::'+this.wasFirstAjaxCalled);
+    let vm = this;
+    vm.makeHttpRequest(vm, '')
+    .then(function(){
+        vm.wasFirstAjaxCalled = true;
+    })
+  
   },
   methods: {
     buildReduce(obj){
-      console.log('obje:::'+ JSON.stringify(obj, null, 2));
+      //console.log('obje:::'+ JSON.stringify(obj, null, 2));
       return obj[this.propkey];
     },
-    emitValue() {
-      console.log('item key selected::'+ this.selectedInternal);
-      this.$emit('input', this.selectedInternal);
+    emitValue(value) {
+     // console.log('item key selected::'+ this.selectedInternal);
+      this.$emit('input', value);
     },
     onSearch(search, loading) {
       loading(true)
       this.search(loading, search, this);
     },
     search: _.debounce((loading, search, vm) => {
-      vm.$http.get(vm.urls[vm.urlapi].picklist(search))
-        .then(res => {
-          vm.optionlist = res.data;
-          loading(false)
-        })
-
+      vm.makeHttpRequest(vm, search)
+      .then(()=> {
+        loading(false);
+      })
     }, 350),
+    makeHttpRequest: function(vm,search)
+    {
+      return vm.$http.get(vm.urls[vm.urlapi].picklist(search))
+      .then(res => {
+        vm.optionlist = res.data;
+        vm.selectedInternal = _.find(vm.optionlist, (el) => el.id == vm.selected);
+      })
+    },
   },
-  
 }
 </script>
 

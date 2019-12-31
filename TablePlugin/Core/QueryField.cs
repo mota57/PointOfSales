@@ -4,13 +4,15 @@ namespace TablePlugin.Core
 {
     public class QueryField : IQueryField
     {
-        public QueryField(string name, bool filter = true, bool sort = true, bool display = true, string friendlyName = null, string type = "string")
+        public QueryField(string name, bool filter = true, bool sort = true, bool display = true, string friendlyName = null, Type type = null)
         {
             if (name.IsBlank()) throw new ArgumentNullException();
             Name = name;
             IsFilter = filter;
             IsSort = sort;
             Display = display;
+            FriendlyName = friendlyName;
+            Type = type;
         }
 
         public int Id { get; set; }
@@ -19,7 +21,7 @@ namespace TablePlugin.Core
         public bool IsFilter { get; set; }
         public bool IsSort { get; set; }
         public bool Display { get; set; }
-        public string Type { get; set; }
+        public Type Type { get; set; }
     }
 
 

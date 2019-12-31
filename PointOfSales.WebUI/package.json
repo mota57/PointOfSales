@@ -25,6 +25,7 @@
     "axios": "^0.18.0",
     "bootstrap-vue": "^2.0.2",
     "core-js": "^2.5.3",
+    "daterangepicker": "^3.0.5",
     "faker": "^4.1.0",
     "lodash": "^4.17.15",
     "moment": "^2.24.0",

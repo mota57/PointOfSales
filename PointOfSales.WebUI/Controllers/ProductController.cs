@@ -16,9 +16,6 @@ using System.Threading;
 namespace PointOfSales.WebUI.Controllers
 {
 
-
-
-
     [Route("api/[controller]")]
     [ApiController]
     public partial class ProductController : ApplicationBaseController<Product>

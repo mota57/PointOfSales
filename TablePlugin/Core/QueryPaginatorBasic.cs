@@ -1,9 +1,12 @@
 ﻿using Microsoft.Data.Sqlite;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SqlKata;
 using SqlKata.Compilers;
 using SqlKata.Execution;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,12 +14,122 @@ using TablePlugin.Data;
 
 namespace TablePlugin.Core
 {
+    public interface IFilterByColumnStrategy
+    {
+        void FilterByColumn(Query query, QueryConfig queryConfig, IRequestTableParameter parameter);
+    }
+
+    public class VueFilterByColumnStrategy : IFilterByColumnStrategy
+    {
+        public class VueDateValueObject
+        {
+            public DateTime Start { get; set; }
+
+            public DateTime End { get; set; }
+             
+        }
+
+        public void FilterByColumn(Query query, QueryConfig queryConfig, IRequestTableParameter parameter)
+        {
+            var queryFilters = parameter.Query;
+
+            foreach (QueryFilter prop in queryFilters)
+            {
+                if (prop.Value == null || prop.Value.ToString().IsBlank()) continue;
+
+                var name = prop.Name;
+                var value = prop.Value;
+                var propConfig = queryConfig.GetQueryFieldByName(name);
+                if (propConfig.Type == typeof(DateTime))
+                {
+                    //OnConstruction....
+                    //var date = ((JObject)value).ToObject<VueDateValueObject>();
+                    //query
+                    //    .OrWhereDate(name, ">=", date.Start.ToString("mm/dd/yyyy"))
+                        
+                    //    .OrWhereDate(name, "<=", date.End.ToString("yyyy-mm-dd"));
+                }
+                else
+                {
+                    query.OrWhereLike(name, $"%{value}%");
+                }
+            }
+        }
+    }
+
+    public class BasicFilterByColumnStrategy : IFilterByColumnStrategy
+    {
+        public void FilterByColumn(Query query, QueryConfig queryConfig, IRequestTableParameter parameter)
+        {
+
+            var queryFilters = parameter.Query;
+
+            foreach (QueryFilter prop in queryFilters)
+            {
+                if (prop.Value == null || prop.Value.ToString().IsBlank()) continue;
+                var name = prop.Name;
+                var value = prop.Value;
+
+
+                switch (prop.Operator)
+                {
+                    case OperatorType.EndWith:
+                        query.OrWhereEnds(name, value.ToString());
+                        break;
+
+                    case OperatorType.StartWith:
+                        query.OrWhereStarts(name, value.ToString());
+                        break;
+
+                    case OperatorType.Equals:
+                        query.OrWhere(name, "=", value);
+                        break;
+
+                    case OperatorType.NotEquals:
+                        query.OrWhere(name, "!=", value);
+                        break;
+
+                    case OperatorType.LessThan:
+                        query.OrWhere(name, "<", value);
+                        break;
+
+
+                    case OperatorType.LessOrEqual:
+                        query.OrWhere(name, "<=", value);
+                        break;
+
+
+                    case OperatorType.GreaterThan:
+                        query.OrWhere(name, ">", value);
+                        break;
+
+                    case OperatorType.GreaterOrEqual:
+                        query.OrWhere(name, ">=", value);
+                        break;
+
+                    //case OperatorType.DateWithoutTime:
+                    //    query.OrWhereBetween(name, prop.DateLogicalOperator, value);
+                    //    break;
+
+                    default:
+                        query.OrWhereContains(name, value.ToString());
+                        break;
+
+                }
+            }
+        }
+
+    }
+
     public class QueryPaginatorBasic
     {
 
-        public QueryPaginatorBasic()
+        public IFilterByColumnStrategy FilterByColumnStrategy { get; set; }
+
+
+        public QueryPaginatorBasic(IFilterByColumnStrategy filterByColumnStrategy)
         {
-            
+            FilterByColumnStrategy = filterByColumnStrategy;
         }
 
         private const int DEFAULT_PER_PAGE = 10;
@@ -115,73 +228,21 @@ namespace TablePlugin.Core
 
         private void Filter(Query query, QueryConfig queryConfig, IRequestTableParameter parameter)
         {
+
+            if (parameter.IsFilterByColumn == false || parameter.Query == null || parameter.Query.Count() == 0) return;
+
             if (parameter.IsFilterByColumn)
-                FilterByColumn(query, queryConfig, parameter);
+                FilterByColumnStrategy.FilterByColumn(query, queryConfig, parameter);
             else
                 FilterByAllFields(query, queryConfig, parameter);
 
         }
+        
 
-        private void FilterByColumn(Query query, QueryConfig queryConfig, IRequestTableParameter parameter)
-        {
-            var queryString = parameter.Query;
-            if (parameter.IsFilterByColumn == false || queryString.IsBlank()) return;
+       
+       
 
-            QueryFilter[] obj = JsonConvert.DeserializeObject<QueryFilter[]>(queryString);
-            foreach (QueryFilter prop in obj)
-            {
-                if (prop.Value == null || prop.Value.ToString().IsBlank()) continue;
-                var name = prop.Name;
-                var value = prop.Value;
-
-                switch (prop.Operator)
-                {
-                    case OperatorType.Contains:
-                        query.OrWhereContains(name, value.ToString());
-                        break;
-
-                    case OperatorType.EndWith:
-                        query.OrWhereEnds(name, value.ToString());
-                        break;
-
-                    case OperatorType.StartWith:
-                        query.OrWhereStarts(name, value.ToString());
-                        break;
-
-
-                    case OperatorType.Equals:
-                        query.OrWhere(name, "=", value);
-                        break;
-
-                    case OperatorType.NotEquals:
-                        query.OrWhere(name, "!=", value);
-                        break;
-
-                    case OperatorType.LessThan:
-                        query.OrWhere(name, "<", value);
-                        break;
-
-
-                    case OperatorType.LessOrEqual:
-                        query.OrWhere(name, "<=", value);
-                        break;
-
-
-                    case OperatorType.GreaterThan:
-                        query.OrWhere(name, ">", value);
-                        break;
-
-
-                    case OperatorType.GreaterOrEqual:
-                        query.OrWhere(name, ">=", value);
-                        break;
-
-                    case OperatorType.DateWithoutTime:
-                        query.OrWhereDate(name, prop.DateLogicalOperator, value);
-                    break;
-                }
-            }
-        }
+        
 
 
         private void FilterByAllFields(Query query, QueryConfig queryConfig, IRequestTableParameter parameter)

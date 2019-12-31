@@ -15,6 +15,9 @@
             <div style="height: 500px;overflow: auto;">
               <b-list-group flush>
                 <b-list-group-item v-for="(orderItem,index) in orderItemList" :key="index">
+                      <!-- <pre>
+                      {{orderItem}}
+                      </pre> -->
                   <div class="row">
                     <div class="col-2">
                       <b-img height="30" :src="orderItem.mainImage"></b-img>
@@ -110,6 +113,7 @@
       </b-modal>
 
         <b-modal id="order-configure" size="lg" title="Product configure" ok-only hide-footer>
+          <order-configure></order-configure>
         </b-modal>
       <!-- modals -->
     </div>
@@ -123,12 +127,12 @@ import faker from "faker";
 import { mapGetters, mapState, mapMutations } from "vuex";
 
 function buildRequest(vm) {
-  let query = JSON.stringify(queryManager.values(), null, 1);
+  let query = queryManager.values();
   console.clear();
   console.log(query);
 
   return {
-    PerPage: vm.perPage,
+    PerPage: Number.parseInt(vm.perPage),
     OrderBy: vm.orderBy,
     Page: vm.currentPage,
     Query: query,
@@ -180,7 +184,11 @@ export default {
     clearFilter(){
       this.searchTextbox = null;
       this.tabIndex = -1;
+
       queryManager.clear();
+      this.currentPage = 1;
+      // this.orderBy = ''
+      this.loadData(buildRequest(this));
     },
     filterByCategory(categoryObject) {
       queryManager.add({
@@ -189,6 +197,7 @@ export default {
           Operator: "Contains",
           DateLogicalOperator: null
         })
+      this.currentPage = 1;
       
       this.loadData(buildRequest(this));
     },

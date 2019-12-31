@@ -58,7 +58,7 @@
 </template>
 
 <script>
-  import { mapGetters } from "vuex";
+  import { mapGetters, mapMutations } from "vuex";
   import { MethodType, Payment } from "../domain";
 
 
@@ -74,6 +74,9 @@
       ...mapGetters(["totalOrderItemCharge"])
     },
     methods: {
+       ...mapMutations({
+        clearOrder: "clearOrderItemList",
+      }),
       callPay(){
          let discountOfOrder = this.$store.state.discountOfOrder;
 
@@ -94,9 +97,24 @@
           url: this.urls.merchant.pay,
           data: formData,
         }).then(function(result){
-          console.info(result);
+          console.log(JSON.stringify(result, null, 1));
+          vm.clearOrder();
+          this.$toasted.success('save success', {
+           position:'top-center',
+           duration:3000,
+           fullWidth:true
+          })
+          
         }).catch(function (errorResult) {
-          console.info(errorResult);
+          
+          console.log(JSON.stringify(errorResult, null, 1));
+
+          vm.$toasted.error('Error on trying to save the order', {
+           position:'top-center',
+           duration:3000,
+           fullWidth:true
+          })
+          
         }).then(function () {
           vm.isAjax = false;
         });

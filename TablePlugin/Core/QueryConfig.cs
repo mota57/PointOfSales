@@ -1,6 +1,7 @@
 ﻿using SqlKata;
 using SqlKata.Execution;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace TablePlugin.Core
@@ -18,6 +19,10 @@ namespace TablePlugin.Core
 
         public string TableName { get; }
         public IQueryField[] Fields { get; set; }
+
+        public IQueryField GetQueryFieldByName(string name) => Fields.FirstOrDefault(p => p.Name.EqualIgnoreCase(name));
+       
+
         private Query query = null;
         protected internal Query Query
         {
@@ -32,5 +37,36 @@ namespace TablePlugin.Core
         }
         public string ConnectionString { get; set; }
         public DatabaseProvider Provider { get; set; }
+    }
+
+    public class QueryConfigDTO
+    {
+        public QueryConfigDTO(QueryConfig config)
+        {
+            this.TableName = config.TableName;
+            this.Fields = config.Fields.Select(v => new QueryFieldDTO(v));
+
+        }
+
+        public string TableName { get; }
+        public IEnumerable<QueryFieldDTO> Fields { get; }
+    }
+
+    public class QueryFieldDTO
+    {
+        public QueryFieldDTO(IQueryField queryField)
+        {
+            this.Name = queryField.Name;
+            this.Filter = queryField.IsFilter;
+            this.Display = queryField.Display;
+            this.Type = queryField.Type?.Name;
+        }
+
+        public string Name { get; set; }
+        public bool Filter { get; set; }
+        public bool Display { get; set; }
+
+        public string Type { get; set; }
+
     }
 }

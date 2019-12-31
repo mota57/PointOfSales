@@ -28,6 +28,14 @@ namespace PointOfSales.Core.Infraestructure
             .AddJsonFile("appsettings.Development.json", optional: true, reloadOnChange: true)
             .Build();
         }
+
+
+        public string  GetConnectionString()
+        {
+            var config = Config.GetSection("DatabaseConfig");
+            var connectionString = config[config["DBKEY"]];
+            return connectionString;
+        }
     }
 
 }

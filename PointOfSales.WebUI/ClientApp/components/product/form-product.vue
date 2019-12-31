@@ -46,7 +46,7 @@
             <div class="form-group">
               <label for="Category">Category </label>
               
-              <form-select urlapi="category" v-model="form.categoryId"  ></form-select>
+              <form-select urlapi="category" v-model="form.categoryId" :selected="form.categoryId"  ></form-select>
 
               <b-button class="btn btn-light" v-b-modal.form-category>
                 <icon icon="plus" class="mr-2 menu-icon" />
@@ -63,7 +63,7 @@
             <div class="form-group">
               <label for="ProductModifier">Product Modifier </label>
            
-              <form-select urlapi="modifier" v-model="form.modifierIds"  ></form-select>
+              <form-select urlapi="modifier" v-model="form.modifierIds" :is-multiple="true"  :selected="form.modifierIds"></form-select>
 
               <b-button class="btn btn-light" v-b-modal.form-modifier>
                 <icon icon="plus" class="mr-2 menu-icon" />

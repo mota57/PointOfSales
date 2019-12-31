@@ -8,16 +8,20 @@ Vue.use(Vuex)
 // TYPES
 const MAIN_SET_COUNTER = 'MAIN_SET_COUNTER'
 
-// STATE
-const state = {
-  counter: 1,
-  orderItemList: [],
-  discountOfOrder:
-  {
+function discountOfOrderFactory(){
+  return {
     discountId: '',
     customDiscountAmount: '',
     disscountType: 'none',
   }
+}
+
+// STATE
+const state = {
+  counter: 1,
+  orderItemList: [],
+  discountOfOrder: discountOfOrderFactory()
+ 
 }
 
 // MUTATIONS
@@ -26,7 +30,8 @@ const mutations = {
     state.counter = obj.counter
   },
   setOrderItemList (state, item) {
-    let orderItem = MerchantHelper.findOrderItemById(state, item.id);
+    console.log(JSON.stringify(item, null, 2));
+    let orderItem = MerchantHelper.findOrderItemById(state, item.productId);
     if (!orderItem) {
       orderItem = { discountId:-1, quantity: 1, customDiscountAmount:0, disscountType: null, ...item };
       //console.log("setOrderItemList::" + JSON.stringify(orderItem));
@@ -41,10 +46,11 @@ const mutations = {
     state.discountOfOrder.disscountType        =  payload.disscountType;
   },
   setOrderItemConfiguration (state, payload){
-      var orderItem = MerchantHelper.findOrderItemById(state, payload.id);
+      var orderItem = MerchantHelper.findOrderItemById(state, payload.productId);
       Object.assign(orderItem, payload);
   },
   clearOrderItemList (state) {
+    state.discountOfOrder = discountOfOrderFactory();
     state.orderItemList = [];
   },
 }
@@ -63,8 +69,8 @@ const actions = ({
 
 
 const MerchantHelper = {
-  findOrderItemById(state, id){
-    return _.find(state.orderItemList, l => l.id == id);
+  findOrderItemById(state, productId){
+    return _.find(state.orderItemList, l => l.productId == productId);
   },
   getTotalOrderItemCharge(state) {
     let total = 0;

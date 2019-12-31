@@ -14,7 +14,7 @@ namespace TablePlugin
             config.ConnectionString = TablePluginOptions.SQLConnectionName;
             config.Provider = TablePluginOptions.DatabaseProvider;
 
-            var paginator = new QueryPaginatorBasic();
+            var paginator = new QueryPaginatorBasic(new BasicFilterByColumnStrategy());
             var result = await paginator.GetAsync(config, parameter);
             return result;
         }
@@ -25,7 +25,7 @@ namespace TablePlugin
             config.ConnectionString = TablePluginOptions.SQLConnectionName;
             config.Provider = TablePluginOptions.DatabaseProvider;
 
-            var paginator = new QueryPaginatorBasic();
+            var paginator = new QueryPaginatorBasic(new BasicFilterByColumnStrategy());
             var result = await paginator.GetAsync<T>(config, parameter);
             return result;
         }

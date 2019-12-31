@@ -38,10 +38,10 @@ namespace TablePlugin.Test
             
             TestHandler.Connection = Connection;
 
-            QueryPersonInfo = new QueryConfig ("Person",
-                        new QueryField ("FirstName"),
-                        new QueryField ("LastName"),
-                        new QueryField (name: "Age", type: "integer"));
+            QueryPersonInfo = new QueryConfig("Person",
+                        new QueryField("FirstName"),
+                        new QueryField("LastName"),
+                        new QueryField(name: "Age", type: typeof(int)));
 
 
             QueryPersonInfo.Provider = DatabaseProvider.SQLite;
@@ -280,7 +280,7 @@ namespace TablePlugin.Test
             return new RequestTableParameter () {
                 IsFilterByColumn = true,
                     OrderBy = null,
-                    Query = JsonConvert.SerializeObject (new QueryFilter[] { new QueryFilter (name, @operator, value) }),
+                    Query = new QueryFilter[] { new QueryFilter (name, @operator, value) },
                     Page = page,
                     PerPage = 10,
             };

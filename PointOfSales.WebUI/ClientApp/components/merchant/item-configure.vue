@@ -39,7 +39,7 @@
 
           <div class="form-group" v-if="disscountType == 'system'">
             <label for="Discount">System discount</label>
-            <form-select urlapi="discount" propkey="id" v-model="discountId" :selected="discountId" ></form-select>
+            <form-select urlapi="discount" propkey="id" v-model="discountId" :selected="discountId"></form-select>
 
             <!-- <template v-if="errList && errList.Disscount">
               <p
@@ -79,9 +79,7 @@
       </div>
     </div>
 
-    <pre>
-            {{orderitem}}
-        </pre>
+    <!-- <pre>{{orderitem}}</pre> -->
   </div>
 </template>
 
@@ -140,7 +138,7 @@ export default {
       if (this.validateForm()) {
         let propsToUpdate = {
           quantity: Number.parseInt(this.quantity),
-          id: this.orderitem.id,
+          productId: this.orderitem.productId,
           discountId: this.disscountType == "system" ? this.discountId : null,
           customDiscountAmount: this.disscountType == "custom" ? this.customDiscountAmount : null,
           startDate: this.orderitem.isProductForRent ? this.dateRange.startDate : null,

@@ -94,7 +94,7 @@ namespace TablePlugin.Core
         private QueryConfig MapToQueryConfig(QueryRecordDocument queryRecord)
         {
             var queryFields = queryRecord.QueryFieldDocuments
-           .Select(q => new QueryField(q.Name, q.IsFilter, q.IsSort, q.Display, q.FriendlyName, q.Type))
+           .Select(q => new QueryField(q.Name, q.IsFilter, q.IsSort, q.Display, q.FriendlyName, null))
            .ToArray();
 
             var config = new QueryConfig(queryRecord.TableName, queryFields);

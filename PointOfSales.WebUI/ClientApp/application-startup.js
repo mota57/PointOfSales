@@ -4,14 +4,14 @@
 
 
 import { FontAwesomeIcon } from './icons'
-import jQuery from 'jquery'
+// import jQuery from 'jquery'
 import vSelect from 'vue-select'
 import { ServerTable, ClientTable, Event } from 'vue-tables-2';
 import Toasted from '@gitlab/vue-toasted';
 import BootstrapVue from 'bootstrap-vue'
 import VueNumeric from 'vue-numeric'
 import DateRangePicker from 'vue2-daterange-picker'
-import moment from 'moment'
+// import moment from 'moment'
 
 
 /** custom */
@@ -65,8 +65,9 @@ export default {
     },
     RegisterGlobals(axios){
         // Registration of global window variables 
-        window.$ = jQuery
+        // window.$ = jQuery
         window.axios = axios;
+        // window.moment = moment;
         return this;
     },
     UseCustomFilers(Vue){

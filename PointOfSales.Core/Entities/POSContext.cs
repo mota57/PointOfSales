@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using EFTriggerHelper;
+using EFTriggerHelper.Extensions;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using System.Collections.Generic;
-using System.Linq;
+using PointOfSales.Infraestructure.TriggerClasses;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -35,9 +36,9 @@ namespace PointOfSales.Core.Entities
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Category>().HasData(
-                new Category() { Id=1, Name = "Category 1"}
-                ,new Category() { Id =2, Name = "Category 2"}
-                ,new Category() { Id=3, Name = "Category 3"}
+                new Category() { Id=1, Name = "Category 1", CreateDate = DateTime.Now, ModifiedDate = DateTime.Now}
+                ,new Category() { Id =2, Name = "Category 2", CreateDate = DateTime.Now, ModifiedDate = DateTime.Now }
+                ,new Category() { Id=3, Name = "Category 3", CreateDate = DateTime.Now, ModifiedDate = DateTime.Now }
                 );
 
             #region productModifier
@@ -59,32 +60,31 @@ namespace PointOfSales.Core.Entities
             base.OnModelCreating(modelBuilder);
         }
 
-        //DbContextTriggerHelper helper = new DbContextTriggerHelper((typeof().Assembly);
+        private DbContextTriggerHelper helper = new DbContextTriggerHelper(typeof(OrderTrigger).Assembly);
 
         public override int SaveChanges()
         {
-            //helper.BeforeCreate(this);
-            return base.SaveChanges();
+            Func<int> handler = () => base.SaveChanges();
+            return this.EFTriggerHelperSaveChanges(handler, helper);
         }
 
         public override int SaveChanges(bool acceptAllChangesOnSuccess)
         {
-            //helper.BeforeCreate(this);
-            return base.SaveChanges(acceptAllChangesOnSuccess);
+            Func<int> handler = () => base.SaveChanges(acceptAllChangesOnSuccess);
+            return this.EFTriggerHelperSaveChanges(handler, helper);
         }
 
-        //public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default(CancellationToken))
-        //{
-        //    await helper.BeforeCreateAsync(this);
-        //    return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
-        //}
+        public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            Func<Task<int>> handler = async () => await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+            return await this.EFTriggerHelperSaveChangesAsync(handler, helper);
+        }
 
-        //public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
-        //{
-        //    await helper.BeforeCreateAsync(this);
-        //    return await base.SaveChangesAsync(cancellationToken);
-        //}
-
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
+        {
+            Func<Task<int>> handler = async () => await base.SaveChangesAsync(cancellationToken);
+            return await this.EFTriggerHelperSaveChangesAsync(handler, helper);
+        }
     }
 
 

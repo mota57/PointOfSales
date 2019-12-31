@@ -3,11 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using PointOfSales.Core.DTO;
 using PointOfSales.Core.Entities;
-using System.Threading.Tasks;
 using PointOfSales.Core.Infraestructure;
 using System;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+using System.Threading.Tasks;
 using TablePlugin;
 using TablePlugin.Core;
 
@@ -15,7 +13,7 @@ namespace PointOfSales.WebUI.Controllers
 {
 
     [Route("api/[controller]")]
-    public class MerchantController  : Controller 
+    public class MerchantController : Controller
     {
         private readonly POSContext _context;
         private readonly ILogger<MerchantController> _logger;
@@ -45,18 +43,19 @@ namespace PointOfSales.WebUI.Controllers
         [HttpPost("[action]/")]
         public async Task<ActionResult> ProductPosList([FromBody] RequestTableParameter parameter)
         {
-            
+
             try
             {
                 //var productConfig = new CustomQueryConfig("v_product_merchant",
-                //        new QueryField(nameof(Product.Id), display:false),
-                //        new QueryField(nameof(Product.Name)),
-                //        new QueryField(nameof(Product.Price)),
-                //        new QueryField(nameof(Product.Note), sort:false),
-                //        new QueryField("CategoryName"),
-                //        new QueryField(nameof(Product.MainImage), filter:false, sort:false),
-                //        new QueryField(nameof(Product.IsProductForRent))
+                //        new QueryField("productId"), display:false),
+                //        new QueryField("name")),
+                //        new QueryField("price"),
+                //        new QueryField("note", sort:false),
+                //        new QueryField("categoryName"),
+                //        new QueryField("mainImage", filter:false, sort:false),
+                //        new QueryField("isProductForRent))
                 //  );
+
 
                 /*
                  */
@@ -70,7 +69,8 @@ namespace PointOfSales.WebUI.Controllers
                 var result = await TablePluginQueryPaginator.Build("v_product_merchant1", parameter);
                 return Ok(result);
 
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 return BadRequest(new ErrorResponse(ex));
             }
@@ -103,9 +103,10 @@ namespace PointOfSales.WebUI.Controllers
             {
                 _context.Add(order);
                 _context.SaveChanges();
+                return Ok();
             }
-
             return BadRequest(ModelState);
+
         }
 
     }

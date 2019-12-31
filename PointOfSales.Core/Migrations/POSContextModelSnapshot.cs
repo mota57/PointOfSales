@@ -180,9 +180,15 @@ namespace PointOfSales.Core.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<DateTime>("CreateDate");
+
+                    b.Property<DateTime>("ModifiedDate");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50);
+
+                    b.Property<bool>("SoftDetelete");
 
                     b.HasKey("Id");
 
@@ -192,17 +198,26 @@ namespace PointOfSales.Core.Migrations
                         new
                         {
                             Id = 1,
-                            Name = "Category 1"
+                            CreateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Category 1",
+                            SoftDetelete = false
                         },
                         new
                         {
                             Id = 2,
-                            Name = "Category 2"
+                            CreateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Category 2",
+                            SoftDetelete = false
                         },
                         new
                         {
                             Id = 3,
-                            Name = "Category 3"
+                            CreateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Category 3",
+                            SoftDetelete = false
                         });
                 });
 
@@ -213,9 +228,15 @@ namespace PointOfSales.Core.Migrations
 
                     b.Property<decimal>("Amount");
 
+                    b.Property<DateTime>("CreateDate");
+
+                    b.Property<DateTime>("ModifiedDate");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50);
+
+                    b.Property<bool>("SoftDetelete");
 
                     b.HasKey("Id");
 
@@ -227,6 +248,10 @@ namespace PointOfSales.Core.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<DateTime>("CreateDate");
+
+                    b.Property<DateTime>("ModifiedDate");
+
                     b.Property<int>("ModifierId");
 
                     b.Property<string>("Name")
@@ -234,6 +259,8 @@ namespace PointOfSales.Core.Migrations
                         .HasMaxLength(50);
 
                     b.Property<decimal>("Price");
+
+                    b.Property<bool>("SoftDetelete");
 
                     b.HasKey("Id");
 
@@ -247,9 +274,15 @@ namespace PointOfSales.Core.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<DateTime>("CreateDate");
+
+                    b.Property<DateTime>("ModifiedDate");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50);
+
+                    b.Property<bool>("SoftDetelete");
 
                     b.HasKey("Id");
 
@@ -339,6 +372,8 @@ namespace PointOfSales.Core.Migrations
 
                     b.Property<int?>("CategoryId");
 
+                    b.Property<DateTime>("CreateDate");
+
                     b.Property<decimal?>("DiscountAmount");
 
                     b.Property<int?>("DiscountId");
@@ -348,6 +383,8 @@ namespace PointOfSales.Core.Migrations
                     b.Property<bool>("IsProductForRent");
 
                     b.Property<string>("MainImage");
+
+                    b.Property<DateTime>("ModifiedDate");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -359,6 +396,8 @@ namespace PointOfSales.Core.Migrations
 
                     b.Property<string>("ProductCode")
                         .HasMaxLength(50);
+
+                    b.Property<bool>("SoftDetelete");
 
                     b.Property<int?>("TaxId");
 
@@ -397,9 +436,15 @@ namespace PointOfSales.Core.Migrations
 
                     b.Property<decimal>("Amount");
 
+                    b.Property<DateTime>("CreateDate");
+
+                    b.Property<DateTime>("ModifiedDate");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50);
+
+                    b.Property<bool>("SoftDetelete");
 
                     b.HasKey("Id");
 
@@ -411,9 +456,15 @@ namespace PointOfSales.Core.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<DateTime>("CreateDate");
+
+                    b.Property<DateTime>("ModifiedDate");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50);
+
+                    b.Property<bool>("SoftDetelete");
 
                     b.HasKey("Id");
 

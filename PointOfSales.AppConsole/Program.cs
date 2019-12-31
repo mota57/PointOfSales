@@ -38,17 +38,17 @@ namespace ConsoleApp1
             Console.ReadLine();
         }
 
-        //public static void example_run_example_json()
-        //{
+        public static void example_run_example_json()
+        {
 
-        //    var obj = new
-        //    {
-        //        username = "andrey",
-        //        log = new JRaw("'function() { return function(arg1) { console.log(arg1) }'")
-        //    };
-        //    Log(JsonConvert.SerializeObject(obj));
+            var obj = new
+            {
+                username = "andrey",
+                log = new JRaw("'function() { return function(arg1) { console.log(arg1) }'")
+            };
+            Log(JsonConvert.SerializeObject(obj));
 
-        //}
+        }
         public static void RunConfiguration(){
             ConfigurationLoaderHelper loader = new ConfigurationLoaderHelper();
       
@@ -75,77 +75,6 @@ namespace ConsoleApp1
             var result = q.Get();
 
             Console.WriteLine(JsonConvert.SerializeObject(result));
-
-        }
-
-        public static void Example_Pagination()
-        {
-            var queryConfig = new QueryConfig("v_tracks",
-                    new QueryField("TrackId"),
-                    new QueryField("Name"),
-                    new QueryField("album"),
-                    new QueryField("media"),
-                    new QueryField("geners"));
-
-            queryConfig.ConnectionString = @"Data Source=C:\Users\hmota\Documents\RESOURCES\Projects\PointOfSales\PointOfSales.AppConsole\chinook.db";
-
-            queryConfig.Provider = DatabaseProvider.SQLite;
-
-            var queryParameter = new RequestTableParameter() { Page = 1, Query = null };
-
-            Func<string, string> ToJObjectString = (string input) => {
-                if (! string.IsNullOrEmpty(input))
-                {
-                    JObject obj = new JObject();
-                    foreach (var item in input.Split(";"))
-                    {
-                        var keyValue = item.Split("=");
-                        obj[keyValue[0]] = keyValue[1];
-                    }
-                    string result = JsonConvert.SerializeObject(obj);
-                    Console.WriteLine(JsonConvert.SerializeObject(obj, Formatting.Indented));
-                    return result;
-                }
-                return null;
-            };
-
-            Func<string, PropertyOrder[]> ToPropertyOrder = (string input) =>
-            {
-
-                ICollection<PropertyOrder> propertyOrders = new List<PropertyOrder>();
-            if (!string.IsNullOrEmpty(input))
-               {
-                   JObject jobj =  JsonConvert.DeserializeObject<JObject>(input);
-                   foreach(var jprop in jobj.Properties())
-                   {
-                       if (!jprop.HasValues) continue;
-                       OrderType type = (OrderType)Enum.Parse(typeof(OrderType), jprop.Value.ToString());
-                       propertyOrders.Add(new PropertyOrder(jprop.Name, type));
-                   }
-               };
-               return propertyOrders.ToArray();
-           };
-            
-            while (true)
-            {
-
-                Console.WriteLine("enter page");
-                queryParameter.Page = int.Parse(Console.ReadLine());
-
-                Console.WriteLine("enter where clause");
-                queryParameter.Query = ToJObjectString(Console.ReadLine());
-             
-                Console.WriteLine("enter order by");
-                queryParameter.OrderBy = ToPropertyOrder(ToJObjectString(Console.ReadLine()));
-
-                Task.Run(async () =>
-                {
-                    QueryPaginatorBasic reader = new QueryPaginatorBasic();
-                    var records = await reader.GetAsync(queryConfig, queryParameter);
-                    Console.WriteLine(JsonConvert.SerializeObject(records, Formatting.Indented));
-                    Console.WriteLine("=======================================================================\n\n");
-                }).Wait();
-            }
 
         }
     }

@@ -1,6 +1,6 @@
 <template>
 <div style="margin-top: 5rem;">
-    <sidebar-menu :menu="menu" />
+    <sidebar-menu :menu="menu" :collapsed="true"/>
 
 </div>
     <!-- <div class="main-nav" style="margin-top: 5rem;">
@@ -51,12 +51,8 @@
                         title: 'POS APP',
                         hiddenOnCollapse: true
                     },
-                    {
-                        href: '/',
-                        title: 'Home',
-                        icon: 'fa fa-user',
-                        child: routes.filter(e=> e.hidden == false && e.name != 'home').map(el => toSideBarMenuModel(el))
-                    },
+                    ...routes.filter(e=> e.hidden == false).map(el => toSideBarMenuModel(el))
+                    
                 ]
         }
       },

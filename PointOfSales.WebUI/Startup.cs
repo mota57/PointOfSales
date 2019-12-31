@@ -33,7 +33,6 @@ namespace PointOfSales.WebUI
 
             services.AddIdentityFeature();
 
-
             // Add framework services.
             services.AddMvc()
                 .AddRazorPagesOptions(options =>

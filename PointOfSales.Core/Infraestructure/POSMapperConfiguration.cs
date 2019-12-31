@@ -10,6 +10,7 @@ namespace PointOfSales.Core.Infraestructure
         {
             CreateMap<OrderForPayDTO, Order>();
             CreateMap<OrderDetailForPayDTO, OrderDetail>();
+
             CreateMap<PaymentOrderForPayDTO, PaymentOrder>();
             ProductMapper.Configure(this);
           

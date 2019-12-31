@@ -53,7 +53,10 @@ namespace PointOfSales.Core.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(maxLength: 50, nullable: false)
+                    Name = table.Column<string>(maxLength: 50, nullable: false),
+                    SoftDetelete = table.Column<bool>(nullable: false),
+                    CreateDate = table.Column<DateTime>(nullable: false),
+                    ModifiedDate = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -67,6 +70,9 @@ namespace PointOfSales.Core.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(maxLength: 50, nullable: false),
+                    SoftDetelete = table.Column<bool>(nullable: false),
+                    CreateDate = table.Column<DateTime>(nullable: false),
+                    ModifiedDate = table.Column<DateTime>(nullable: false),
                     Amount = table.Column<decimal>(nullable: false)
                 },
                 constraints: table =>
@@ -80,7 +86,10 @@ namespace PointOfSales.Core.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(maxLength: 50, nullable: false)
+                    Name = table.Column<string>(maxLength: 50, nullable: false),
+                    SoftDetelete = table.Column<bool>(nullable: false),
+                    CreateDate = table.Column<DateTime>(nullable: false),
+                    ModifiedDate = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -94,6 +103,9 @@ namespace PointOfSales.Core.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(maxLength: 50, nullable: false),
+                    SoftDetelete = table.Column<bool>(nullable: false),
+                    CreateDate = table.Column<DateTime>(nullable: false),
+                    ModifiedDate = table.Column<DateTime>(nullable: false),
                     Amount = table.Column<decimal>(nullable: false)
                 },
                 constraints: table =>
@@ -107,7 +119,10 @@ namespace PointOfSales.Core.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(maxLength: 50, nullable: false)
+                    Name = table.Column<string>(maxLength: 50, nullable: false),
+                    SoftDetelete = table.Column<bool>(nullable: false),
+                    CreateDate = table.Column<DateTime>(nullable: false),
+                    ModifiedDate = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -251,6 +266,9 @@ namespace PointOfSales.Core.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(maxLength: 50, nullable: false),
+                    SoftDetelete = table.Column<bool>(nullable: false),
+                    CreateDate = table.Column<DateTime>(nullable: false),
+                    ModifiedDate = table.Column<DateTime>(nullable: false),
                     ModifierId = table.Column<int>(nullable: false),
                     Price = table.Column<decimal>(nullable: false)
                 },
@@ -272,6 +290,9 @@ namespace PointOfSales.Core.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(maxLength: 50, nullable: false),
+                    SoftDetelete = table.Column<bool>(nullable: false),
+                    CreateDate = table.Column<DateTime>(nullable: false),
+                    ModifiedDate = table.Column<DateTime>(nullable: false),
                     ProductCode = table.Column<string>(maxLength: 50, nullable: true),
                     Price = table.Column<decimal>(nullable: false),
                     MainImage = table.Column<string>(nullable: true),
@@ -399,18 +420,18 @@ namespace PointOfSales.Core.Migrations
 
             migrationBuilder.InsertData(
                 table: "Category",
-                columns: new[] { "Id", "Name" },
-                values: new object[] { 1, "Category 1" });
+                columns: new[] { "Id", "CreateDate", "ModifiedDate", "Name", "SoftDetelete" },
+                values: new object[] { 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Category 1", false });
 
             migrationBuilder.InsertData(
                 table: "Category",
-                columns: new[] { "Id", "Name" },
-                values: new object[] { 2, "Category 2" });
+                columns: new[] { "Id", "CreateDate", "ModifiedDate", "Name", "SoftDetelete" },
+                values: new object[] { 2, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Category 2", false });
 
             migrationBuilder.InsertData(
                 table: "Category",
-                columns: new[] { "Id", "Name" },
-                values: new object[] { 3, "Category 3" });
+                columns: new[] { "Id", "CreateDate", "ModifiedDate", "Name", "SoftDetelete" },
+                values: new object[] { 3, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Category 3", false });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",

@@ -18,11 +18,12 @@ namespace PointOfSales.Core.Entities
 
         [Key]
         public int Id { get; set; }
-        //public bool SoftDetelete { get; set; }
-        //public DateTime CreateDate { get; set; }
-        //public DateTime ModifiedDate { get; set; }
+        public bool SoftDetelete { get; set; }
+        public DateTime CreateDate { get; set; }
+        public DateTime ModifiedDate { get; set; }
     }
 
+  
     public class Supplier : BaseEntity
     {
         public string RNC { get; set; }

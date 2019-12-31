@@ -72,6 +72,12 @@ class discount extends BASE_URL {
   }
 }
 
+class Product2 extends BASE_URL {
+  constructor()
+   {
+     super('/Product2')
+   }
+}
 
 class modifier extends BASE_URL {
   constructor() {
@@ -84,6 +90,8 @@ class modifier extends BASE_URL {
   }
 
 }
+
+
 
 const merchant = function(){
   let _merchantUrl = new BASE_URL('/Merchant');
@@ -101,7 +109,8 @@ export default {
     product: new product(),
     modifier: new modifier(),
     merchant : merchant(),
-    discount: new discount()
+    discount: new discount(),
+    product2 : new Product2()
    
   }
 }

@@ -12,9 +12,10 @@ namespace TablePlugin
         }
 
         public static string GetDirectoryProject () {
-            string workingDirectory = Directory.GetCurrentDirectory ();
-            string projectDirectory = Directory.GetParent (workingDirectory).Parent.Parent.FullName;
-            return projectDirectory;
+
+            var parent = Directory.GetParent(Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..\\..\\..\\"))).Parent;
+            string workingDirectory = Path.Combine(parent.FullName, "TablePlugin");
+            return workingDirectory;
         }
 
     }

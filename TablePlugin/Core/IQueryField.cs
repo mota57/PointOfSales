@@ -1,3 +1,5 @@
+using System;
+
 namespace TablePlugin.Core
 {
     public interface IQueryField
@@ -7,7 +9,7 @@ namespace TablePlugin.Core
         bool IsFilter { get; set; }
         bool IsSort { get; set; }
         bool Display { get; set; }
-        string Type { get; set; }
+        Type Type { get; set; }
         
     }
 

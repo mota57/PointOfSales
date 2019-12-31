@@ -43,9 +43,8 @@ namespace TablePlugin.Core
 
         protected static internal Stream IndexStream()
         {
-            //return System.IO.File.OpenRead(@"C:\Users\hpnotebook\Documents\Visual Studio 2017\Projects\PointOfSales\TablePlugin\index.html");
-            return System.IO.File.OpenRead(@"C:\Users\hmota\Desktop\GLOBAL CRM\RESOURCES\Projects\PointOfSales\TablePlugin\index.html");
-            //return typeof(QueryField).GetType().Assembly.GetFile("TablePlugin.index.html");
+            var path = UtilHelper.GetFilePath("index.html");
+            return System.IO.File.OpenRead(path);
             //return typeof(QueryField).GetType().Assembly.GetManifestResourceStream("TablePlugin.index.html");
         }
     }

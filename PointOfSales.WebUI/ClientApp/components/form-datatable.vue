@@ -49,7 +49,7 @@
               <icon icon="plus" class="mr-2 menu-icon" /> Add
             </b-button>
 
-            <!--<b-button  @click="$bvModal.show(modalFilterId)"> <icon icon="filter" class="mr-2 menu-icon" /> </b-button>-->
+            <b-button  @click="$bvModal.show(modalFilterId)"> <icon icon="filter" class="mr-2 menu-icon" /> </b-button>
 
             <slot name="sectionBeforeTable"></slot>
 
@@ -61,6 +61,30 @@
             <slot name="sectionAction" :row="props.row"></slot>
           </div>
           <!--/ column actions -->
+        <template v-if="activeCustomFilters">
+          <template v-for="(col, index) in columNames" >
+            <div :slot="'filter__'+col" :key="index">
+              <div>
+                <input type="text " style="width: 7.5rem;height: 1.5rem;"   @input="debounceOnSearch($event, col, queryFields[index])"  >
+                <i class="fa fa-filter"></i> 
+              </div>
+              <div class="">
+                <select v-model="queryFields[index].operator">
+                  <option >Contains</option>
+                  <option value="StartWith">Start With</option>
+                  <option value="EndWith">End With</option>
+                  <option value="Equals">Equals</option>
+                  <option value="NotEquals">Not equal to</option>
+                  <option value="LessThan">Less than</option>
+                  <option value="LessOrEqual">Less or Equal</option> 
+                  <option value="GreaterThan">Greater than</option>
+                  <option value="GreaterOrEqual">Greater or Equal</option>
+                </select>
+              </div>
+            </div>
+          </template>
+        </template>
+
         </v-server-table>
       </div>
       <!-- /TABLE-->
@@ -69,6 +93,14 @@
         <div class="card col-12">
           <div class="card-body">
             <h5 class="card-title">Create filter</h5>
+
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Search Name</label>
+              <div class="col-sm-10">
+                <input type="text" placeholder="unique search name" class="form-control"/> 
+              </div>
+            </div>
+
 
             <div class="form-group row">
               <label class="col-sm-2 col-form-label">Field</label>
@@ -101,8 +133,9 @@
                 <input type="text" class="form-control" />
               </div>
             </div>
-
-            <a href="#" class="btn btn-primary">Go somewhere</a>
+  
+            <a href="#" class="btn btn-default" @click="$bvModal.hide(modalFilterId)">Cancel</a>
+            <a href="#" class="btn btn-primary">Save</a>
           </div>
         </div>
         </b-modal>
@@ -112,6 +145,13 @@
   </div>
 </template>
 <script>
+
+  import { mapGetters } from 'vuex'
+  import { QueryFilterStore, QueryFilter } from './QueryFilterStore'
+
+  let queryFilter = new QueryFilterStore();
+
+  
 
   export default {
     props: ['name', 'eventpostfix', 'title'],
@@ -126,6 +166,19 @@
         if (this.currentRow) {
           this.eventBus.$emit(`loadForm::${this.eventpostfix}`, this.currentRow);
         }
+      },
+      beforeDestroy() {
+        this.eventBus.$off(`reloadTable::${this.eventpostfix}`)
+      },
+      debounceOnSearch(event, colName, queryMeta){
+        let vm = this;
+        clearTimeout(this.debounce);
+        this.debounce = setTimeout(()=>{ 
+          queryMeta.value = event.target.value;
+          vm.$refs.tableObj.setFilter(null);
+          // vm.$store.commit(`${this.name}/SET_FILTER`, dataToSend);
+          // this.$store.commit(`${this.name}/SET_CUSTOM_FILTER`, {filter:'Query', value:queryFilter.values()});
+        },350)
       },
       reloadTable() {
         this.$refs.tableObj.refresh();
@@ -152,16 +205,17 @@
           })
           .then(() => { vm.isAjax = false; })
       },
+
       //to call custom fitler 
       //emitName: function() {
       //  this.$store.commit('${this.name}/SET_FILTER', { '<property_name>': <value> });
       //}
     },
-    beforeDestroy() {
-      this.eventBus.$off(`reloadTable::${this.eventpostfix}`)
-    },
+    
     async created() {
       var vm = this;
+      console.log(this);
+
       vm.modalFormId = 'modal-form-' + vm.name;
       vm.modalFormDelete = 'modal-form-delete-' + vm.name;
       vm.modalFilterId = 'modal-filter-' + vm.name;
@@ -180,12 +234,32 @@
         this.isComplete = true;
         let data = response.data;
 
-        //todo move .map and. filter  to API CONTROLLER 
         let fieldsToFilter = data.fields.filter(_ => _.filter).map(_ => _.name);
+        let dateColumns = data.fields.filter(_ => _.filter && _.type == "DateTime").map(_ => _.name);
+
+        for(let index in fieldsToFilter) {
+          this.queryFields.push(new  QueryFilter(fieldsToFilter[index], null, null));
+        }
+        
         this.columns = data.fields.map(_ => _.name);
         this.columns.push('Edit');
+
+        this.columNames = data.fields.map(_ => _.name);
+        console.log('date columns' +  JSON.stringify(dateColumns))
+        this.options.dateColumns = dateColumns;
         this.options.filterable = fieldsToFilter; // set the default input text filter of the api
-        this.options.customFilters = fieldsToFilter;  // allow fields to be filter
+        if(this.activeCustomFilters)
+        {
+          this.options.filterable = [];
+          this.options.requestAdapter = function(data) {
+            data.query = JSON.stringify(vm.queryFields);
+            console.log('data to send' + JSON.stringify(vm.queryFields, null, 2));
+            return data;
+          }
+       }  
+      this.options.resizableColumns = true;
+
+      
 
       /*
        # create dropdown for pick list
@@ -218,6 +292,7 @@
     },
     data() {
       return {
+
         modalFormId:'',
         modalFormDelete:'',
         modalFilterId:'',
@@ -227,13 +302,18 @@
         isAjax: false,
         columns: [], // Id, name
         options: {
-          customFilters: [],
           filterByColumn: true,
-        }
+        },
+        activeCustomFilters: false,
+        queryFields:[]
       }
     },
   }
 </script>
 
 <style>
+table {
+    font-size: 12px;
+
+}
 </style>

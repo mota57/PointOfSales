@@ -13,7 +13,7 @@
 
           <div class="form-group" v-if="discountOfOrder.disscountType == 'system'">
             <label for="Discount">System discount</label>
-            <form-select urlapi="discount" v-model="discountId"></form-select>
+            <form-select urlapi="discount" v-model="discountOfOrder.discountId" :selected="discountOfOrder.discountId"></form-select>
           </div>
 
           <div class="form-group" v-if="discountOfOrder.disscountType == 'custom'">
@@ -24,7 +24,7 @@
               separator=","
               v-bind:min="0"
               v-bind:max="70"
-              v-model="customDiscountAmount"
+              v-model="discountOfOrder.customDiscountAmount"
             ></vue-numeric>
 
           </div>

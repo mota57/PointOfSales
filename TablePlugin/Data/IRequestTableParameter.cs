@@ -8,11 +8,11 @@ namespace TablePlugin.Data
         int PerPage { get; set; }
         PropertyOrder[] OrderBy { get; set; }
         int Page { get; set; }
-        string Query { get; set; } // QueryFilter[] {Name, Operator, Value}
+        ICollection<QueryFilter> Query { get; set; } // QueryFilter[] {Name, Operator, Value}
         bool IsFilterByColumn { get; set; }
     }
 
-   
+  
     public class QueryFilter
     {
         public QueryFilter(){
@@ -26,7 +26,7 @@ namespace TablePlugin.Data
         }
 
         public string Name {get;set;}
-        public OperatorType Operator {get;set;} 
+        public OperatorType? Operator {get;set;} 
        
         public string DateLogicalOperator {get;set;}
         public object Value {get;set;}
