@@ -2,17 +2,13 @@
 using Newtonsoft.Json.Linq;
 using SqlKata;
 using SqlKata.Execution;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using TablePlugin.Data;
 
 namespace TablePlugin.Core
 {
 
-    public partial class QueryPaginatorBasic
+    public class QueryPaginatorBasic
     {
 
         public IFilterByColumnStrategy FilterByColumnStrategy { get; set; } = new BasicFilterByColumnStrategy();
