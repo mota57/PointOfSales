@@ -10,9 +10,9 @@ namespace TablePlugin.Core
 
     public class VueTable2RequestParameterAdapter : IRequestParameter
     {
-        private readonly VueTable2RequestParameterModel vueTable;
+        private readonly VueTable2RequestParameter vueTable;
 
-        public VueTable2RequestParameterAdapter(VueTable2RequestParameterModel vueTable)
+        public VueTable2RequestParameterAdapter(VueTable2RequestParameter vueTable)
         {
             this.vueTable = vueTable;
         }

@@ -1,6 +1,6 @@
 ﻿namespace TablePlugin.Core
 {
-    public class VueTable2RequestParameterModel
+    public class VueTable2RequestParameter
     {
         public string Query { get; set; }
         public int Limit { get; set; }

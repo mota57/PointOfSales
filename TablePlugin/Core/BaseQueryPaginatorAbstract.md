@@ -25,9 +25,9 @@ namespace TablePlugin.Core
          ///implement it differently.
      }
 
-     public abstract class QueryPaginatorAbstract : IQueryPaginator
+     public abstract class BaseQueryPaginatorAbstract : IQueryPaginator
      {
-         public QueryPaginatorAbstract(QueryConfig queryConfig)
+         public BaseQueryPaginatorAbstract(QueryConfig queryConfig)
          {
              this.QueryConfig = queryConfig;
          }

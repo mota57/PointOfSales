@@ -1,13 +1,10 @@
-﻿using Microsoft.Data.Sqlite;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SqlKata;
-using SqlKata.Compilers;
 using SqlKata.Execution;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using TablePlugin.Data;
@@ -15,7 +12,7 @@ using TablePlugin.Data;
 namespace TablePlugin.Core
 {
 
-    public class QueryPaginatorBasic
+    public partial class QueryPaginatorBasic
     {
 
         public IFilterByColumnStrategy FilterByColumnStrategy { get; set; } = new BasicFilterByColumnStrategy();
@@ -58,7 +55,7 @@ namespace TablePlugin.Core
 
             Query query = queryConfig.Query.Clone();
 
-            QueryFactory db = QueryFactoryBuilder.Build(queryConfig);
+            QueryFactory db = QueryFactorySqlKata.Build(queryConfig);
 
             ProcessQuery(query, queryConfig, parameter);
 
@@ -76,7 +73,7 @@ namespace TablePlugin.Core
         {
             Query query = queryConfig.Query.Clone();
 
-            QueryFactory db = QueryFactoryBuilder.Build(queryConfig);
+            QueryFactory db = QueryFactorySqlKata.Build(queryConfig);
 
             ProcessQuery(query, queryConfig, parameter);
 
@@ -158,44 +155,6 @@ namespace TablePlugin.Core
         {
             if (!config.Fields.Where(f => f.IsFilter).Any(p => p.Name.EqualIgnoreCase(prop)))
                 throw new ArgumentException($"field name {prop} doesn't exists");
-        }
-
-
-        protected internal static class QueryFactoryBuilder
-        {
-            public static QueryFactory Build(QueryConfig queryConfig)
-            {
-                return Build(queryConfig.Provider, queryConfig.ConnectionString);
-            }
-
-            public static QueryFactory Build(DatabaseProvider provider = DatabaseProvider.SQLite, string connectionString = null)
-            {
-                System.Data.IDbConnection connection = null;
-                Compiler compiler = null;
-
-                switch (provider)
-                {
-                    case DatabaseProvider.SQLite:
-
-                        compiler = new SqliteCompiler();
-                        connection = new SqliteConnection(connectionString);
-                        break;
-                    case DatabaseProvider.SQLServer:
-                        compiler = new SqlServerCompiler();
-                        connection = new SqlConnection(connectionString);
-                        break;
-                }
-                var db = new QueryFactory(connection, compiler);
-                db.Logger = compiled =>
-                {
-
-                    Console.WriteLine(compiled.RawSql);
-                    System.Diagnostics.Debug.WriteLine(compiled.ToString());
-                };
-                return db;
-
-            }
-
         }
     }
 }

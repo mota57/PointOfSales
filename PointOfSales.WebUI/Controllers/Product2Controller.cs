@@ -28,13 +28,14 @@ namespace PointOfSales.WebUI.Controllers
         /// <param name="parameters"></param>
         /// <returns></returns>
         [HttpGet("GetDatatable")]
-        public async Task<object> GetDataTable([FromQuery] VueTable2ParameterMathFish parameters)
+        public async Task<object> GetDataTable([FromQuery] VueTable2RequestParameter parameters)
         {
             productConfig.ConnectionString = GlobalVariables.Connection;
             productConfig.Provider = TablePlugin.Core.DatabaseProvider.SQLite;
 
             IRequestParameter requestTableParameter = new VueTable2RequestParameterAdapter(parameters);
             var reader = new QueryPaginatorBasic(new VueFilterByColumnStrategy());
+            //var reader = new QueryVueTable2Provider();
             var result = await reader.GetAsync(productConfig, requestTableParameter);
             return result;
         }
