@@ -1,8 +1,14 @@
 ﻿namespace TablePlugin.Core
 {
+  
     public enum DatabaseProvider
     {
         SQLServer,
-        SQLite
+        SQLite,
+        Firebird,
+        Oracle,
+        Postgres,
+        MySql
+
     }
 }

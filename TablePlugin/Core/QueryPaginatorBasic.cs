@@ -14,118 +14,16 @@ using TablePlugin.Data;
 
 namespace TablePlugin.Core
 {
-    public interface IFilterByColumnStrategy
-    {
-        void FilterByColumn(Query query, QueryConfig queryConfig, IRequestTableParameter parameter);
-    }
-
-    public class VueFilterByColumnStrategy : IFilterByColumnStrategy
-    {
-        public class VueDateValueObject
-        {
-            public DateTime Start { get; set; }
-
-            public DateTime End { get; set; }
-             
-        }
-
-        public void FilterByColumn(Query query, QueryConfig queryConfig, IRequestTableParameter parameter)
-        {
-            var queryFilters = parameter.Query;
-
-            foreach (QueryFilter prop in queryFilters)
-            {
-                if (prop.Value == null || prop.Value.ToString().IsBlank()) continue;
-
-                var name = prop.Name;
-                var value = prop.Value;
-                var propConfig = queryConfig.GetQueryFieldByName(name);
-                if (propConfig.Type == typeof(DateTime))
-                {
-                    //OnConstruction....
-                    //var date = ((JObject)value).ToObject<VueDateValueObject>();
-                    //query
-                    //    .OrWhereDate(name, ">=", date.Start.ToString("mm/dd/yyyy"))
-                        
-                    //    .OrWhereDate(name, "<=", date.End.ToString("yyyy-mm-dd"));
-                }
-                else
-                {
-                    query.OrWhereLike(name, $"%{value}%");
-                }
-            }
-        }
-    }
-
-    public class BasicFilterByColumnStrategy : IFilterByColumnStrategy
-    {
-        public void FilterByColumn(Query query, QueryConfig queryConfig, IRequestTableParameter parameter)
-        {
-
-            var queryFilters = parameter.Query;
-
-            foreach (QueryFilter prop in queryFilters)
-            {
-                if (prop.Value == null || prop.Value.ToString().IsBlank()) continue;
-                var name = prop.Name;
-                var value = prop.Value;
-
-
-                switch (prop.Operator)
-                {
-                    case OperatorType.EndWith:
-                        query.OrWhereEnds(name, value.ToString());
-                        break;
-
-                    case OperatorType.StartWith:
-                        query.OrWhereStarts(name, value.ToString());
-                        break;
-
-                    case OperatorType.Equals:
-                        query.OrWhere(name, "=", value);
-                        break;
-
-                    case OperatorType.NotEquals:
-                        query.OrWhere(name, "!=", value);
-                        break;
-
-                    case OperatorType.LessThan:
-                        query.OrWhere(name, "<", value);
-                        break;
-
-
-                    case OperatorType.LessOrEqual:
-                        query.OrWhere(name, "<=", value);
-                        break;
-
-
-                    case OperatorType.GreaterThan:
-                        query.OrWhere(name, ">", value);
-                        break;
-
-                    case OperatorType.GreaterOrEqual:
-                        query.OrWhere(name, ">=", value);
-                        break;
-
-                    //case OperatorType.DateWithoutTime:
-                    //    query.OrWhereBetween(name, prop.DateLogicalOperator, value);
-                    //    break;
-
-                    default:
-                        query.OrWhereContains(name, value.ToString());
-                        break;
-
-                }
-            }
-        }
-
-    }
 
     public class QueryPaginatorBasic
     {
 
-        public IFilterByColumnStrategy FilterByColumnStrategy { get; set; }
+        public IFilterByColumnStrategy FilterByColumnStrategy { get; set; } = new BasicFilterByColumnStrategy();
 
+        public QueryPaginatorBasic()
+        {
+
+        }
 
         public QueryPaginatorBasic(IFilterByColumnStrategy filterByColumnStrategy)
         {
@@ -155,7 +53,7 @@ namespace TablePlugin.Core
         /// <param name="queryConfig"></param>
         /// <param name="parameter"></param>
         /// <returns></returns>
-        public async Task<object> GetAsync(QueryConfig queryConfig, IRequestTableParameter parameter)
+        public async Task<object> GetAsync(QueryConfig queryConfig, IRequestParameter parameter)
         {
 
             Query query = queryConfig.Query.Clone();
@@ -174,7 +72,7 @@ namespace TablePlugin.Core
             };
         }
 
-        public async Task<DataResponse<TData>> GetAsync<TData>(QueryConfig queryConfig, IRequestTableParameter parameter)
+        public async Task<DataResponse<TData>> GetAsync<TData>(QueryConfig queryConfig, IRequestParameter parameter)
         {
             Query query = queryConfig.Query.Clone();
 
@@ -194,7 +92,7 @@ namespace TablePlugin.Core
 
 
 
-        private void ProcessQuery(Query query, QueryConfig queryConfig, IRequestTableParameter parameter)
+        private void ProcessQuery(Query query, QueryConfig queryConfig, IRequestParameter parameter)
         {
 
             PerPage = parameter.PerPage;
@@ -226,7 +124,7 @@ namespace TablePlugin.Core
         private void Paginate(Query queryBuilder, int page)
               => queryBuilder = queryBuilder.ForPage(page, PerPage);
 
-        private void Filter(Query query, QueryConfig queryConfig, IRequestTableParameter parameter)
+        private void Filter(Query query, QueryConfig queryConfig, IRequestParameter parameter)
         {
 
             if (parameter.IsFilterByColumn == false || parameter.Query == null || parameter.Query.Count() == 0) return;
@@ -245,7 +143,7 @@ namespace TablePlugin.Core
         
 
 
-        private void FilterByAllFields(Query query, QueryConfig queryConfig, IRequestTableParameter parameter)
+        private void FilterByAllFields(Query query, QueryConfig queryConfig, IRequestParameter parameter)
         {
             var value = parameter.Query;
             var fields = queryConfig.Fields.Where(p => p.IsFilter);

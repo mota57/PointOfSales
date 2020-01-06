@@ -1,5 +1,6 @@
-﻿namespace TablePlugin.Data
+﻿namespace TablePlugin.Core
 {
+
     public class PropertyOrder
     {
         public PropertyOrder()

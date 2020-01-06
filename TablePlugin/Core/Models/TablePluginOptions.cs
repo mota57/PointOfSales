@@ -4,17 +4,6 @@ using TablePlugin.Data;
 namespace TablePlugin.Core
 {
 
-    //public class PluginOptions
-    //{
-
-    //    public  DatabaseProvider DatabaseProvider { get; set; }
-
-    //    public  string SQLConnectionName { get; set; }
-
-
-    //    public  string RoutePath { get; set; } = "tableplugin";
-    //}
-
     public class TablePluginOptions
     {
 

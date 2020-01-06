@@ -66,7 +66,7 @@ namespace PointOfSales.WebUI.Controllers
                 //var paginator = new QueryPaginator();
                 //var products = await paginator.GetAsync<ProductView>(productConfig, parameter);
 
-                var result = await TablePluginQueryPaginator.Build("v_product_merchant1", parameter);
+                var result = await QueryPaginatorDbService.Build("v_product_merchant1", parameter);
                 return Ok(result);
 
             }

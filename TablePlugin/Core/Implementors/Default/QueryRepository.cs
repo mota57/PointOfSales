@@ -91,6 +91,9 @@ namespace TablePlugin.Core
             return ConfigCache[configName];
         }
 
+
+
+
         private QueryConfig MapToQueryConfig(QueryRecordDocument queryRecord)
         {
             var queryFields = queryRecord.QueryFieldDocuments

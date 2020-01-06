@@ -7,21 +7,12 @@ using TablePlugin.Data;
 
 namespace TablePlugin.Core
 {
-    
-    public class VueTableParameterMathFish
-    {
-        public string Query { get; set; }
-        public int Limit { get; set; }
-        public int Ascending { get; set; }
-        public int ByColumn { get; set; }
-        public int Page { get; set; }
-    }
-    
-    public class VueTableParameterAdapter : IRequestTableParameter
-    {
-        private readonly VueTableParameterMathFish vueTable;
 
-        public VueTableParameterAdapter(VueTableParameterMathFish vueTable)
+    public class VueTable2RequestParameterAdapter : IRequestParameter
+    {
+        private readonly VueTable2RequestParameterModel vueTable;
+
+        public VueTable2RequestParameterAdapter(VueTable2RequestParameterModel vueTable)
         {
             this.vueTable = vueTable;
         }

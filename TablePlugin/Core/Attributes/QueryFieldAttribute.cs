@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 
-namespace TablePlugin
+namespace TablePlugin.Core
 {
     public class QueryFieldAttribute : System.Attribute
     {
