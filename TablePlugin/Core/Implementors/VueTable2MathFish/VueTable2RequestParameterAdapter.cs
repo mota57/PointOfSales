@@ -8,7 +8,7 @@ using TablePlugin.Data;
 namespace TablePlugin.Core
 {
 
-    public class VueTable2RequestParameterAdapter : IRequestParameter
+    public class VueTable2RequestParameterAdapter : IRequestParameterAdapter
     {
         private readonly VueTable2RequestParameter vueTable;
 

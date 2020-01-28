@@ -13,7 +13,7 @@ namespace TablePlugin.Core
              
         }
 
-        public void FilterByColumn(Query query, QueryConfig queryConfig, IRequestParameter parameter)
+        public void FilterByColumn(Query query, QueryConfig queryConfig, IRequestParameterAdapter parameter)
         {
             var queryFilters = parameter.Query;
 

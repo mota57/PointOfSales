@@ -3,7 +3,7 @@ using TablePlugin.Data;
 
 namespace TablePlugin.Core
 {
-    public class RequestTableParameter : IRequestParameter
+    public class RequestTableParameter : IRequestParameterAdapter
     {
         public ICollection<QueryFilter> Query { get; set; }
         public int Page { get; set; } = 1;

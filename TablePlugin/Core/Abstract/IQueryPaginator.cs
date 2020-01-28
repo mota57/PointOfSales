@@ -5,10 +5,9 @@ using System.Threading.Tasks;
 
 namespace TablePlugin.Core
 {
-    public interface IQueryPaginator
+    public interface IQueryPaginator<TResult>
     {
         QueryConfig QueryConfig { get; set; }
-        Task<object> GetAsync(IRequestParameter request);
-        Task<DataResponse<TData>> GetAsync<TData>(IRequestParameter request);
+        Task<DataResponseAbstract<TResult>> GetAsync(IRequestParameterAdapter request);
     }
 }

@@ -3,7 +3,7 @@ using System;
 
 namespace TablePlugin.Core
 {
-    public interface IRequestParameter
+    public interface IRequestParameterAdapter
     {
         int PerPage { get; set; }
         PropertyOrder[] OrderBy { get; set; }

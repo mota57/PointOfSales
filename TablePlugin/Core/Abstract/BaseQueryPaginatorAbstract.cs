@@ -1,5 +1,6 @@
 ﻿using SqlKata.Execution;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,15 +8,41 @@ using System.Threading.Tasks;
 
 namespace TablePlugin.Core
 {
-    public abstract class BaseQueryPaginatorAbstract : IQueryPaginator
+    public abstract class BaseQueryPaginatorAbstract<DataResponseType, TResult> : IQueryPaginator<TResult>
+         where DataResponseType : DataResponseAbstract<TResult>
+
     {
+
         public BaseQueryPaginatorAbstract(QueryConfig queryConfig)
         {
             this.QueryConfig = queryConfig;
+            this.filterByColumnStrategy = new BasicFilterByColumnStrategy();
         }
+
+
+
+        public BaseQueryPaginatorAbstract(QueryConfig queryConfig, IFilterByColumnStrategy filterByColumnStrategy)
+        {
+            this.QueryConfig = queryConfig;
+            this.filterByColumnStrategy = filterByColumnStrategy;
+        }
+
+
+      
 
         private const int DEFAULT_PER_PAGE = 10;
         private int _perPage = DEFAULT_PER_PAGE;
+
+        private IFilterByColumnStrategy filterByColumnStrategy =  new BasicFilterByColumnStrategy();
+
+        public IFilterByColumnStrategy FilterByColumnStrategy
+        {
+            get => filterByColumnStrategy;
+            set
+            {
+                filterByColumnStrategy = value ?? throw new ApplicationException("Column Strategy is required");
+            }
+        }
 
         public int PerPage
         {
@@ -34,20 +61,15 @@ namespace TablePlugin.Core
         protected SqlKata.Query QueryBuilder { get; set; }
 
 
-        public async Task<object> GetAsync(IRequestParameter request)
+        public async Task<DataResponseAbstract<TResult>> GetAsync(IRequestParameterAdapter request)
         {
-            ProcessQuery(request);
-            return await BuildResponseAsync<object>();
+            BuildFilterOrderAndPaginateQuery(request);
+            var dataResponseInstance = await QueryData();
+            return CreateResponseAdapter(dataResponseInstance);
         }
 
-        public async Task<DataResponse<TData>> GetAsync<TData>(IRequestParameter request)
-        {
-            ProcessQuery(request);
-            return await BuildResponseAsync<TData>();
-        }
-       
 
-        protected void ProcessQuery(IRequestParameter parameter)
+        private void BuildFilterOrderAndPaginateQuery(IRequestParameterAdapter parameter)
         {
             QueryBuilder = QueryConfig.Query.Clone();
             PerPage = parameter.PerPage;
@@ -55,14 +77,11 @@ namespace TablePlugin.Core
             Filter(parameter);
             OrderBy(parameter);
             Paginate(parameter);
+
         }
 
-        protected virtual void Paginate(IRequestParameter parameter)
-        {
-            var page = parameter.Page;
-            QueryBuilder.ForPage(page, PerPage);
-        }
-        protected virtual void OrderBy(IRequestParameter parameter)
+
+        protected virtual void OrderBy(IRequestParameterAdapter parameter)
         {
             var propertiesOrder = parameter.OrderBy;
 
@@ -82,30 +101,43 @@ namespace TablePlugin.Core
             }
         }
 
-        protected virtual void Filter(IRequestParameter parameter)
+        protected virtual void Filter(IRequestParameterAdapter parameter)
+            => FilterByColumnStrategy.FilterByColumn(QueryBuilder, QueryConfig, parameter);
+
+        private void Paginate(IRequestParameterAdapter parameter)
         {
-                new BasicFilterByColumnStrategy()
-                .FilterByColumn(QueryBuilder, QueryConfig, parameter);
+            var page = parameter.Page;
+            QueryBuilder.ForPage(page, PerPage);
         }
 
+       
 
-        public virtual async Task<DataResponse<TData>> BuildResponseAsync<TData>()
+
+        private async Task<DataResponse<TResult>> QueryData()
         {
-
             var db = QueryFactorySqlKata.Build(QueryConfig);
 
 
             var count = await db.FromQuery(QueryBuilder).CountAsync<int>();
-            var data = await db.FromQuery(QueryBuilder).GetAsync<TData>();
+            var data = await db.FromQuery(QueryBuilder).GetAsync<TResult>();
 
-            return new DataResponse<TData>
+
+            return new DataResponse<TResult>
             {
                 Count = count,
                 Data = data
             };
-
         }
 
-     
+
+        private DataResponseAbstract<TResult> CreateResponseAdapter(DataResponse<TResult> dataResponse)
+        {
+            var typeOfResponseType = typeof(DataResponseType);
+            var instance = (DataResponseAbstract<TResult>)Activator.CreateInstance(typeOfResponseType, dataResponse);
+            return instance;
+        }
+
     }
+
+
 }

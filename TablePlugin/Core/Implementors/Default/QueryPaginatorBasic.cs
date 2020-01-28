@@ -47,7 +47,7 @@ namespace TablePlugin.Core
         /// <param name="queryConfig"></param>
         /// <param name="parameter"></param>
         /// <returns></returns>
-        public async Task<object> GetAsync(QueryConfig queryConfig, IRequestParameter parameter)
+        public async Task<object> GetAsync(QueryConfig queryConfig, IRequestParameterAdapter parameter)
         {
 
             Query query = queryConfig.Query.Clone();
@@ -66,7 +66,7 @@ namespace TablePlugin.Core
             };
         }
 
-        public async Task<DataResponse<TData>> GetAsync<TData>(QueryConfig queryConfig, IRequestParameter parameter)
+        public async Task<DataResponse<TData>> GetAsync<TData>(QueryConfig queryConfig, IRequestParameterAdapter parameter)
         {
             Query query = queryConfig.Query.Clone();
 
@@ -86,7 +86,7 @@ namespace TablePlugin.Core
 
 
 
-        private void ProcessQuery(Query query, QueryConfig queryConfig, IRequestParameter parameter)
+        private void ProcessQuery(Query query, QueryConfig queryConfig, IRequestParameterAdapter parameter)
         {
 
             PerPage = parameter.PerPage;
@@ -118,7 +118,7 @@ namespace TablePlugin.Core
         private void Paginate(Query queryBuilder, int page)
               => queryBuilder = queryBuilder.ForPage(page, PerPage);
 
-        private void Filter(Query query, QueryConfig queryConfig, IRequestParameter parameter)
+        private void Filter(Query query, QueryConfig queryConfig, IRequestParameterAdapter parameter)
         {
 
             if (parameter.IsFilterByColumn == false || parameter.Query == null || parameter.Query.Count() == 0) return;
@@ -137,7 +137,7 @@ namespace TablePlugin.Core
         
 
 
-        private void FilterByAllFields(Query query, QueryConfig queryConfig, IRequestParameter parameter)
+        private void FilterByAllFields(Query query, QueryConfig queryConfig, IRequestParameterAdapter parameter)
         {
             var value = parameter.Query;
             var fields = queryConfig.Fields.Where(p => p.IsFilter);

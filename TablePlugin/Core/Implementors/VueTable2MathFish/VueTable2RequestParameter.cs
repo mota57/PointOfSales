@@ -8,6 +8,4 @@
         public int ByColumn { get; set; }
         public int Page { get; set; }
     }
-
-
 }

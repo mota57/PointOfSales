@@ -8,7 +8,7 @@ namespace TablePlugin.Core
     /// </summary>
     public class QueryPaginatorDbService
     {
-        public async static Task<object> Build(string configName, IRequestParameter parameter)
+        public async static Task<object> Build(string configName, IRequestParameterAdapter parameter)
         {
             var config = TablePluginOptions.QueryRepositoryInstance.GetByConfig(configName);
             config.ConnectionString = TablePluginOptions.SQLConnectionName;
@@ -19,7 +19,7 @@ namespace TablePlugin.Core
             return result;
         }
 
-        public async static Task<DataResponse<T>> Build<T>(string configName, IRequestParameter parameter)
+        public async static Task<DataResponse<T>> Build<T>(string configName, IRequestParameterAdapter parameter)
         {
             var config = TablePluginOptions.QueryRepositoryInstance.GetByConfig(configName);
             config.ConnectionString = TablePluginOptions.SQLConnectionName;

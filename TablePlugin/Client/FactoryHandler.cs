@@ -4,7 +4,7 @@ using TablePlugin.Core;
 
 namespace TablePlugin.Client
 {
-    public static class FactoryHandler
+    internal static class FactoryHandler
     {
         public static TablePLuginController BuildTablePluginHanlder(HttpRequest request, 
             HttpResponse response, 

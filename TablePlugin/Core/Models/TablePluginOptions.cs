@@ -36,5 +36,8 @@ namespace TablePlugin.Core
             return System.IO.File.OpenRead(path);
             //return typeof(QueryField).GetType().Assembly.GetManifestResourceStream("TablePlugin.index.html");
         }
+
+
+
     }
 }

@@ -4,7 +4,7 @@ namespace TablePlugin.Core
 {
     public class BasicFilterByColumnStrategy : IFilterByColumnStrategy
     {
-        public void FilterByColumn(Query query, QueryConfig queryConfig, IRequestParameter parameter)
+        public void FilterByColumn(Query query, QueryConfig queryConfig, IRequestParameterAdapter parameter)
         {
 
             var queryFilters = parameter.Query;
