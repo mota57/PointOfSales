@@ -33,7 +33,7 @@ namespace PointOfSales.WebUI.Controllers
             productConfig.ConnectionString = GlobalVariables.Connection;
             productConfig.Provider = TablePlugin.Core.DatabaseProvider.SQLite;
 
-            IRequestParameter requestTableParameter = new VueTable2RequestParameterAdapter(parameters);
+            IRequestParameterAdapter requestTableParameter = new VueTable2RequestParameterAdapter(parameters);
             var reader = new QueryPaginatorBasic(new VueFilterByColumnStrategy());
             //var reader = new QueryVueTable2Provider();
             var result = await reader.GetAsync(productConfig, requestTableParameter);

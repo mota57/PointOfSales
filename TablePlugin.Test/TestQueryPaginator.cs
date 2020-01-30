@@ -48,7 +48,6 @@ namespace TablePlugin.Test
             QueryPersonInfo.ConnectionString = Connection;
         }
 
-
         [TestMethod]
         public void TestFilterOperators () {
             TestHandler.Handle<DummyContext> ((options) => {
@@ -314,6 +313,11 @@ namespace TablePlugin.Test
     }
 
     public class Person {
+
+        public Person() {
+            CreatedDate = new System.DateTime(2009,1,1);
+        }
+        public System.DateTime CreatedDate {get; set;}
         public int PersonId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }

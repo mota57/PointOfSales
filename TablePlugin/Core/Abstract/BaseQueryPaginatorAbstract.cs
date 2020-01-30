@@ -1,19 +1,16 @@
 ﻿using SqlKata.Execution;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace TablePlugin.Core
 {
-    public abstract class BaseQueryPaginatorAbstract<DataResponseType, TResult> : IQueryPaginator<TResult>
+    public class QueryPaginator<DataResponseType, TResult> : IQueryPaginator<TResult>
          where DataResponseType : DataResponseAbstract<TResult>
 
     {
 
-        public BaseQueryPaginatorAbstract(QueryConfig queryConfig)
+        public QueryPaginator(QueryConfig queryConfig)
         {
             this.QueryConfig = queryConfig;
             this.filterByColumnStrategy = new BasicFilterByColumnStrategy();
@@ -21,7 +18,7 @@ namespace TablePlugin.Core
 
 
 
-        public BaseQueryPaginatorAbstract(QueryConfig queryConfig, IFilterByColumnStrategy filterByColumnStrategy)
+        public QueryPaginator(QueryConfig queryConfig, IFilterByColumnStrategy filterByColumnStrategy)
         {
             this.QueryConfig = queryConfig;
             this.filterByColumnStrategy = filterByColumnStrategy;

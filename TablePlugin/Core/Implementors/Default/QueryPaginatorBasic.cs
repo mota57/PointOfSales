@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using SqlKata;
 using SqlKata.Execution;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -26,7 +27,7 @@ namespace TablePlugin.Core
 
         private const int DEFAULT_PER_PAGE = 10;
         private int _perPage = DEFAULT_PER_PAGE;
-
+        private QueryFactory queryFactory;
 
         public int PerPage
         {
@@ -47,35 +48,18 @@ namespace TablePlugin.Core
         /// <param name="queryConfig"></param>
         /// <param name="parameter"></param>
         /// <returns></returns>
-        public async Task<object> GetAsync(QueryConfig queryConfig, IRequestParameterAdapter parameter)
-        {
-
-            Query query = queryConfig.Query.Clone();
-
-            QueryFactory db = QueryFactorySqlKata.Build(queryConfig);
-
-            ProcessQuery(query, queryConfig, parameter);
-
-            var count = await db.FromQuery(query).CountAsync<int>();
-            var data = await db.FromQuery(query).GetAsync<object>();
-
-            return new
-            {
-                data,
-                count
-            };
-        }
-
+        public async Task<object> GetAsync(QueryConfig queryConfig, IRequestParameterAdapter parameter) => await GetAsync<object>(queryConfig, parameter);
+        
         public async Task<DataResponse<TData>> GetAsync<TData>(QueryConfig queryConfig, IRequestParameterAdapter parameter)
         {
             Query query = queryConfig.Query.Clone();
 
-            QueryFactory db = QueryFactorySqlKata.Build(queryConfig);
+            queryFactory = QueryFactorySqlKata.Build(queryConfig);
 
             ProcessQuery(query, queryConfig, parameter);
 
-            var count = await db.FromQuery(query).CountAsync<int>();
-            var data = await db.FromQuery(query).GetAsync<TData>();
+            var count = await GetCount(query);
+            var data = await GetRecords<TData>(query);
 
             return new DataResponse<TData>
             {
@@ -84,6 +68,11 @@ namespace TablePlugin.Core
             };
         }
 
+        private async Task<int> GetCount(Query query)
+         => await queryFactory.FromQuery(query).CountAsync<int>();
+        private async Task<IEnumerable<TData>> GetRecords<TData>(Query query)
+         => await queryFactory.FromQuery(query).GetAsync<TData>();
+        
 
 
         private void ProcessQuery(Query query, QueryConfig queryConfig, IRequestParameterAdapter parameter)
@@ -129,13 +118,6 @@ namespace TablePlugin.Core
                 FilterByAllFields(query, queryConfig, parameter);
 
         }
-        
-
-       
-       
-
-        
-
 
         private void FilterByAllFields(Query query, QueryConfig queryConfig, IRequestParameterAdapter parameter)
         {

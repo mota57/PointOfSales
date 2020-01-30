@@ -83,7 +83,7 @@ namespace TablePlugin.Core.Implementors.JTable
         public int TotalRecordCount { get;  }
     }
 
-    public class JTableQueryPaginator<TResult> : BaseQueryPaginatorAbstract<JTableDataResponse<TResult>, TResult>
+    public class JTableQueryPaginator<TResult> : QueryPaginator<JTableDataResponse<TResult>, TResult>
     {
         public JTableQueryPaginator(QueryConfig queryConfig) : base(queryConfig)
         {
