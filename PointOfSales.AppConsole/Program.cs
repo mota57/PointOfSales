@@ -27,7 +27,7 @@ namespace ConsoleApp1
             {
                 ProgramGenerator.example_render_model(); //render app
 
-                //example_log_modelFactory(); //log modelform example
+                //example_log_modelFactory<Product>(); //log modelform example
                 // Example_Pagination();
                 //RunConfiguration();
 

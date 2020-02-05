@@ -21,11 +21,11 @@ namespace PointOfSales.Core.Generator
             Log("complete");
         }
 
-        public static void example_log_modelFactory()
+        public static void example_log_modelFactory<T>()
         {
 
             POSContext context = new POSContextFactory().CreateDbContext(new string[]{ });
-            ModelForm model = ModelFormFactory.BuildModelForm(context, typeof(Product));
+            ModelForm model = ModelFormFactory.BuildModelForm(context, typeof(T));
             Log(JsonConvert.SerializeObject(model, Formatting.Indented));
         }
 
