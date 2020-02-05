@@ -9,9 +9,6 @@ using System.ComponentModel.DataAnnotations;
 using System.IO;
 using Scriban;
 using Scriban.Runtime;
-using PointOfSales.Core.Infraestructure;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using PointOfSales.Core.Entities;
 
 namespace PointOfSales.Core.Generator
 { 
@@ -64,52 +61,57 @@ namespace PointOfSales.Core.Generator
 
         public override async Task Build(string inputFile, string outputFile, object objTemplate)
         {
-            try
+           
+            var templateUncompile = await getUncompileTemplate(inputFile);
+            var templateContext = BuildTemplateContext(objTemplate);
+            var template = Template.Parse(templateUncompile);
+
+            ThrowErrorIfAny(template);
+
+            var compiled = template.Render(templateContext);
+
+            Console.WriteLine(compiled);
+
+            await WriteCompiledTemplate(outputFile, compiled);
+        }
+
+        private void ThrowErrorIfAny(Template template)
+        {
+            List<string> messages = new List<string>();
+            if (template.HasErrors == true)
             {
+                foreach (var error in template.Messages)
+                   messages.Add("error::"+error);
 
-                var templateContext = new TemplateContext();
-                templateContext.MemberRenamer = member => member.Name;
-
-                var globals = new GlobalScribanCustomFunctions();
-
-                var scriptObjTemplate = new ScriptObject();
-                scriptObjTemplate.Import(objTemplate, renamer:member => member.Name);
-
-                templateContext.PushGlobal(globals);
-                templateContext.PushGlobal(scriptObjTemplate);
-
-
-                var path = Path.Combine(_templateDirectory, inputFile);
-                var templateUncompile = await File.ReadAllTextAsync(path);
-
-                var template = Template.Parse(templateUncompile);
-
-                if (template.HasErrors == true)
-                {
-                    foreach (var error in template.Messages)
-                    {
-                        Console.WriteLine("error "+ error);
-                    }
-                    return;
-                }
-
-                var compiled = template.Render(templateContext);
-
-                Console.WriteLine(compiled);
-
-                await File.WriteAllTextAsync(Path.Combine(_outputDirectory, outputFile), compiled);
-
-            } catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                Console.WriteLine(ex.StackTrace);
+                throw new Exception(string.Join('\n', messages));
             }
+        }
+
+        private async Task WriteCompiledTemplate(string outputFile, string compiled)
+        {
+            await File.WriteAllTextAsync(Path.Combine(_outputDirectory, outputFile), compiled);
+        }
+        private async Task<string> getUncompileTemplate(string inputFile)
+        {
+            var path = Path.Combine(_templateDirectory, inputFile);
+            var templateUncompile = await File.ReadAllTextAsync(path);
+            return templateUncompile;
+        }
+        private  TemplateContext BuildTemplateContext(object objTemplate){
+            var templateContext = new TemplateContext();
+            templateContext.MemberRenamer = member => member.Name;
+            var globals = new GlobalScribanCustomFunctions();
+            var scriptObjTemplate = new ScriptObject();
+            scriptObjTemplate.Import(objTemplate, renamer:member => member.Name);
+            templateContext.PushGlobal(globals);
+            templateContext.PushGlobal(scriptObjTemplate);
+            return templateContext;
         }
     }
 
     public static class ModelFormFactory
     {
-        public static ModelForm BuildModelForm(IdentityDbContext<ApplicationUser> context, Type type)
+        public static ModelForm BuildModelForm(DbContext context, Type type)
         {
             var modelForm = new ModelForm();
             modelForm.ModelName = type.Name;
@@ -120,54 +122,29 @@ namespace PointOfSales.Core.Generator
             var formLayout = type.GetCustomAttribute<FormLayoutAttribute>();
 
             foreach (var item in  properties)
-            {
-                
-                var fieldForm = new FieldForm()
+            {   
+                var fieldForm = CreateFieldForm(item);
+
+                modelForm.FieldForms.Add(fieldForm);
+
+                fieldForm.Type = GetTypeInput(item);
+              
+                PopulateMetadataForFieldSelect(modelForm, fieldForm, item);
+                PopulateMetadataForUpload(modelForm, fieldForm);
+
+            }
+            return modelForm;
+        }
+        private  static FieldForm CreateFieldForm(IProperty item)
+        {
+            return new FieldForm()
                 {
                     Label = item.Name,
                     Name = item.Name,
                     IsPrimaryKey = item.IsPrimaryKey()
                 };
-                modelForm.FieldForms.Add(fieldForm);
-
-                if (item.IsForeignKey())
-                {
-                    IForeignKey foreignKey = item.GetContainingForeignKeys().First();
-                    var declaringType = foreignKey.PrincipalKey.DeclaringEntityType;
-
-                    fieldForm.ForeignEntityName = declaringType.ClrType.Name;
-                    fieldForm.IsForeingKey = true;
-                    fieldForm.IsCollection = foreignKey.DependentToPrincipal.IsCollection();
-                    fieldForm.Type = "select";
-                    modelForm.DependentToPrincipalFields.Add(fieldForm);
-                } else
-                {
-                    fieldForm.Type = ModelFormHelper.GetTypeInput(item);
-                }
-
-                if(fieldForm.Type == "Upload")
-                {
-                    modelForm.ContainsFile = true;
-                }
-
-            }
-            //order entities
-
-
-
-            return modelForm;
         }
-    }
-
-    public class ModelFormHelper
-    {
-
-        
-        /// <summary>
-        /// get a type to render a proper input format
-        /// </summary>
-        /// <returns></returns>
-        public static string GetTypeInput(IProperty item)
+        private static string GetTypeInput(IProperty item)
         {
             var attr = item.PropertyInfo.GetCustomAttribute<DataTypeAttribute>();
             if (attr != null)
@@ -178,20 +155,63 @@ namespace PointOfSales.Core.Generator
                 return !string.IsNullOrEmpty(attr.CustomDataType) ? attr.CustomDataType : attr.DataType.ToString();
             }
 
-            return item.ClrType.IsNumber() ? "number" :
+            return 
+                item.IsForeignKey() ? "select" :
+                item.ClrType.IsNumber() ? "number" :
                 item.ClrType == typeof(DateTime) ? "date" :
-                item.ClrType == typeof(string) ? "text" : throw new Exception($"not type assing to property {item.Relational().ColumnName}");
+                item.ClrType == typeof(string) ? "text" : 
+                throw new Exception($"not type assing to property {item.Relational().ColumnName}");
+        }
+        private static void PopulateMetadataForFieldSelect(ModelForm modelForm, FieldForm fieldForm, IProperty item)
+        {
+            if(fieldForm.Type == "select" && item.IsForeignKey())
+            {
+                IForeignKey foreignKey = item.GetContainingForeignKeys().First();
+                var declaringType = foreignKey.PrincipalKey.DeclaringEntityType;
+
+                fieldForm.ForeignEntityName = declaringType.ClrType.Name;
+                fieldForm.IsForeingKey = true;
+                fieldForm.IsCollection = foreignKey.DependentToPrincipal.IsCollection();
+                modelForm.DependentToPrincipalFields.Add(fieldForm);
+            } else if(fieldForm.Type == "select" && item.ClrType.IsEnum == true){
+                Enum.GetNames(item.GetType());
+            }
+        }
+        private static void PopulateMetadataForUpload(ModelForm modelForm, FieldForm fieldForm){
+            if(fieldForm.Type == "Upload")
+            {
+                modelForm.ContainsFile = true;
+            }
         }
 
     }
+
+
 
     public static class ExtensionHelper
     {
        
         public static bool IsNumber(this Type type)
         {
-            return type == typeof(int) || type == typeof(decimal) || type == typeof(short) || type == typeof(double) || type == typeof(float) 
-                || type == typeof(long) || type == (typeof(uint)) || type == typeof(ushort);
+            
+            return type == typeof(int) 
+            || type == typeof(decimal) 
+            || type == typeof(decimal?) 
+            || type == typeof(short) 
+            || type == typeof(double) 
+            || type == typeof(float) 
+            || type == typeof(long) 
+            || type == typeof(uint) 
+            || type == typeof(ushort)
+            || type == typeof(int?) 
+            || type == typeof(decimal?) 
+            || type == typeof(decimal?) 
+            || type == typeof(short?) 
+            || type == typeof(double?) 
+            || type == typeof(float?) 
+            || type == typeof(long?) 
+            || type == typeof(uint?) 
+            || type == typeof(ushort?);
         }
 
     }

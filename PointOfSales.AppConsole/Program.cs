@@ -11,6 +11,7 @@ using TablePlugin;
 using TablePlugin.Core;
 using TablePlugin.Data;
 using PointOfSales.Core.Infraestructure;
+using PointOfSales.Core.Generator;
 
 namespace ConsoleApp1
 {
@@ -22,13 +23,13 @@ namespace ConsoleApp1
         static void Main(string[] args)
         {
 
-            //example_log_modelFactory(); //log modelform example
-            //ProgramGenerator.example_render_model(); //render app
             try
             {
+                ProgramGenerator.example_render_model(); //render app
 
+                //example_log_modelFactory(); //log modelform example
                 // Example_Pagination();
-                RunConfiguration();
+                //RunConfiguration();
 
             } catch (Exception ex)
             {
