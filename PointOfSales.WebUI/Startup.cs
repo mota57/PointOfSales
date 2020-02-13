@@ -16,10 +16,12 @@ namespace PointOfSales.WebUI
     public class Startup
     {
         public ILogger<Startup> Logger { get; set; }
-        public Startup(IConfiguration configuration, ILogger<Startup> logger)
+        public Startup(IConfiguration configuration, ILogger<Startup> logger, IHostingEnvironment env)
         {
             this.Logger = logger;
             Configuration = configuration;
+            env.EnvironmentName = "Development";
+
         }
 
         public IConfiguration Configuration { get; }
@@ -53,6 +55,7 @@ namespace PointOfSales.WebUI
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            
             if (env.IsDevelopment())
             {
                 app.UseExceptionHandler("/error");
@@ -71,14 +74,7 @@ namespace PointOfSales.WebUI
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-            //app.Use(async (context, next) =>
-            //{
-            //    if(Regex.Match(context.Request.Path.Value, "^/datatableconfig").Success)
-            //    {
-            //        await context.Response.WriteAsync("Foo");
-            //    }
-            //    await next.Invoke();
-            //});
+          
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
