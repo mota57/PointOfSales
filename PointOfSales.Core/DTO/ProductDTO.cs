@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-using PointOfSales.Core.Entities;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
