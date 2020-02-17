@@ -111,7 +111,12 @@ namespace PointOfSales.WebUI.Controllers
             return Ok(entity);
         }
 
-
+        [NonAction]
+         public TResult GetService<TResult>() {
+            var services = HttpContext.RequestServices;
+            TResult result = (TResult) services.GetService(typeof(TResult));
+            return result;
+        }
 
     }
 }

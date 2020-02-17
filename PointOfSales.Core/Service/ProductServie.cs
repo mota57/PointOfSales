@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using PointOfSales.Core.DTO;
 using PointOfSales.Core.Entities;
+using PointOfSales.Core.Infraestructure;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -26,7 +28,13 @@ namespace PointOfSales.Core.Service
             return product;
         }
 
+        public void UpsertDeleteProductModifiers(Product product, ProductFormDTO dto) 
+        {
+            var productModifierClient = ProductMapper.CreateListOfProductModifier(dto);
 
+            UpsertDeleteProductModifiers(product, productModifierClient);
+        }
+       
         /// <summary>
         /// Assing a modifiers to a product
         /// </summary>
