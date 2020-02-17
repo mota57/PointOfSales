@@ -132,9 +132,10 @@ namespace PointOfSales.WebUI.Areas.Identity.Pages.Account
                     //    new ClaimsPrincipal(claimsIdentity), 
                     //    authProperties);
 
-
+                    
 
                     _logger.LogInformation("User logged in.");
+            
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)

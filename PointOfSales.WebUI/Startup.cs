@@ -11,10 +11,15 @@ using TablePlugin.Client;
 using TablePlugin.Core;
 using Microsoft.Extensions.Logging;
 
+
 namespace PointOfSales.WebUI
 {
+  
+
     public class Startup
     {
+
+        
         public ILogger<Startup> Logger { get; set; }
         public Startup(IConfiguration configuration, ILogger<Startup> logger, IHostingEnvironment env)
         {
@@ -23,6 +28,8 @@ namespace PointOfSales.WebUI
             env.EnvironmentName = "Development";
 
         }
+
+      
 
         public IConfiguration Configuration { get; }
 

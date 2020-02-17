@@ -12,8 +12,7 @@ using PointOfSales.Core.Infraestructure;
 using PointOfSales.Core.Service;
 using PointOfSales.WebUI.Providers;
 using System;
-using System.Net;
-using System.Threading.Tasks;
+
 
 namespace PointOfSales.WebUI.Extensions
 {
@@ -26,6 +25,8 @@ namespace PointOfSales.WebUI.Extensions
             services.AddSingleton<IWeatherProvider, WeatherProviderFake>();
             services.AddDbContext<POSContext>(cfg => cfg.UseSqlite(connectionString: GlobalVariables.Connection));
             services.AddScoped<POSService>();
+
+            services.AddScoped<IJwtProvider, CustomJwtProvider>();
 
 
             // Register the Swagger generator, defining 1 or more Swagger documents

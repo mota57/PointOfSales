@@ -7,12 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PointOfSales.Core.DTO;
 using PointOfSales.Core.Entities;
-using PointOfSales.Core.Infraestructure;
 using PointOfSales.Core.Service;
-using PointOfSales.WebUI.Extensions;
 using PointOfSales.WebUI.Models;
 
-namespace PointOfSales.WebUI.Controllers {
+namespace PointOfSales.WebUI.Controllers
+{
 
     [Route ("api/[controller]")]
     [ApiController]
